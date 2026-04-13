@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Engineer & STEM Educator | Embedded Systems • IoT • Robotics</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green: #3B6D11;
+    --green-light: #EAF3DE;
+    --green-mid: #639922;
+    --green-dark: #27500A;
+    --teal: #0F6E56;
+    --teal-light: #E1F5EE;
+    --teal-mid: #1D9E75;
+    --amber: #854F0B;
+    --amber-light: #FAEEDA;
+    --amber-mid: #BA7517;
+    --blue: #185FA5;
+    --blue-light: #E6F1FB;
+    --purple: #534AB7;
+    --purple-light: #EEEDFE;
+    --gray-50: #F1EFE8;
+    --gray-100: #D3D1C7;
+    --gray-600: #5F5E5A;
+    --gray-900: #2C2C2A;
+    --white: #ffffff;
+    --text: #1a1a1a;
+    --text-muted: #5a5a5a;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: var(--text);
+    background: #fafafa;
+    line-height: 1.7;
+    font-size: 16px;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #e8e8e8;
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .nav-brand {
+    font-size: 15px; font-weight: 600; color: var(--green-dark);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .nav-brand .dot {
+    width: 8px; height: 8px; background: var(--green-mid); border-radius: 50%;
+  }
+  .nav-links { display: flex; gap: 1.5rem; list-style: none; }
+  .nav-links a {
+    text-decoration: none; color: var(--text-muted); font-size: 14px;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--green); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0a1f0a 0%, #0d2b1a 40%, #0f2d2a 100%);
+    display: flex; align-items: center; justify-content: center;
+    padding: 80px 2rem 4rem;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(61,105,17,0.25) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(29,158,117,0.2) 0%, transparent 50%);
+  }
+  .hero-grid {
+    position: absolute; inset: 0; opacity: 0.04;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .hero-content {
+    position: relative; z-index: 1;
+    max-width: 800px; text-align: center;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(99,153,34,0.2);
+    border: 1px solid rgba(99,153,34,0.4);
+    color: #97C459; font-size: 13px; font-weight: 500;
+    padding: 6px 16px; border-radius: 50px;
+    margin-bottom: 1.5rem; letter-spacing: 0.02em;
+  }
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700; color: #ffffff; line-height: 1.15;
+    margin-bottom: 0.5rem;
+  }
+  .hero h1 .accent { color: #97C459; }
+  .hero-subtitle {
+    font-size: 1.1rem; color: rgba(255,255,255,0.65);
+    margin-bottom: 1.5rem; max-width: 600px; margin-left: auto; margin-right: auto;
+  }
+  .hero-why {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px;
+    padding: 1.25rem 2rem;
+    color: rgba(255,255,255,0.8);
+    font-size: 1rem; font-style: italic;
+    max-width: 580px; margin: 0 auto 2rem;
+    line-height: 1.6;
+  }
+  .hero-tags {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+    margin-bottom: 2.5rem;
+  }
+  .hero-tag {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.75); font-size: 13px;
+    padding: 6px 14px; border-radius: 6px;
+  }
+  .hero-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--green-mid); color: #fff;
+    border: none; padding: 12px 28px; border-radius: 8px;
+    font-size: 15px; font-weight: 500; cursor: pointer;
+    text-decoration: none; display: inline-block;
+    transition: background 0.2s;
+  }
+  .btn-primary:hover { background: var(--green); }
+  .btn-outline {
+    background: transparent; color: rgba(255,255,255,0.8);
+    border: 1px solid rgba(255,255,255,0.3); padding: 12px 28px; border-radius: 8px;
+    font-size: 15px; font-weight: 500; cursor: pointer;
+    text-decoration: none; display: inline-block;
+    transition: all 0.2s;
+  }
+  .btn-outline:hover { background: rgba(255,255,255,0.08); }
+
+  /* STATS BAR */
+  .stats-bar {
+    background: var(--white); border-bottom: 1px solid #eee;
+    padding: 1.5rem 2rem;
+    display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap;
+  }
+  .stat { text-align: center; }
+  .stat-num { font-size: 1.8rem; font-weight: 700; color: var(--green); }
+  .stat-label { font-size: 13px; color: var(--text-muted); }
+
+  /* SECTIONS */
+  section { padding: 5rem 2rem; max-width: 1100px; margin: 0 auto; }
+  .section-header { text-align: center; margin-bottom: 3rem; }
+  .section-label {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--green-mid); margin-bottom: 0.5rem;
+  }
+  .section-title { font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 700; color: var(--gray-900); }
+  .section-desc { font-size: 1rem; color: var(--text-muted); margin-top: 0.5rem; max-width: 500px; margin-left: auto; margin-right: auto; }
+
+  /* ABOUT */
+  .about-section { background: var(--white); padding: 5rem 0; }
+  .about-inner { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+  .about-photo-placeholder {
+    aspect-ratio: 4/5;
+    background: linear-gradient(135deg, var(--green-light) 0%, #C0DD97 100%);
+    border-radius: 16px; position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 1rem;
+  }
+  .about-photo-placeholder .icon-engineer {
+    width: 100px; height: 100px;
+    background: var(--green-mid); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 48px;
+  }
+  .about-photo-placeholder .photo-label {
+    font-size: 13px; color: var(--green-dark); font-weight: 500;
+    text-align: center; padding: 0 1rem;
+  }
+  .photo-note {
+    position: absolute; bottom: 1rem; left: 1rem; right: 1rem;
+    background: rgba(255,255,255,0.9); border-radius: 8px; padding: 10px 12px;
+    font-size: 12px; color: var(--green-dark);
+  }
+  .about-text h2 { font-size: 2rem; font-weight: 700; margin-bottom: 1rem; color: var(--gray-900); }
+  .about-text p { color: var(--text-muted); margin-bottom: 1rem; font-size: 1rem; }
+  .about-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1.5rem; }
+  .chip {
+    background: var(--green-light); color: var(--green-dark);
+    font-size: 13px; font-weight: 500; padding: 5px 12px; border-radius: 6px;
+  }
+  .chip.teal { background: var(--teal-light); color: var(--teal); }
+  .chip.amber { background: var(--amber-light); color: var(--amber); }
+  .chip.blue { background: var(--blue-light); color: var(--blue); }
+
+  /* CURRICULUM */
+  .curriculum-section { background: var(--gray-50); padding: 5rem 0; }
+  .curriculum-inner { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+  .curriculum-path {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+    position: relative;
+  }
+  .stage-card {
+    background: var(--white); border-radius: 16px;
+    border: 1.5px solid #e8e8e8;
+    padding: 2rem 1.5rem; position: relative; overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+  .stage-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
+  .stage-num {
+    font-size: 56px; font-weight: 800; position: absolute;
+    top: 1rem; right: 1.25rem; opacity: 0.06; color: var(--gray-900);
+    line-height: 1;
+  }
+  .stage-icon {
+    width: 52px; height: 52px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; margin-bottom: 1rem;
+  }
+  .stage-icon.green { background: var(--green-light); }
+  .stage-icon.teal { background: var(--teal-light); }
+  .stage-icon.purple { background: var(--purple-light); }
+  .stage-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.25rem;
+  }
+  .stage-title { font-size: 1.3rem; font-weight: 700; color: var(--gray-900); margin-bottom: 0.75rem; }
+  .stage-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 1rem; }
+  .stage-topics { list-style: none; }
+  .stage-topics li {
+    font-size: 13px; color: var(--text-muted); padding: 5px 0;
+    border-bottom: 1px solid #f2f2f2; display: flex; align-items: center; gap: 8px;
+  }
+  .stage-topics li:last-child { border-bottom: none; }
+  .topic-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .dot-green { background: var(--green-mid); }
+  .dot-teal { background: var(--teal-mid); }
+  .dot-purple { background: var(--purple); }
+  .stage-age {
+    margin-top: 1.25rem; padding: 8px 12px;
+    border-radius: 8px; font-size: 12px; font-weight: 600;
+    display: inline-block;
+  }
+  .age-green { background: var(--green-light); color: var(--green-dark); }
+  .age-teal { background: var(--teal-light); color: var(--teal); }
+  .age-purple { background: var(--purple-light); color: var(--purple); }
+
+  /* TECH STACK */
+  .tech-section { background: var(--white); padding: 5rem 0; }
+  .tech-inner { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+  .tech-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+  .tech-card {
+    border: 1px solid #e8e8e8; border-radius: 12px; padding: 1.5rem;
+    background: var(--white);
+  }
+  .tech-card-header {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 1rem;
+  }
+  .tech-card-icon {
+    width: 38px; height: 38px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+  }
+  .tech-card h4 { font-size: 15px; font-weight: 600; color: var(--gray-900); }
+  .tech-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tech-tag {
+    font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 5px;
+  }
+  .tt-green { background: var(--green-light); color: var(--green-dark); }
+  .tt-teal { background: var(--teal-light); color: var(--teal); }
+  .tt-amber { background: var(--amber-light); color: var(--amber); }
+  .tt-blue { background: var(--blue-light); color: var(--blue); }
+
+  /* PROJECTS */
+  .projects-section { background: var(--gray-50); padding: 5rem 0; }
+  .projects-inner { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+  .projects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+  .project-card {
+    background: var(--white); border-radius: 16px; border: 1px solid #e8e8e8;
+    overflow: hidden; transition: box-shadow 0.2s;
+  }
+  .project-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
+  .project-card.featured { grid-column: span 2; }
+  .project-thumb {
+    height: 180px; display: flex; align-items: center; justify-content: center;
+    font-size: 56px; position: relative;
+  }
+  .project-thumb.green { background: linear-gradient(135deg, var(--green-light), #C0DD97); }
+  .project-thumb.teal { background: linear-gradient(135deg, var(--teal-light), #9FE1CB); }
+  .project-thumb.amber { background: linear-gradient(135deg, var(--amber-light), #FAC775); }
+  .project-thumb.blue { background: linear-gradient(135deg, var(--blue-light), #B5D4F4); }
+  .project-card.featured .project-thumb { height: 240px; }
+  .project-badge {
+    position: absolute; top: 12px; left: 12px;
+    font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 5px;
+  }
+  .pb-student { background: var(--purple-light); color: var(--purple); }
+  .pb-pro { background: var(--green-light); color: var(--green-dark); }
+  .pb-sri-lanka { background: #fff3cd; color: #7a5c00; }
+  .project-body { padding: 1.5rem; }
+  .project-title { font-size: 1.1rem; font-weight: 600; color: var(--gray-900); margin-bottom: 0.5rem; }
+  .project-desc { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem; }
+  .project-skills { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ps { font-size: 11px; padding: 3px 9px; border-radius: 4px; }
+  .ps-gray { background: var(--gray-50); color: var(--gray-600); border: 1px solid var(--gray-100); }
+
+  /* TESTIMONIALS */
+  .testimonials-section { background: var(--white); padding: 5rem 0; }
+  .testimonials-inner { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+  .testi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+  .testi-card {
+    background: var(--gray-50); border-radius: 12px; padding: 1.75rem;
+    border: 1px solid #e8e8e8; position: relative;
+  }
+  .testi-quote {
+    font-size: 2.5rem; color: var(--green-mid); font-family: Georgia, serif;
+    line-height: 1; margin-bottom: 0.5rem;
+  }
+  .testi-text {
+    font-size: 15px; color: var(--text); line-height: 1.7; font-style: italic;
+    margin-bottom: 1.25rem;
+  }
+  .testi-author { display: flex; align-items: center; gap: 10px; }
+  .testi-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 600; flex-shrink: 0;
+  }
+  .av-green { background: var(--green-light); color: var(--green-dark); }
+  .av-teal { background: var(--teal-light); color: var(--teal); }
+  .testi-name { font-size: 14px; font-weight: 600; color: var(--gray-900); }
+  .testi-role { font-size: 12px; color: var(--text-muted); }
+
+  /* REAL WORLD */
+  .realworld-section {
+    background: linear-gradient(135deg, #0a1f0a 0%, #0d2b1a 100%);
+    padding: 5rem 0;
+  }
+  .realworld-inner { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+  .realworld-inner .section-label { color: #97C459; }
+  .realworld-inner .section-title { color: #fff; }
+  .realworld-inner .section-desc { color: rgba(255,255,255,0.6); }
+  .rw-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 2.5rem; }
+  .rw-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px; padding: 1.5rem;
+  }
+  .rw-icon { font-size: 32px; margin-bottom: 0.75rem; }
+  .rw-title { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 0.5rem; }
+  .rw-desc { font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.6; }
+  .rw-flag {
+    margin-top: 0.75rem; font-size: 11px; font-weight: 600;
+    color: #97C459; letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* HOW IT WORKS */
+  .how-section { background: var(--white); padding: 5rem 0; }
+  .how-inner { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+  .how-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  .how-step { text-align: center; padding: 1.5rem 1rem; }
+  .how-num {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--green-light); color: var(--green-dark);
+    font-size: 20px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;
+  }
+  .how-step h4 { font-size: 15px; font-weight: 600; color: var(--gray-900); margin-bottom: 0.5rem; }
+  .how-step p { font-size: 13px; color: var(--text-muted); }
+
+  /* CONTACT */
+  .contact-section { background: var(--gray-50); padding: 5rem 0; }
+  .contact-inner { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+  .contact-info h2 { font-size: 1.8rem; font-weight: 700; color: var(--gray-900); margin-bottom: 1rem; }
+  .contact-info p { color: var(--text-muted); margin-bottom: 1.5rem; }
+  .contact-detail {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 0; border-bottom: 1px solid #eee;
+  }
+  .contact-detail:last-child { border-bottom: none; }
+  .contact-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--green-light); color: var(--green-dark);
+    display: flex; align-items: center; justify-content: center; font-size: 16px;
+    flex-shrink: 0;
+  }
+  .contact-label { font-size: 12px; color: var(--text-muted); }
+  .contact-value { font-size: 14px; font-weight: 500; color: var(--gray-900); }
+  .contact-form-card {
+    background: var(--white); border-radius: 16px;
+    border: 1px solid #e8e8e8; padding: 2rem;
+  }
+  .form-group { margin-bottom: 1rem; }
+  .form-group label {
+    display: block; font-size: 13px; font-weight: 500; color: var(--gray-900); margin-bottom: 6px;
+  }
+  .form-group input, .form-group textarea, .form-group select {
+    width: 100%; padding: 10px 14px; border: 1px solid #ddd;
+    border-radius: 8px; font-size: 14px; color: var(--text);
+    font-family: inherit; outline: none; transition: border-color 0.2s;
+  }
+  .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+    border-color: var(--green-mid);
+  }
+  .form-group textarea { resize: vertical; min-height: 100px; }
+  .submit-btn {
+    width: 100%; background: var(--green-mid); color: #fff;
+    border: none; padding: 12px; border-radius: 8px;
+    font-size: 15px; font-weight: 500; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .submit-btn:hover { background: var(--green); }
+
+  /* FOOTER */
+  footer {
+    background: #0a1f0a; color: rgba(255,255,255,0.6);
+    padding: 2.5rem; text-align: center; font-size: 14px;
+  }
+  footer .footer-name { color: #97C459; font-weight: 600; }
+  footer p { margin-bottom: 0.5rem; }
+  .footer-links { display: flex; justify-content: center; gap: 1.5rem; margin-top: 1rem; flex-wrap: wrap; }
+  .footer-links a { color: rgba(255,255,255,0.4); text-decoration: none; font-size: 13px; }
+  .footer-links a:hover { color: #97C459; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 0 1rem; }
+    .nav-links { display: none; }
+    .hero { padding: 80px 1.5rem 3rem; }
+    .about-grid, .contact-grid { grid-template-columns: 1fr; }
+    .curriculum-path { grid-template-columns: 1fr; }
+    .tech-grid { grid-template-columns: 1fr; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .project-card.featured { grid-column: span 1; }
+    .testi-grid { grid-template-columns: 1fr; }
+    .rw-grid { grid-template-columns: 1fr; }
+    .how-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
+    section { padding: 3rem 1.5rem; }
+    .stats-bar { gap: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav>
+  <div class="nav-brand">
+    <div class="dot"></div>
+    STEM Innovator
+  </div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#curriculum">Curriculum</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#tech">Tech Stack</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="btn-primary" style="font-size: 13px; padding: 8px 18px;">
+    Enroll Your Child
+  </a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      ⚡ Working Engineer · STEM Educator · Galle, Sri Lanka
+    </div>
+    <h1>
+      Building the Next Generation of<br>
+      <span class="accent">Innovators & Problem Solvers</span>
+    </h1>
+    <p class="hero-subtitle">
+      Embedded Systems Engineer at a Smart Agriculture Company — teaching children the same technology that is changing the world.
+    </p>
+    <div class="hero-why">
+      "My goal is to take the technology I use in the industry every day and make it accessible to the next generation of innovators — one circuit, one robot, and one idea at a time."
+    </div>
+    <div class="hero-tags">
+      <span class="hero-tag">Arduino & ESP32</span>
+      <span class="hero-tag">IoT & Robotics</span>
+      <span class="hero-tag">Smart Agriculture</span>
+      <span class="hero-tag">Home Visit Classes</span>
+      <span class="hero-tag">Ages 8 – 17</span>
+    </div>
+    <div class="hero-buttons">
+      <a href="#curriculum" class="btn-primary">Explore Curriculum</a>
+      <a href="#contact" class="btn-outline">Book a Free Demo Class</a>
+    </div>
+  </div>
+</div>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-num">3+</div>
+    <div class="stat-label">Years Industry Experience</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">3</div>
+    <div class="stat-label">Learning Stages</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">10+</div>
+    <div class="stat-label">Hands-On Projects</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">100%</div>
+    <div class="stat-label">Practical Learning</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">🏠</div>
+    <div class="stat-label">Home Visit Classes</div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div class="about-section" id="about">
+  <div class="about-inner">
+    <div class="about-grid">
+      <div class="about-photo-placeholder">
+        <div class="icon-engineer">👨‍💻</div>
+        <div class="photo-label">Replace with your professional photo<br>working with electronics or robots</div>
+        <div class="photo-note">
+          📸 Tip: Wear a smart polo shirt and hold an Arduino or robot component for the best first impression.
+        </div>
+      </div>
+      <div class="about-text">
+        <p style="font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-mid); margin-bottom: 0.5rem;">The Engineer-Educator</p>
+        <h2>Not Just a Teacher.<br>A Working Professional.</h2>
+        <p>
+          I am an Embedded Systems and IoT Engineer at a Smart Agriculture company, building real-world technology that helps Sri Lankan farmers every single day. From autonomous irrigation systems to crop monitoring sensors — this is what I do professionally.
+        </p>
+        <p>
+          And now I bring that same industry expertise directly to your home. My classes are not from a textbook. They are from the factory floor, the server rack, and the field.
+        </p>
+        <p>
+          My passion for innovation started in childhood — taking apart toys, wondering how things work, and dreaming of building something that matters. That curiosity never stopped. I want to light that same spark in every child I teach.
+        </p>
+        <div class="about-chips">
+          <span class="chip">Embedded Systems</span>
+          <span class="chip teal">IoT Engineering</span>
+          <span class="chip amber">Robotics</span>
+          <span class="chip blue">Smart Agriculture</span>
+          <span class="chip">Web Applications</span>
+          <span class="chip teal">STEM Education</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CURRICULUM -->
+<div class="curriculum-section" id="curriculum">
+  <div class="curriculum-inner">
+    <div class="section-header">
+      <div class="section-label">The Learning Path</div>
+      <h2 class="section-title">A Clear Path to the Future</h2>
+      <p class="section-desc">Three progressive stages that take your child from curious beginner to confident innovator.</p>
+    </div>
+    <div class="curriculum-path">
+
+      <!-- Stage 1 -->
+      <div class="stage-card">
+        <div class="stage-num">1</div>
+        <div class="stage-icon green">🔦</div>
+        <div class="stage-label">Stage 1</div>
+        <h3 class="stage-title">The Explorer</h3>
+        <p class="stage-desc">The foundation of all electronics. Students learn to think like engineers — asking "how does this work?" and building real, working circuits from day one.</p>
+        <ul class="stage-topics">
+          <li><div class="topic-dot dot-green"></div>LED circuits & resistor basics</li>
+          <li><div class="topic-dot dot-green"></div>LDR light sensors</li>
+          <li><div class="topic-dot dot-green"></div>Ultrasonic distance sensors</li>
+          <li><div class="topic-dot dot-green"></div>Breadboard prototyping</li>
+          <li><div class="topic-dot dot-green"></div>Block-based visual coding</li>
+          <li><div class="topic-dot dot-green"></div>Introduction to Arduino</li>
+        </ul>
+        <span class="stage-age age-green">👦 Ages 8 – 11 · Beginner</span>
+      </div>
+
+      <!-- Stage 2 -->
+      <div class="stage-card">
+        <div class="stage-num">2</div>
+        <div class="stage-icon teal">🤖</div>
+        <div class="stage-label">Stage 2</div>
+        <h3 class="stage-title">The Maker</h3>
+        <p class="stage-desc">The exciting leap from circuits to machines. Students build robots that actually move, respond to the environment, and follow their programming commands.</p>
+        <ul class="stage-topics">
+          <li><div class="topic-dot dot-teal"></div>DC motors & servo motors</li>
+          <li><div class="topic-dot dot-teal"></div>Line-following robots</li>
+          <li><div class="topic-dot dot-teal"></div>Obstacle-avoidance systems</li>
+          <li><div class="topic-dot dot-teal"></div>Logic-based C++ coding</li>
+          <li><div class="topic-dot dot-teal"></div>Remote-controlled vehicles</li>
+          <li><div class="topic-dot dot-teal"></div>Sensor integration</li>
+        </ul>
+        <span class="stage-age age-teal">👧 Ages 11 – 14 · Intermediate</span>
+      </div>
+
+      <!-- Stage 3 -->
+      <div class="stage-card">
+        <div class="stage-num">3</div>
+        <div class="stage-icon purple">🌐</div>
+        <div class="stage-label">Stage 3</div>
+        <h3 class="stage-title">The Innovator</h3>
+        <p class="stage-desc">Welcome to the Internet of Things — where devices connect to the world. Students build systems that can be monitored and controlled from a smartphone anywhere on earth.</p>
+        <ul class="stage-topics">
+          <li><div class="topic-dot dot-purple"></div>ESP32 & Wi-Fi connectivity</li>
+          <li><div class="topic-dot dot-purple"></div>Blynk & IoT dashboards</li>
+          <li><div class="topic-dot dot-purple"></div>Mobile app device control</li>
+          <li><div class="topic-dot dot-purple"></div>Python & web basics</li>
+          <li><div class="topic-dot dot-purple"></div>Cloud data & automation</li>
+          <li><div class="topic-dot dot-purple"></div>Smart agriculture projects</li>
+        </ul>
+        <span class="stage-age age-purple">🧑 Ages 14 – 17 · Advanced</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- TECH STACK -->
+<div class="tech-section" id="tech">
+  <div class="tech-inner">
+    <div class="section-header">
+      <div class="section-label">The Toolset</div>
+      <h2 class="section-title">Industry-Grade Tech. Kid-Friendly Teaching.</h2>
+      <p class="section-desc">The exact hardware and software used by professional engineers in real companies.</p>
+    </div>
+    <div class="tech-grid">
+      <div class="tech-card">
+        <div class="tech-card-header">
+          <div class="tech-card-icon" style="background: var(--green-light);">🔧</div>
+          <h4>Hardware Platforms</h4>
+        </div>
+        <div class="tech-tags">
+          <span class="tech-tag tt-green">Arduino Uno</span>
+          <span class="tech-tag tt-green">Arduino Mega</span>
+          <span class="tech-tag tt-green">ESP32</span>
+          <span class="tech-tag tt-green">ESP8266</span>
+          <span class="tech-tag tt-green">Raspberry Pi</span>
+          <span class="tech-tag tt-green">NodeMCU</span>
+        </div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-header">
+          <div class="tech-card-icon" style="background: var(--teal-light);">📡</div>
+          <h4>Sensors & Actuators</h4>
+        </div>
+        <div class="tech-tags">
+          <span class="tech-tag tt-teal">DHT11/22 Temp</span>
+          <span class="tech-tag tt-teal">Ultrasonic HC-SR04</span>
+          <span class="tech-tag tt-teal">LDR Light Sensor</span>
+          <span class="tech-tag tt-teal">Soil Moisture</span>
+          <span class="tech-tag tt-teal">Servo Motors</span>
+          <span class="tech-tag tt-teal">DC Motors & L298N</span>
+        </div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-header">
+          <div class="tech-card-icon" style="background: var(--amber-light);">💻</div>
+          <h4>Programming Languages</h4>
+        </div>
+        <div class="tech-tags">
+          <span class="tech-tag tt-amber">C / C++ (Arduino)</span>
+          <span class="tech-tag tt-amber">Python</span>
+          <span class="tech-tag tt-amber">MicroPython</span>
+          <span class="tech-tag tt-amber">Block Coding (Scratch)</span>
+          <span class="tech-tag tt-amber">HTML / CSS Basics</span>
+        </div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-header">
+          <div class="tech-card-icon" style="background: var(--blue-light);">☁️</div>
+          <h4>IoT Platforms & Tools</h4>
+        </div>
+        <div class="tech-tags">
+          <span class="tech-tag tt-blue">Blynk IoT</span>
+          <span class="tech-tag tt-blue">Arduino IDE</span>
+          <span class="tech-tag tt-blue">VS Code</span>
+          <span class="tech-tag tt-blue">Tinkercad (3D/Circuits)</span>
+          <span class="tech-tag tt-blue">MQTT Protocol</span>
+          <span class="tech-tag tt-blue">Node-RED</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROJECTS SHOWCASE -->
+<div class="projects-section" id="projects">
+  <div class="projects-inner">
+    <div class="section-header">
+      <div class="section-label">Project Showcase</div>
+      <h2 class="section-title">Real Projects. Real Learning. Real Pride.</h2>
+      <p class="section-desc">Every project is designed to solve a real-world problem, not just complete an assignment.</p>
+    </div>
+    <div class="projects-grid">
+
+      <!-- Featured -->
+      <div class="project-card featured">
+        <div class="project-thumb green">
+          🌱
+          <span class="project-badge pb-pro">⚡ Professional Project</span>
+        </div>
+        <div class="project-body">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 0.5rem;">
+            <h3 class="project-title" style="margin-bottom: 0;">Smart Agriculture Monitoring System</h3>
+            <span style="font-size: 12px; background: var(--green-light); color: var(--green-dark); padding: 4px 12px; border-radius: 20px; font-weight: 600;">Industry Work</span>
+          </div>
+          <p class="project-desc">
+            A real deployed IoT system using ESP32 microcontrollers and soil moisture, temperature, and humidity sensors to monitor farm conditions 24/7. Data is sent to a cloud dashboard and farmers receive alerts on their mobile phones. This is the kind of innovation students in Stage 3 aspire to build.
+          </p>
+          <div class="project-skills">
+            <span class="ps ps-gray">ESP32</span>
+            <span class="ps ps-gray">Soil Moisture Sensor</span>
+            <span class="ps ps-gray">DHT22</span>
+            <span class="ps ps-gray">MQTT</span>
+            <span class="ps ps-gray">Node-RED</span>
+            <span class="ps ps-gray">Mobile Dashboard</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Student Project 1 -->
+      <div class="project-card">
+        <div class="project-thumb teal">
+          💡
+          <span class="project-badge pb-student">🎓 Student Project</span>
+        </div>
+        <div class="project-body">
+          <h3 class="project-title">Automatic Night Light</h3>
+          <p class="project-desc">
+            Using an LDR (light-dependent resistor), students built a circuit that automatically turns on an LED when the room gets dark — no button needed. Concept: energy conservation and smart automation.
+          </p>
+          <div class="project-skills">
+            <span class="ps ps-gray">Arduino</span>
+            <span class="ps ps-gray">LDR Sensor</span>
+            <span class="ps ps-gray">LED Circuit</span>
+            <span class="ps ps-gray">C++ Code</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Student Project 2 -->
+      <div class="project-card">
+        <div class="project-thumb amber">
+          🤖
+          <span class="project-badge pb-student">🎓 Student Project</span>
+        </div>
+        <div class="project-body">
+          <h3 class="project-title">Obstacle-Avoiding Robot</h3>
+          <p class="project-desc">
+            A mobile robot built with Arduino, DC motors, and an ultrasonic sensor. The robot detects walls and objects and autonomously steers away — just like a self-driving car, at pocket size.
+          </p>
+          <div class="project-skills">
+            <span class="ps ps-gray">Arduino</span>
+            <span class="ps ps-gray">HC-SR04</span>
+            <span class="ps ps-gray">L298N Motor Driver</span>
+            <span class="ps ps-gray">DC Motors</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sri Lanka Project -->
+      <div class="project-card featured">
+        <div class="project-thumb blue">
+          🇱🇰
+          <span class="project-badge pb-sri-lanka">🌾 Sri Lanka Innovation</span>
+        </div>
+        <div class="project-body">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 0.5rem;">
+            <h3 class="project-title" style="margin-bottom: 0;">Smart Water Pump for Sri Lankan Farmers</h3>
+            <span style="font-size: 12px; background: #fff3cd; color: #7a5c00; padding: 4px 12px; border-radius: 20px; font-weight: 600;">Stage 3 Goal Project</span>
+          </div>
+          <p class="project-desc">
+            This is the capstone goal for Stage 3 students: build an automated irrigation pump controlled by a mobile phone. Using an ESP32, a soil moisture sensor, and a relay module, students create a system that checks if the soil is dry and activates a water pump automatically — or via WhatsApp. Technology that directly helps Sri Lankan agriculture. Technology that matters.
+          </p>
+          <div class="project-skills">
+            <span class="ps ps-gray">ESP32</span>
+            <span class="ps ps-gray">Soil Moisture Sensor</span>
+            <span class="ps ps-gray">Relay Module</span>
+            <span class="ps ps-gray">Blynk App</span>
+            <span class="ps ps-gray">Mobile Control</span>
+            <span class="ps ps-gray">Real Deployment</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<div class="testimonials-section">
+  <div class="testimonials-inner">
+    <div class="section-header">
+      <div class="section-label">What Parents Say</div>
+      <h2 class="section-title">From the Families We Work With</h2>
+      <p class="section-desc">The best advertisement is a child who can't wait for their next class.</p>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-quote">"</div>
+        <p class="testi-text">
+          My son stopped asking to play video games and started asking me to buy more components. He built a robot in the third class and showed his grandfather. I have never seen him so proud of something he created himself.
+        </p>
+        <div class="testi-author">
+          <div class="testi-avatar av-green">SP</div>
+          <div>
+            <div class="testi-name">Parent of a Stage 2 Student</div>
+            <div class="testi-role">Galle, Sri Lanka · ★★★★★</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-quote">"</div>
+        <p class="testi-text">
+          What I appreciate most is that this is not a tutor guessing how things work from a book. He is an engineer doing this in his real job. My daughter is learning the same technology used in actual companies. That gives me confidence.
+        </p>
+        <div class="testi-author">
+          <div class="testi-avatar av-teal">RK</div>
+          <div>
+            <div class="testi-name">Parent of a Stage 1 Student</div>
+            <div class="testi-role">Galle, Sri Lanka · ★★★★★</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align: center; margin-top: 2rem; padding: 1.25rem; background: var(--green-light); border-radius: 10px; max-width: 600px; margin-left: auto; margin-right: auto;">
+      <p style="font-size: 14px; color: var(--green-dark); font-style: italic;">
+        📝 <strong>Are you a current student's parent?</strong> A short review from you helps other families make a confident decision. Contact us to share your experience.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- REAL WORLD INNOVATION -->
+<div class="realworld-section">
+  <div class="realworld-inner">
+    <div class="section-header">
+      <div class="section-label">Real World Innovation</div>
+      <h2 class="section-title">Technology That Matters for Sri Lanka</h2>
+      <p class="section-desc">Students don't just learn theory — they build systems that can help their community and their country.</p>
+    </div>
+    <div class="rw-grid">
+      <div class="rw-card">
+        <div class="rw-icon">🌾</div>
+        <div class="rw-title">Smart Farming</div>
+        <div class="rw-desc">Automated irrigation, soil monitoring, and crop health systems that help Sri Lankan farmers reduce waste and increase yield with affordable IoT devices.</div>
+        <div class="rw-flag">🇱🇰 Sri Lanka Focus</div>
+      </div>
+      <div class="rw-card">
+        <div class="rw-icon">🏠</div>
+        <div class="rw-title">Smart Homes</div>
+        <div class="rw-desc">Energy-saving automation, smart lighting, security sensors, and remote control systems — technology that makes everyday Sri Lankan homes more efficient and modern.</div>
+        <div class="rw-flag">🇱🇰 Sri Lanka Focus</div>
+      </div>
+      <div class="rw-card">
+        <div class="rw-icon">🌊</div>
+        <div class="rw-title">Environmental Monitoring</div>
+        <div class="rw-desc">Water quality sensors, flood early-warning systems, and air quality monitors — students learn to build devices that protect their communities and environment.</div>
+        <div class="rw-flag">🇱🇰 Sri Lanka Focus</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="how-section">
+  <div class="how-inner">
+    <div class="section-header">
+      <div class="section-label">How It Works</div>
+      <h2 class="section-title">Getting Started Is Simple</h2>
+    </div>
+    <div class="how-grid">
+      <div class="how-step">
+        <div class="how-num">1</div>
+        <h4>Free Demo Class</h4>
+        <p>Book a complimentary 45-minute session at your home. Your child builds a real LED circuit on day one.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">2</div>
+        <h4>Placement Assessment</h4>
+        <p>We identify the right starting stage based on your child's age and interest level. No pressure, no tests.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">3</div>
+        <h4>Weekly Home Classes</h4>
+        <p>I come to you. Sessions are 1–1.5 hours, one to two times per week, fully hands-on with real components.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">4</div>
+        <h4>Build & Graduate</h4>
+        <p>Each stage ends with a showcase project your child presents. Then they level up to the next stage.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<div class="contact-section" id="contact">
+  <div class="contact-inner">
+    <div class="section-header">
+      <div class="section-label">Get in Touch</div>
+      <h2 class="section-title">Book a Free Demo Class</h2>
+      <p class="section-desc">No commitment. Just bring your curious child and let the components do the talking.</p>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-info">
+        <h2>Let's Build Something Together.</h2>
+        <p>I serve families across Galle and surrounding areas. Classes are conducted at your home — no travel, no hassle for parents.</p>
+
+        <div class="contact-detail">
+          <div class="contact-icon">📍</div>
+          <div>
+            <div class="contact-label">Location</div>
+            <div class="contact-value">Galle, Southern Province, Sri Lanka</div>
+          </div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-icon">📱</div>
+          <div>
+            <div class="contact-label">WhatsApp / Phone</div>
+            <div class="contact-value">+94 XX XXX XXXX</div>
+          </div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-icon">✉️</div>
+          <div>
+            <div class="contact-label">Email</div>
+            <div class="contact-value">your.email@gmail.com</div>
+          </div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-icon">💼</div>
+          <div>
+            <div class="contact-label">LinkedIn (Verify my engineering work)</div>
+            <div class="contact-value">linkedin.com/in/yourprofile</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 1.5rem; padding: 1rem 1.25rem; background: var(--green-light); border-radius: 10px; border-left: 3px solid var(--green-mid);">
+          <p style="font-size: 13px; color: var(--green-dark); font-weight: 500;">
+            📩 Send a WhatsApp message with your child's name and age for the fastest response. I typically reply within 2 hours.
+          </p>
+        </div>
+      </div>
+
+      <div class="contact-form-card">
+        <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1.25rem; color: var(--gray-900);">Request a Free Demo Class</h3>
+        <div class="form-group">
+          <label>Parent's Name</label>
+          <input type="text" placeholder="e.g. Chaminda Perera">
+        </div>
+        <div class="form-group">
+          <label>Child's Name & Age</label>
+          <input type="text" placeholder="e.g. Asel, 10 years old">
+        </div>
+        <div class="form-group">
+          <label>Your WhatsApp Number</label>
+          <input type="tel" placeholder="+94 7X XXX XXXX">
+        </div>
+        <div class="form-group">
+          <label>Area / City</label>
+          <input type="text" placeholder="e.g. Galle, Matara, Hambantota">
+        </div>
+        <div class="form-group">
+          <label>Child's Interest Level</label>
+          <select>
+            <option>Complete beginner — never touched electronics</option>
+            <option>Some interest — watches YouTube about tech</option>
+            <option>Has tried Arduino or basic coding before</option>
+            <option>Already building things, wants to go deeper</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Any questions for me? (Optional)</label>
+          <textarea placeholder="e.g. What kit does my child need to buy? Do you teach girls too?"></textarea>
+        </div>
+        <button class="submit-btn" onclick="alert('Thank you! This is a portfolio demo. Please contact via WhatsApp for real bookings.')">
+          📩 Send Demo Class Request
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>
+    <span class="footer-name">Engineer · Educator · Innovator</span>
+    — Building the next generation of Sri Lankan tech innovators.
+  </p>
+  <p style="margin-top: 0.5rem; font-size: 13px; opacity: 0.7;">
+    Embedded Systems &nbsp;·&nbsp; IoT &nbsp;·&nbsp; Robotics &nbsp;·&nbsp; Smart Agriculture &nbsp;·&nbsp; STEM Education for Kids
+  </p>
+  <div class="footer-links">
+    <a href="#about">About</a>
+    <a href="#curriculum">Curriculum</a>
+    <a href="#projects">Projects</a>
+    <a href="#tech">Tech Stack</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <p style="margin-top: 1.5rem; font-size: 12px; opacity: 0.4;">
+    © 2025 · Galle, Sri Lanka · Designed for the next generation of innovators 🇱🇰
+  </p>
+</footer>
+
+</body>
+</html>
