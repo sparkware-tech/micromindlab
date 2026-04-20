@@ -19,6 +19,8 @@
   --amber-light: #FEF0D8;
   --purple: #4A3FB0;
   --purple-light: #EEEDFB;
+  --blue: #0A4B7A;
+  --blue-light: #DDF0FC;
   --gray-50: #F6F5F1;
   --gray-100: #E5E3DA;
   --gray-500: #7A7870;
@@ -89,13 +91,42 @@ nav {
   pointer-events: none;
 }
 .hero-content {
-  position: relative; z-index: 1;
-  max-width: 720px; text-align: center;
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  align-items: center;
+  gap: 3rem;
+  text-align: left;
+}
+.hero-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.hero-image img {
+  height: 100%;
+  max-width: 420px;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+@media (max-width: 900px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .hero-text {
+    order: 1;
+  }
+
+  .hero-image {
+    order: 2;
+  }
 }
 .hero-eyebrow-top {
   display: inline-flex; align-items: center; gap: 8px;
-  /* background: rgba(125,200,50,0.12); */
-  /* border: 1px solid rgba(125,200,50,0.3); */
   color: #9ADA50; font-size: 13px; font-weight: 600;
   padding: 6px 16px; border-radius: 50px;
   margin-bottom: 1.75rem; letter-spacing: 0.04em;
@@ -121,17 +152,17 @@ nav {
 }
 .hero h1 {
   font-family: 'Sora', sans-serif;
-  font-size: clamp(2.4rem, 5.5vw, 4rem);
+  font-size: clamp(2.4rem, 3.5vw, 4rem);
   font-weight: 800; color: #fff; line-height: 1.12;
   margin-bottom: 1.25rem;
 }
 .hero h1 .green { color: #9ADA50; }
 .hero-sub {
-  font-size: 1.05rem; color: rgba(255,255,255,0.6);
+  font-size: 1.0rem; color: rgba(255,255,255,0.6);
   max-width: 520px; margin: 0 auto 2rem;
 }
 .hero-tags {
-  display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+  display: flex; flex-wrap: wrap; gap: 8px;
   margin-bottom: 2.5rem;
 }
 .hero-tag {
@@ -140,7 +171,7 @@ nav {
   color: rgba(255,255,255,0.7); font-size: 13px;
   padding: 5px 14px; border-radius: 20px;
 }
-.hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
 .btn-green {
   background: var(--green-bright); color: #0C1F0C;
   border: none; padding: 13px 30px; border-radius: 9px;
@@ -193,6 +224,37 @@ nav {
 .sec-desc { font-size: 15px; color: var(--gray-500); margin-top: 0.6rem; max-width: 480px; }
 .sec-head { margin-bottom: 3rem; }
 
+/* ABOUT INTRO */
+.about-intro { margin-bottom: 3rem; }
+.about-intro .sec-desc { max-width: 100%; margin-top: 0; }
+.about-intro-body { margin-top: 1.25rem; display: flex; flex-direction: column; gap: 0.6rem; }
+.about-intro-body p { font-size: 15px; color: var(--gray-500); }
+
+.about-bullets {
+  list-style: none;
+  display: flex; flex-direction: column; gap: 8px;
+  margin-top: 1rem;
+}
+.about-bullets li {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 14px; color: var(--gray-900); font-weight: 500;
+}
+.about-bullets li::before {
+  content: '';
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--green-mid); flex-shrink: 0;
+}
+
+/* STEM SUB-SECTION */
+.stem-subsection {
+  margin-top: 3.5rem;
+  padding-top: 3rem;
+  border-top: 1px solid var(--gray-100);
+}
+.stem-subsection .stem-header { margin-bottom: 2rem; }
+.stem-subsection .sec-title { font-size: clamp(1.3rem, 2.5vw, 1.8rem); }
+.stem-subsection .sec-desc { margin-top: 0.4rem; }
+
 /* STEM PILLARS */
 .bg-gray { background: var(--gray-50); }
 .pillars-grid {
@@ -229,8 +291,8 @@ nav {
 .pt-amber { background: var(--amber-light); color: var(--amber); }
 .pt-purple { background: var(--purple-light); color: var(--purple); }
 
-/* CURRICULUM */
-.stages { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+/* Curriculum */
+.stages { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
 .stage {
   background: var(--white); border-radius: 18px;
   border: 1.5px solid var(--gray-100);
@@ -249,6 +311,7 @@ nav {
 .sb-green { background: var(--green-light); color: var(--green); }
 .sb-teal { background: var(--teal-light); color: var(--teal); }
 .sb-purple { background: var(--purple-light); color: var(--purple); }
+.sb-blue { background: var(--blue-light); color: var(--blue); }
 .stage-emoji { font-size: 2rem; margin-bottom: 0.75rem; display: block; }
 .stage h3 {
   font-family: 'Sora', sans-serif;
@@ -266,6 +329,7 @@ nav {
 .ld-green { background: var(--green-mid); }
 .ld-teal { background: var(--teal); }
 .ld-purple { background: var(--purple); }
+.ld-blue { background: var(--blue); }
 .stage-age {
   margin-top: 1.5rem; padding: 8px 14px;
   border-radius: 8px; font-size: 12px; font-weight: 600;
@@ -274,8 +338,9 @@ nav {
 .sa-green { background: var(--green-light); color: var(--green); }
 .sa-teal { background: var(--teal-light); color: var(--teal); }
 .sa-purple { background: var(--purple-light); color: var(--purple); }
+.sa-blue { background: var(--blue-light); color: var(--blue); }
 
-/* ABOUT */
+/* ABOUT / INSTRUCTOR */
 .about-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 4rem; align-items: center; }
 .about-photo {
   aspect-ratio: 4/5; border-radius: 20px;
@@ -294,6 +359,22 @@ nav {
 }
 .about-text .sec-title { margin-bottom: 1rem; }
 .about-text p { color: var(--gray-500); margin-bottom: 1rem; font-size: 15px; }
+
+/* Instructor credential bullets */
+.cred-list {
+  list-style: none;
+  display: flex; flex-direction: column; gap: 10px;
+  margin-top: 1.25rem;
+}
+.cred-list li {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 14px; color: var(--gray-900); line-height: 1.5;
+}
+.cred-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--green-mid); flex-shrink: 0; margin-top: 6px;
+}
+
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1.5rem; }
 .chip {
   font-size: 13px; font-weight: 500; padding: 5px 13px;
@@ -345,6 +426,90 @@ nav {
 .testi-name { font-size: 14px; font-weight: 600; color: var(--gray-900); font-family: 'Sora', sans-serif; }
 .testi-loc { font-size: 12px; color: var(--gray-500); }
 
+/* ── GALLERY ── */
+.gallery-section { padding: 5rem 2rem; background: var(--white); }
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto auto;
+  gap: 1rem;
+  margin-top: 2.5rem;
+}
+.gallery-item {
+  border-radius: 14px; overflow: hidden;
+  position: relative; cursor: pointer;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-100);
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.gallery-item:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.10); }
+.gallery-item.featured {
+  grid-column: span 2;
+}
+.gallery-thumb {
+  width: 100%; aspect-ratio: 4/3;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 0.75rem;
+  font-size: 3rem;
+  position: relative;
+}
+.gallery-item.featured .gallery-thumb { aspect-ratio: 16/9; font-size: 4rem; }
+
+/* colour-coded placeholder backgrounds */
+.g-green  { background: linear-gradient(135deg, #d4edba 0%, #b5dea0 100%); }
+.g-teal   { background: linear-gradient(135deg, #b8ece0 0%, #8fd5c4 100%); }
+.g-amber  { background: linear-gradient(135deg, #fde8bc 0%, #f8d08a 100%); }
+.g-purple { background: linear-gradient(135deg, #dddaf6 0%, #c5c0ef 100%); }
+.g-blue   { background: linear-gradient(135deg, #c2dff5 0%, #9ccaee 100%); }
+.g-rose   { background: linear-gradient(135deg, #fcd5d5 0%, #f5afaf 100%); }
+
+.gallery-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.52) 0%, transparent 55%);
+  opacity: 0; transition: opacity 0.25s;
+}
+.gallery-item:hover .gallery-overlay { opacity: 1; }
+.gallery-caption {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 1rem 1.25rem;
+  transform: translateY(6px); opacity: 0;
+  transition: all 0.25s;
+}
+.gallery-item:hover .gallery-caption { transform: translateY(0); opacity: 1; }
+.gallery-caption-title {
+  font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700;
+  color: #fff; line-height: 1.3;
+}
+.gallery-caption-sub { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 2px; }
+
+/* Static label shown always (not on hover) */
+.gallery-label {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--gray-100);
+}
+.gallery-label-title {
+  font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; color: var(--gray-900);
+}
+.gallery-label-sub { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+
+.gallery-tag {
+  position: absolute; top: 12px; left: 12px;
+  font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px;
+  font-family: 'Sora', sans-serif; letter-spacing: 0.04em;
+}
+.gt-green  { background: var(--green-light); color: var(--green); }
+.gt-teal   { background: var(--teal-light); color: var(--teal); }
+.gt-amber  { background: var(--amber-light); color: var(--amber); }
+.gt-purple { background: var(--purple-light); color: var(--purple); }
+.gt-blue   { background: var(--blue-light); color: var(--blue); }
+
+.gallery-note {
+  margin-top: 1.75rem; text-align: center;
+  font-size: 13px; color: var(--gray-500);
+  padding: 14px 20px; background: var(--green-light); border-radius: 10px;
+  border: 1px dashed var(--green-mid); color: var(--green); font-weight: 500;
+}
+
 /* CONTACT */
 .contact-wrap { display: grid; grid-template-columns: 1fr 1.1fr; gap: 4rem; align-items: start; }
 .contact-info .sec-title { margin-bottom: 0.75rem; }
@@ -361,7 +526,7 @@ nav {
   flex-shrink: 0;
 }
 .clabel { font-size: 11px; color: var(--gray-500); }
-.cval { font-size: 14px; font-weight: 600; color: var(--gray-900); font-family: 'Sora', sans-serif; }
+.cval { font-size: 14px; font-weight: 600; color: var(--gray-900); font-family: 'Sora', sans-serif; word-break: break-all; }
 .wa-note {
   margin-top: 1.5rem; padding: 1rem 1.25rem;
   background: var(--green-light); border-radius: 10px;
@@ -415,20 +580,28 @@ footer {
 .footer-copy { font-size: 12px; opacity: 0.35; }
 
 /* RESPONSIVE */
+@media (max-width: 1024px) {
+  .stages { grid-template-columns: repeat(2, 1fr); }
+}
 @media (max-width: 900px) {
   .pillars-grid { grid-template-columns: repeat(2, 1fr); }
-  .stages { grid-template-columns: 1fr; }
+  .stages { grid-template-columns: repeat(2, 1fr); }
   .steps { grid-template-columns: repeat(2, 1fr); }
   .about-grid, .contact-wrap { grid-template-columns: 1fr; }
   .testi-grid { grid-template-columns: 1fr; }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+  .gallery-item.featured { grid-column: span 2; }
 }
 @media (max-width: 640px) {
   .nav-links { display: none; }
   .pillars-grid { grid-template-columns: 1fr; }
+  .stages { grid-template-columns: 1fr; }
   .stats { gap: 0; }
   .stat-item { padding: 0.75rem 1.5rem; border-right: none; border-bottom: 1px solid var(--gray-100); }
   .stat-item:last-child { border-bottom: none; }
   .steps { grid-template-columns: 1fr; }
+  .gallery-grid { grid-template-columns: 1fr; }
+  .gallery-item.featured { grid-column: span 1; }
 }
 </style>
 </head>
@@ -442,11 +615,12 @@ footer {
   </a>
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
-    <li><a href="#curriculum">Curriculum</a></li>
     <li><a href="#instructor">Instructor</a></li>
+    <li><a href="#curriculum">Curriculum</a></li>
+    <li><a href="#gallery">Gallery</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
-  <a href="lms.html" target="_blank" class="nav-cta">Loging to LMS</a>
+  <a href="lms.html" target="_blank" class="nav-cta">Log in to LMS</a>
 </nav>
 
 <!-- HERO -->
@@ -454,38 +628,44 @@ footer {
   <div class="hero-dots"></div>
   <div class="hero-glow"></div>
   <div class="hero-content">
-    <div class="hero-eyebrow-top">
-      <h2>MicroMind Lab</h2>
+    <div class="hero-image">
+      <img src="assests/img/robot.png" alt="Student building robot">
     </div>
-    <h1>
-      The Way to <span class="green">Smart</span><br>Future
-    </h1>
-    <div class="hero-eyebrow">
-      <div class="hero-eyebrow-dot"></div>
-      Information & Communication Technology (ICT)
-    </div>
-    <p class="hero-sub">
-      Traditional classes teach you how to pass exams; I teach you how to build solutions. Get industry-level experience in Smart Technology through 100% practical, project-based learning.
-    </p>
-    <div class="hero-tags">
-      <span class="hero-tag">Technology</span>
-      <span class="hero-tag">Engineering</span>
-      <span class="hero-tag">Robotics</span>
-      <span class="hero-tag">Home Visit Classes</span>
-      <span class="hero-tag">Grade 6-11</span>
-    </div>
-    <div class="hero-btns">
-      <a href="#curriculum" class="btn-green">Explore Curriculum</a>
-      <a href="#contact" class="btn-ghost">Book Free Discussion</a>
+
+    <div class="hero-text">
+      <!-- <div class="hero-eyebrow-top">
+        <h2>MicroMind Lab</h2>
+      </div> -->
+      <h1>
+        The Way to a <span class="green">Smart</span><br>Future
+      </h1>
+      <div class="hero-eyebrow">
+        <div class="hero-eyebrow-dot"></div>
+        Information &amp; Communication Technology (ICT)
+      </div>
+      <p class="hero-sub">
+        MicroMind Lab is not just about learning ICT — it's about creating with technology.
+      </p>
+      <div class="hero-tags">
+        <span class="hero-tag">ICT</span>
+        <span class="hero-tag">STEM Education</span>
+        <span class="hero-tag">Robotics</span>
+        <span class="hero-tag">Innovation</span>
+        <span class="hero-tag">Smart Future</span>
+      </div>
+      <div class="hero-btns">
+        <a href="#curriculum" class="btn-green">Explore Curriculum</a>
+        <a href="#contact" class="btn-ghost">Book a Free Discussion</a>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- STATS -->
-<div class="stats">
+<!-- <div class="stats">
   <div class="stat-item">
     <div class="stat-num">2+</div>
-    <div class="stat-lbl">Years Industry Experience</div>
+    <div class="stat-lbl">Years of Industry Experience</div>
   </div>
   <div class="stat-item">
     <div class="stat-num">4</div>
@@ -499,116 +679,68 @@ footer {
     <div class="stat-num">100%</div>
     <div class="stat-lbl">Practical Learning</div>
   </div>
-  <div class="stat-item">
-    <div class="stat-num">🏠</div>
-    <div class="stat-lbl">Home Visit Classes</div>
-  </div>
-</div>
+</div> -->
 
-<!-- STEM PILLARS -->
+<!-- ABOUT + STEM PILLARS -->
 <div class="section bg-gray" id="about">
   <div class="inner">
-    <div class="sec-head">
+
+    <!-- About intro -->
+    <div class="about-intro">
       <div class="sec-label">What We Teach</div>
       <h2 class="sec-title">Full STEM, Not Just IT</h2>
-      <p class="sec-desc">We cover all four pillars of STEM education — connecting each to real-world applications students can see and touch.</p>
+      <div class="about-intro-body">
+        <p>Traditional education focuses on passing exams — at MicroMind Lab, students learn how to create, build, and innovate with technology.</p>
+        <p>We go beyond textbooks with 100% practical, project-based learning, covering everything from computer basics to advanced robotics, engineering, and smart technologies.</p>
+        <p>Students don't just study ICT — they explore the full world of STEM, gaining real-world skills and hands-on experience while building their own innovative projects.</p>
+      </div>
+      <ul class="about-bullets">
+        <li>Practical learning from basics to advanced levels</li>
+        <li>Focus on creativity, innovation, and problem-solving</li>
+        <li>Hands-on projects and real-world experience</li>
+      </ul>
     </div>
-    <div class="pillars-grid">
-      <div class="pillar">
-        <div class="pillar-icon pi-green">🔬</div>
-        <h3>Science</h3>
-        <p>Real experiments with sensors, data collection and measurement. Understanding the physical world through hands-on investigation.</p>
-        <span class="pillar-tag pt-green">Experiments</span>
+
+    <!-- STEM sub-section -->
+    <div class="stem-subsection">
+      <div class="stem-header">
+        <div class="sec-label">The Four Pillars</div>
+        <h2 class="sec-title">What is STEM Education?</h2>
+        <p class="sec-desc">A powerful combination of <strong>Science, Technology, Engineering, and Mathematics</strong> — taught together through hands-on projects, not isolated subjects.</p>
       </div>
-      <div class="pillar">
-        <div class="pillar-icon pi-teal">💻</div>
-        <h3>Technology</h3>
-        <p>Programming, Embedded system & IoT devices, robotics, and digital tools. Building things that actually work in the real world.</p>
-        <span class="pillar-tag pt-teal">Coding</span>
-      </div>
-      <div class="pillar">
-        <div class="pillar-icon pi-amber">⚙️</div>
-        <h3>Engineering</h3>
-        <p>Design, prototype, test and improve. The full engineering cycle — from idea to working product — just like professionals do.</p>
-        <span class="pillar-tag pt-amber">Build & Test</span>
-      </div>
-      <div class="pillar">
-        <div class="pillar-icon pi-purple">📐</div>
-        <h3>Mathematics</h3>
-        <p>Applied maths through real projects — circuits, measurements, logic and problem solving with purpose and context.</p>
-        <span class="pillar-tag pt-purple">Maths</span>
+      <div class="pillars-grid">
+        <div class="pillar">
+          <div class="pillar-icon pi-green">🔬</div>
+          <h3>Science</h3>
+          <p>Real experiments with sensors, data collection, and measurement. Students understand the physical world through hands-on investigation.</p>
+          <span class="pillar-tag pt-green">Experiments</span>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon pi-teal">💻</div>
+          <h3>Technology</h3>
+          <p>Programming, embedded systems, IoT devices, robotics, and digital tools. Students build things that actually work in the real world.</p>
+          <span class="pillar-tag pt-teal">Coding</span>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon pi-amber">⚙️</div>
+          <h3>Engineering</h3>
+          <p>Design, prototype, test, and improve. Students follow the full engineering cycle — from idea to working product — just like professionals do.</p>
+          <span class="pillar-tag pt-amber">Build &amp; Test</span>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon pi-purple">📐</div>
+          <h3>Mathematics</h3>
+          <p>Applied maths through real projects — circuits, measurements, logic, and problem-solving with purpose and context.</p>
+          <span class="pillar-tag pt-purple">Mathematics</span>
+        </div>
       </div>
     </div>
+
   </div>
 </div>
 
-<!-- CURRICULUM -->
-<div class="section" id="curriculum">
-  <div class="inner">
-    <div class="sec-head">
-      <div class="sec-label">The Learning Path</div>
-      <h2 class="sec-title">Three Stages to Innovation</h2>
-      <p class="sec-desc">A clear progression from beginner curiosity to building connected smart systems.</p>
-    </div>
-    <div class="stages">
-
-      <div class="stage">
-        <div class="stage-bg-num">1</div>
-        <span class="stage-badge sb-green">Stage 1 · Beginner</span>
-        <span class="stage-emoji">🔦</span>
-        <h3>The Explorer</h3>
-        <p class="stage-sub">Building real circuits from day one. Students learn to ask "how does this work?" and find the answer by making it.</p>
-        <ul class="stage-list">
-          <li><div class="li-dot ld-green"></div>LED circuits & resistors</li>
-          <li><div class="li-dot ld-green"></div>Light & distance sensors</li>
-          <li><div class="li-dot ld-green"></div>Breadboard prototyping</li>
-          <li><div class="li-dot ld-green"></div>Block-based visual coding</li>
-          <li><div class="li-dot ld-green"></div>Introduction to Arduino</li>
-          <li><div class="li-dot ld-green"></div>Basic science experiments</li>
-        </ul>
-        <span class="stage-age sa-green">Ages 10–12 · No experience needed</span>
-      </div>
-
-      <div class="stage">
-        <div class="stage-bg-num">2</div>
-        <span class="stage-badge sb-teal">Stage 2 · Intermediate</span>
-        <span class="stage-emoji">🤖</span>
-        <h3>The Maker</h3>
-        <p class="stage-sub">From circuits to machines. Students build robots that move, sense, and respond — writing real code to control them.</p>
-        <ul class="stage-list">
-          <li><div class="li-dot ld-teal"></div>DC motors & servo motors</li>
-          <li><div class="li-dot ld-teal"></div>Line-following robots</li>
-          <li><div class="li-dot ld-teal"></div>Obstacle-avoidance systems</li>
-          <li><div class="li-dot ld-teal"></div>C++ logic programming</li>
-          <li><div class="li-dot ld-teal"></div>Remote-controlled vehicles</li>
-          <li><div class="li-dot ld-teal"></div>Engineering design cycle</li>
-        </ul>
-        <span class="stage-age sa-teal">Ages 12–15 · Stage 1 or equivalent</span>
-      </div>
-
-      <div class="stage">
-        <div class="stage-bg-num">3</div>
-        <span class="stage-badge sb-purple">Stage 3 · Advanced</span>
-        <span class="stage-emoji">🌐</span>
-        <h3>The Innovator</h3>
-        <p class="stage-sub">Internet of Things and smart systems. Students build devices controlled from a smartphone, anywhere in the world.</p>
-        <ul class="stage-list">
-          <li><div class="li-dot ld-purple"></div>ESP32 & Wi-Fi connectivity</li>
-          <li><div class="li-dot ld-purple"></div>IoT dashboards & mobile control</li>
-          <li><div class="li-dot ld-purple"></div>Python & web fundamentals</li>
-          <li><div class="li-dot ld-purple"></div>Cloud data & automation</li>
-          <li><div class="li-dot ld-purple"></div>Smart agriculture projects</li>
-          <li><div class="li-dot ld-purple"></div>Showcase capstone project</li>
-        </ul>
-        <span class="stage-age sa-purple">Ages 15–17 · Stage 2 or equivalent</span>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<!-- ABOUT -->
-<div class="section bg-gray" id="instructor">
+<!-- INSTRUCTOR -->
+<div class="section" id="instructor">
   <div class="inner">
     <div class="about-grid">
       <div class="about-photo">
@@ -618,24 +750,194 @@ footer {
       <div class="about-text">
         <div class="sec-label">Your Instructor</div>
         <h2 class="sec-title">Not just a teacher.<br>A working engineer.</h2>
-        <p>I work professionally as an Embedded Systems and IoT Engineer — building autonomous irrigation systems and crop monitoring sensors for Sri Lankan farmers. That is my day job.</p>
-        <p>My STEM classes bring that same industry knowledge directly to your home. Every lesson comes from real experience, not a textbook.</p>
-        <p>My passion started in childhood — taking apart toys and wondering how things work. I want to light that same curiosity in every student I teach.</p>
-        <div class="chips">
-          <span class="chip ch-green">Embedded Systems</span>
-          <span class="chip ch-teal">IoT Engineering</span>
-          <span class="chip ch-amber">Robotics</span>
-          <span class="chip ch-purple">Smart Agriculture</span>
-          <span class="chip ch-green">STEM Education</span>
-          <span class="chip ch-teal">Web Development</span>
-        </div>
+        <p>I work professionally as a software engineer at a company that develops smart agriculture solutions. My STEM classes bring that same industry experience directly to your home — every lesson is grounded in real-world knowledge, not just textbooks.</p>
+        <p>My passion for technology began in childhood, taking apart toys and wondering how things work. Today, I aim to spark that same curiosity in every student I teach.</p>
+        <ul class="cred-list">
+          <li><div class="cred-dot"></div>Software Engineer at Elzian Agro Pvt Ltd</li>
+          <li><div class="cred-dot"></div>Former instructor at the Inventors' Society — Dutugamunu Maha Vidyalaya</li>
+          <li><div class="cred-dot"></div>BSc (Computer Studies &amp; Electronics) — University of Kelaniya</li>
+          <li><div class="cred-dot"></div>Training Programme (Microcontroller-Based System Design) — University of Moratuwa</li>
+        </ul>
       </div>
     </div>
   </div>
 </div>
 
+<!-- CURRICULUM -->
+<div class="section bg-gray" id="curriculum">
+  <div class="inner">
+    <div class="sec-head">
+      <div class="sec-label">The Learning Path</div>
+      <h2 class="sec-title">Four Stages to Innovation</h2>
+      <p class="sec-desc">From digital basics to building intelligent, connected systems.</p>
+    </div>
+    <div class="stages">
+
+      <div class="stage">
+        <!-- <div class="stage-bg-num">0</div> -->
+        <span class="stage-badge sb-blue">Foundation Stage</span>
+        <span class="stage-emoji">💻</span>
+        <h3>The Starter</h3>
+        <p class="stage-sub">Building essential digital skills. Students learn to use computers effectively and understand the basics of technology.</p>
+        <!-- <ul class="stage-list">
+          <li><div class="li-dot ld-blue"></div>Computer fundamentals</li>
+          <li><div class="li-dot ld-blue"></div>MS Office (Word, Excel, PowerPoint)</li>
+          <li><div class="li-dot ld-blue"></div>Internet &amp; digital literacy</li>
+          <li><div class="li-dot ld-blue"></div>Basic problem-solving</li>
+          <li><div class="li-dot ld-blue"></div>Introduction to logical thinking</li>
+        </ul> -->
+        <span class="stage-age sa-blue">Ages 10–11 · No experience needed</span>
+      </div>
+
+      <div class="stage">
+        <!-- <div class="stage-bg-num">1</div> -->
+        <span class="stage-badge sb-green">Stage 1 · Beginner</span>
+        <span class="stage-emoji">🔦</span>
+        <h3>The Explorer</h3>
+        <p class="stage-sub">Building real circuits from day one. Students learn to ask "how does this work?" and find the answer by making it.</p>
+        <!-- <ul class="stage-list">
+          <li><div class="li-dot ld-green"></div>LED circuits &amp; resistors</li>
+          <li><div class="li-dot ld-green"></div>Light &amp; distance sensors</li>
+          <li><div class="li-dot ld-green"></div>Breadboard prototyping</li>
+          <li><div class="li-dot ld-green"></div>Block-based visual coding</li>
+          <li><div class="li-dot ld-green"></div>Introduction to Arduino</li>
+          <li><div class="li-dot ld-green"></div>Basic science experiments</li>
+        </ul> -->
+        <span class="stage-age sa-green">Ages 10–12 · No experience needed</span>
+      </div>
+
+      <div class="stage">
+        <!-- <div class="stage-bg-num">2</div> -->
+        <span class="stage-badge sb-teal">Stage 2 · Intermediate</span>
+        <span class="stage-emoji">🤖</span>
+        <h3>The Maker</h3>
+        <p class="stage-sub">From circuits to machines. Students build robots that move, sense, and respond — writing real code to control them.</p>
+        <!-- <ul class="stage-list">
+          <li><div class="li-dot ld-teal"></div>DC motors &amp; servo motors</li>
+          <li><div class="li-dot ld-teal"></div>Line-following robots</li>
+          <li><div class="li-dot ld-teal"></div>Obstacle-avoidance systems</li>
+          <li><div class="li-dot ld-teal"></div>C++ logic programming</li>
+          <li><div class="li-dot ld-teal"></div>Remote-controlled vehicles</li>
+          <li><div class="li-dot ld-teal"></div>Engineering design cycle</li>
+        </ul> -->
+        <span class="stage-age sa-teal">Ages 12–15 · Stage 1 or equivalent</span>
+      </div>
+
+      <div class="stage">
+        <!-- <div class="stage-bg-num">3</div> -->
+        <span class="stage-badge sb-purple">Stage 3 · Advanced</span>
+        <span class="stage-emoji">🌐</span>
+        <h3>The Innovator</h3>
+        <p class="stage-sub">Internet of Things and smart systems. Students build devices that can be controlled from a smartphone, from anywhere in the world.</p>
+        <!-- <ul class="stage-list">
+          <li><div class="li-dot ld-purple"></div>ESP32 &amp; Wi-Fi connectivity</li>
+          <li><div class="li-dot ld-purple"></div>IoT dashboards &amp; mobile control</li>
+          <li><div class="li-dot ld-purple"></div>Python &amp; web fundamentals</li>
+          <li><div class="li-dot ld-purple"></div>Cloud data &amp; automation</li>
+          <li><div class="li-dot ld-purple"></div>Smart agriculture projects</li>
+          <li><div class="li-dot ld-purple"></div>Showcase capstone project</li>
+        </ul> -->
+        <span class="stage-age sa-purple">Ages 15–17 · Stage 2 or equivalent</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- GALLERY -->
+<div class="gallery-section" id="gallery">
+  <div class="inner">
+    <div class="sec-head" style="text-align:center;">
+      <div class="sec-label">Student Showcase</div>
+      <h2 class="sec-title">Projects Built by Our Students</h2>
+      <p class="sec-desc" style="margin: 0.5rem auto 0; max-width: 520px;">Real work by real students — every project shown here was built during a class session.</p>
+    </div>
+
+    <div class="gallery-grid">
+
+      <!-- Featured large item -->
+      <div class="gallery-item featured">
+        <div class="gallery-thumb g-teal">
+          🤖
+        </div>
+        <div class="gallery-overlay"></div>
+        <div class="gallery-caption">
+          <div class="gallery-caption-title">Autonomous Line-Following Robot</div>
+          <div class="gallery-caption-sub">Built with Arduino &amp; IR sensors · Stage 2 student, age 13</div>
+        </div>
+        <div class="gallery-label">
+          <div class="gallery-label-title">Autonomous Line-Following Robot</div>
+          <div class="gallery-label-sub">Arduino &amp; IR sensors · Stage 2</div>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <div class="gallery-thumb g-green">
+          💡
+        </div>
+        <div class="gallery-overlay"></div>
+        <div class="gallery-caption">
+          <div class="gallery-caption-title">Smart LED Night Light</div>
+          <div class="gallery-caption-sub">Light-sensor circuit · Stage 1 student, age 11</div>
+        </div>
+        <div class="gallery-label">
+          <div class="gallery-label-title">Smart LED Night Light</div>
+          <div class="gallery-label-sub">Light-sensor circuit · Stage 1</div>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <div class="gallery-thumb g-purple">
+          🌐
+        </div>
+        <div class="gallery-overlay"></div>
+        <div class="gallery-caption">
+          <div class="gallery-caption-title">IoT Temperature Dashboard</div>
+          <div class="gallery-caption-sub">ESP32 &amp; cloud data · Stage 3 student, age 16</div>
+        </div>
+        <div class="gallery-label">
+          <div class="gallery-label-title">IoT Temperature Dashboard</div>
+          <div class="gallery-label-sub">ESP32 &amp; cloud data · Stage 3</div>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <div class="gallery-thumb g-amber">
+          🚗
+        </div>
+        <div class="gallery-overlay"></div>
+        <div class="gallery-caption">
+          <div class="gallery-caption-title">Remote-Controlled Vehicle</div>
+          <div class="gallery-caption-sub">Bluetooth &amp; DC motors · Stage 2 student, age 14</div>
+        </div>
+        <div class="gallery-label">
+          <div class="gallery-label-title">Remote-Controlled Vehicle</div>
+          <div class="gallery-label-sub">Bluetooth &amp; DC motors · Stage 2</div>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <div class="gallery-thumb g-blue">
+          🌱
+        </div>
+        <div class="gallery-overlay"></div>
+        <div class="gallery-caption">
+          <div class="gallery-caption-title">Smart Plant Watering System</div>
+          <div class="gallery-caption-sub">Soil moisture sensor &amp; automation · Stage 3</div>
+        </div>
+        <div class="gallery-label">
+          <div class="gallery-label-title">Smart Plant Watering System</div>
+          <div class="gallery-label-sub">Soil moisture sensor · Stage 3</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
 <!-- HOW IT WORKS -->
-<div class="section">
+<div class="section bg-gray">
   <div class="inner">
     <div class="sec-head" style="text-align:center;">
       <div class="sec-label">How It Works</div>
@@ -644,30 +946,30 @@ footer {
     <div class="steps">
       <div class="step">
         <div class="step-num">1</div>
-        <h4>Free Demo Class</h4>
+        <h4>Free Discussion</h4>
         <p>A 45-minute session at your home. Your child builds a real circuit on day one — no prior experience needed.</p>
       </div>
       <div class="step">
         <div class="step-num">2</div>
         <h4>Placement Chat</h4>
-        <p>We find the right stage based on your child's age and interests. Relaxed, no pressure, no formal tests.</p>
+        <p>We find the right stage based on your child's age and interests. Relaxed, no pressure, and no formal tests.</p>
       </div>
       <div class="step">
         <div class="step-num">3</div>
         <h4>Weekly Home Classes</h4>
-        <p>I come to you. Sessions are 1–1.5 hours, once or twice a week, fully hands-on with real components.</p>
+        <p>I come to you. Sessions are 2–3 hours, once a week, fully hands-on with real components.</p>
       </div>
       <div class="step">
         <div class="step-num">4</div>
-        <h4>Build & Level Up</h4>
-        <p>Each stage ends with a showcase project your child presents. Then they move to the next stage.</p>
+        <h4>Build &amp; Level Up</h4>
+        <p>Each stage ends with a showcase project your child presents. Then they move on to the next stage.</p>
       </div>
     </div>
   </div>
 </div>
 
 <!-- TESTIMONIALS -->
-<div class="section bg-gray">
+<div class="section">
   <div class="inner">
     <div class="sec-head" style="text-align:center;">
       <div class="sec-label">What Parents Say</div>
@@ -680,7 +982,7 @@ footer {
         <div class="testi-who">
           <div class="testi-av ta-green">SP</div>
           <div>
-            <div class="testi-name">Parent of a Stage 2 student</div>
+            <div class="testi-name">Parent of a Stage 2 Student</div>
             <div class="testi-loc">Galle, Sri Lanka · ★★★★★</div>
           </div>
         </div>
@@ -691,7 +993,7 @@ footer {
         <div class="testi-who">
           <div class="testi-av ta-teal">RK</div>
           <div>
-            <div class="testi-name">Parent of a Stage 1 student</div>
+            <div class="testi-name">Parent of a Stage 1 Student</div>
             <div class="testi-loc">Galle, Sri Lanka · ★★★★★</div>
           </div>
         </div>
@@ -701,17 +1003,17 @@ footer {
 </div>
 
 <!-- CONTACT -->
-<div class="section" id="contact">
+<div class="section bg-gray" id="contact">
   <div class="inner">
     <div class="sec-head" style="text-align:center;">
       <div class="sec-label">Get in Touch</div>
-      <h2 class="sec-title">Book a free demo class</h2>
-      <p class="sec-desc" style="margin: 0.5rem auto 0;">No commitment. Just bring a curious child and let the components do the talking.</p>
+      <h2 class="sec-title">Book a free discussion</h2>
+      <p class="sec-desc" style="margin: 0.5rem auto 0; max-width: 520px;">Bring a curious learner and explore how hands-on learning with real components sparks innovation.</p>
     </div>
     <div class="contact-wrap">
       <div class="contact-info">
         <h2 class="sec-title">Let's build something together.</h2>
-        <p>Serving families across Galle and surrounding areas. Classes at your home — no travel hassle for parents.</p>
+        <p>Serving families across Galle and surrounding areas. Classes are held at your home — no travel hassle for parents.</p>
         <div class="cdetail">
           <div class="cicon">📍</div>
           <div>
@@ -723,21 +1025,21 @@ footer {
           <div class="cicon">📱</div>
           <div>
             <div class="clabel">WhatsApp / Phone</div>
-            <div class="cval">+94 XX XXX XXXX</div>
+            <div class="cval">+94 76 901 1856</div>
           </div>
         </div>
         <div class="cdetail">
           <div class="cicon">✉️</div>
           <div>
             <div class="clabel">Email</div>
-            <div class="cval">your.email@gmail.com</div>
+            <div class="cval">micromindlablk@gmail.com</div>
           </div>
         </div>
         <div class="cdetail">
           <div class="cicon">💼</div>
           <div>
             <div class="clabel">LinkedIn</div>
-            <div class="cval">linkedin.com/in/yourprofile</div>
+            <div class="cval">linkedin.com/in/kavinda-deshan-thennakoon</div>
           </div>
         </div>
         <div class="wa-note">
@@ -746,13 +1048,13 @@ footer {
       </div>
 
       <div class="form-card">
-        <h3>Request a free demo class</h3>
+        <h3>Request a free discussion</h3>
         <div class="fg">
           <label>Parent's name</label>
           <input type="text" placeholder="e.g. Chaminda Perera">
         </div>
         <div class="fg">
-          <label>Child's name & age</label>
+          <label>Child's name &amp; age</label>
           <input type="text" placeholder="e.g. Asel, 13 years old">
         </div>
         <div class="fg">
@@ -760,16 +1062,16 @@ footer {
           <input type="tel" placeholder="+94 7X XXX XXXX">
         </div>
         <div class="fg">
-          <label>Area / city</label>
+          <label>Area / City</label>
           <input type="text" placeholder="e.g. Galle, Matara, Unawatuna">
         </div>
         <div class="fg">
           <label>Child's background</label>
           <select>
             <option>Complete beginner — never touched electronics</option>
-            <option>Some interest — watches YouTube about tech</option>
+            <option>Some interest — watches YouTube videos about tech</option>
             <option>Has tried Arduino or basic coding before</option>
-            <option>Already building things, wants to go deeper</option>
+            <option>Already building things and wants to go deeper</option>
           </select>
         </div>
         <div class="fg">
@@ -777,7 +1079,7 @@ footer {
           <textarea placeholder="e.g. What equipment does my child need? Do you teach girls too?"></textarea>
         </div>
         <button class="submit" onclick="alert('Thank you! Please contact via WhatsApp for real bookings.')">
-          Send Demo Class Request
+          Send Request
         </button>
       </div>
     </div>
@@ -790,11 +1092,12 @@ footer {
   <p class="footer-tagline">The way to a smart future — Galle, Sri Lanka 🇱🇰</p>
   <div class="footer-links">
     <a href="#about">About</a>
-    <a href="#stem">STEM</a>
+    <a href="#instructor">Instructor</a>
     <a href="#curriculum">Curriculum</a>
+    <a href="#gallery">Gallery</a>
     <a href="#contact">Contact</a>
   </div>
-  <p class="footer-copy">© 2025 MicroMind Lab · Science · Technology · Engineering · Mathematics</p>
+  <p class="footer-copy">© 2026 MicroMind Lab</p>
 </footer>
 
 </body>
