@@ -4,8 +4,8 @@
 //  HOW TO SET UP YOUR GOOGLE SHEET:
 //  ─────────────────────────────────────────────────────────
 //  1. Create a new Google Sheet.
-//  2. Create 5 tabs with EXACTLY these names:
-//       Admin  |  Students  |  Courses  |  Files  |  Questions
+//  2. Create 4 tabs with EXACTLY these names:
+//       Admin  |  Students  |  Courses  |  Files
 //  3. Fill each tab using the column headers and structure below.
 //  4. Publish the sheet to web:
 //       File → Share → Publish to web
@@ -15,11 +15,11 @@
 //
 // ─────────────────────────────────────────────────────────
 //  TAB: Admin   (Row 1 = headers)
-//  ┌──────────┬──────────┬───────────────┬────────┐
-//  │ username │ password │ name          │ avatar │
-//  ├──────────┼──────────┼───────────────┼────────┤
-//  │ admin    │ admin123 │ Administrator │ 🛡️    │
-//  └──────────┴──────────┴───────────────┴────────┘
+//  ┌──────────┬──────────┬───────────────┐
+//  │ username │ password │ name          │
+//  ├──────────┼──────────┼───────────────┤
+//  │ admin    │ admin123 │ Administrator │
+//  └──────────┴──────────┴───────────────┘
 //
 //  TAB: Students   (Row 1 = headers)
 //  ┌────┬──────────┬──────────┬──────────────┬────────┬─────────────────┐
@@ -39,23 +39,21 @@
 //
 //  TAB: Files   (Row 1 = headers)
 //  One row per FILE. Multiple files share the same dayId → they group into one day folder.
-//  ┌──────────┬───────┬──────────────────────────┬────────────┬────────┬──────────┬───────────────────┬─────────────────┬────────────────────────────────────┬──────────────┬─────────────────────────┐
-//  │ courseId │ dayId │ dayTitle                 │ dayDate    │ fileId │ fileType │ fileTitle         │ fileDescription │ fileUrl                            │ fileDuration │ fileContent             │
-//  ├──────────┼───────┼──────────────────────────┼────────────┼────────┼──────────┼───────────────────┼─────────────────┼────────────────────────────────────┼──────────────┼─────────────────────────┤
-//  │ c1       │ d1    │ Introduction to computer │ 2025-01-06 │ f1     │ video    │ What is computer? │ Overview        │ https://www.youtube.com/embed/xxx  │ 10 min       │                         │
-//  │ c1       │ d1    │ Introduction to computer │ 2025-01-06 │ f2     │ note     │ Basics Notes      │ Computer basics │                                    │              │ <h3>Title</h3><p>...</p> │
-//  │ c1       │ d2    │ Keyboard                 │ 2025-01-08 │ f3     │ link     │ Typing Practice   │ Practice typing │ https://www.typing.com/            │              │                         │
-//  └──────────┴───────┴──────────────────────────┴────────────┴────────┴──────────┴───────────────────┴─────────────────┴────────────────────────────────────┴──────────────┴─────────────────────────┘
-//  fileType options: video | note | link | pdf
 //
-//  TAB: Questions   (Row 1 = headers)
-//  One row per QUESTION. Multiple questions share the same testId → they form one quiz.
-//  ┌──────────┬────────┬──────────────────────┬──────────────┬─────────────────────┬─────────┬─────────┬─────────┬─────────┬───────────────┐
-//  │ courseId │ testId │ testTitle            │ testDuration │ question            │ option1 │ option2 │ option3 │ option4 │ correctAnswer │
-//  ├──────────┼────────┼──────────────────────┼──────────────┼─────────────────────┼─────────┼─────────┼─────────┼─────────┼───────────────┤
-//  │ c1       │ t1     │ Computer Basics Quiz │ 20 min       │ What is a computer? │ A tool  │ A device│ A robot │ A lamp  │ 1             │
-//  └──────────┴────────┴──────────────────────┴──────────────┴─────────────────────┴─────────┴─────────┴─────────┴─────────┴───────────────┘
-//  correctAnswer = 0-based index  (0 = option1, 1 = option2, 2 = option3, 3 = option4)
+//  ┌──────────┬───────┬──────────────────────────┬────────────┬────────┬──────────┬───────────────────┬─────────────────┬────────────────────────────────────┬──────────────┬─────────────────────────┬───────────────┐
+//  │ courseId │ dayId │ dayTitle                 │ dayDate    │ fileId │ fileType │ fileTitle         │ fileDescription │ fileUrl                            │ fileDuration │ fileContent             │ access        │
+//  ├──────────┼───────┼──────────────────────────┼────────────┼────────┼──────────┼───────────────────┼─────────────────┼────────────────────────────────────┼──────────────┼─────────────────────────┼───────────────┤
+//  │ c1       │ d1    │ Introduction to computer │ 2025-01-06 │ f1     │ video    │ What is computer? │ Overview        │ https://www.youtube.com/embed/xxx  │ 10 min       │                         │               │  ← empty = all enrolled students see it
+//  │ c1       │ d1    │ Introduction to computer │ 2025-01-06 │ f2     │ note     │ Basics Notes      │ Computer basics │                                    │              │ <h3>Title</h3><p>...</p> │ s1,s2         │  ← only s1 and s2 see this
+//  │ c1       │ d2    │ Keyboard                 │ 2025-01-08 │ f3     │ link     │ Typing Practice   │ Practice typing │ https://www.typing.com/            │              │                         │ s3            │  ← only s3 sees this
+//  └──────────┴───────┴──────────────────────────┴────────────┴────────┴──────────┴───────────────────┴─────────────────┴────────────────────────────────────┴──────────────┴─────────────────────────┴───────────────┘
+//
+//  ACCESS COLUMN RULES:
+//  • Leave blank (empty)  → every enrolled student can see the file
+//  • "s1,s2,s3"           → only students with those IDs can see the file
+//  • Admins ALWAYS see all files regardless of access column
+//
+//  fileType options: video | note | link | pdf
 //
 // ============================================================
 
@@ -64,7 +62,6 @@ const SHEET_URLS = {
   students:  "https://docs.google.com/spreadsheets/d/e/2PACX-1vR1gzbWJxXrI-bLNDMdhLCAszPLOsoY-84AmYyoRblZ3oexNRIOeLoJK8r7hJgVUb7_Zgd0Sr5F2iQ3/pub?gid=26403546&single=true&output=csv",
   courses:   "https://docs.google.com/spreadsheets/d/e/2PACX-1vR1gzbWJxXrI-bLNDMdhLCAszPLOsoY-84AmYyoRblZ3oexNRIOeLoJK8r7hJgVUb7_Zgd0Sr5F2iQ3/pub?gid=2102519719&single=true&output=csv",
   files:     "https://docs.google.com/spreadsheets/d/e/2PACX-1vR1gzbWJxXrI-bLNDMdhLCAszPLOsoY-84AmYyoRblZ3oexNRIOeLoJK8r7hJgVUb7_Zgd0Sr5F2iQ3/pub?gid=424331607&single=true&output=csv",
-  questions: "https://docs.google.com/spreadsheets/d/e/2PACX-1vR1gzbWJxXrI-bLNDMdhLCAszPLOsoY-84AmYyoRblZ3oexNRIOeLoJK8r7hJgVUb7_Zgd0Sr5F2iQ3/pub?gid=1514774377&single=true&output=csv",
 };
 
 // ── CSV PARSER ────────────────────────────────────────────
@@ -79,8 +76,8 @@ function parseCSV(text) {
   while (i < text.length) {
     const ch = text[i];
     if (inQuotes) {
-      if (ch === '"' && text[i + 1] === '"') { field += '"'; i += 2; continue; } // escaped quote
-      if (ch === '"') { inQuotes = false; i++; continue; }                        // close quote
+      if (ch === '"' && text[i + 1] === '"') { field += '"'; i += 2; continue; }
+      if (ch === '"') { inQuotes = false; i++; continue; }
       field += ch;
     } else {
       if (ch === '"')  { inQuotes = true; i++; continue; }
@@ -91,7 +88,7 @@ function parseCSV(text) {
     }
     i++;
   }
-  pushRow(); // flush last row
+  pushRow();
   return rows;
 }
 
@@ -113,7 +110,6 @@ async function fetchSheet(name, url) {
       `Sheet URL for "${name}" is not set. Open data.js and paste your Google Sheets CSV URL into SHEET_URLS.${name}`
     );
   }
-  // Cache-bust so edits in the sheet appear quickly.
   const res = await fetch(url + "&cachebust=" + Date.now());
   if (!res.ok) throw new Error(`HTTP ${res.status} fetching "${name}" sheet.`);
   const text = await res.text();
@@ -123,14 +119,12 @@ async function fetchSheet(name, url) {
 // ── MAIN ASSEMBLER ────────────────────────────────────────
 async function loadLMSData() {
 
-  // Fetch all five tabs in parallel.
-  const [adminRows, studentRows, courseRows, fileRows, questionRows] =
+  const [adminRows, studentRows, courseRows, fileRows] =
     await Promise.all([
       fetchSheet("admin",     SHEET_URLS.admin),
       fetchSheet("students",  SHEET_URLS.students),
       fetchSheet("courses",   SHEET_URLS.courses),
       fetchSheet("files",     SHEET_URLS.files),
-      fetchSheet("questions", SHEET_URLS.questions),
     ]);
 
   // ── Admin ──────────────────────────────────────────────
@@ -151,14 +145,12 @@ async function loadLMSData() {
       password: r.password,
       name:     r.name,
       avatar:   r.avatar || "👤",
-      // "c1,c3,c7" → ["c1","c3","c7"]
       enrolledCourses: r.enrolledCourses
         ? r.enrolledCourses.split(",").map(s => s.trim()).filter(Boolean)
         : [],
     }));
 
   // ── Courses skeleton ───────────────────────────────────
-  // Preserve sheet order; use a Map to keep insertion order.
   const courseMap = new Map();
   courseRows
     .filter(r => r.id)
@@ -176,7 +168,8 @@ async function loadLMSData() {
     });
 
   // ── Files → Days ───────────────────────────────────────
-  // dayRegistry[courseId][dayId] = { id, title, date, files[] }
+  // Each file stores an `access` array: [] means open to all enrolled students.
+  // ["s1","s2"] means only those student IDs can see it.
   const dayRegistry = {};
   fileRows
     .filter(r => r.courseId && r.dayId && r.fileId)
@@ -190,11 +183,20 @@ async function loadLMSData() {
           files: [],
         };
       }
+
+      // Parse the access column:
+      // - Empty string → [] (no restriction; all enrolled students see it)
+      // - "s1,s2,s3"  → ["s1","s2","s3"] (only these student IDs see it)
+      const accessList = r.access
+        ? r.access.split(",").map(s => s.trim()).filter(Boolean)
+        : [];
+
       const file = {
         id:          r.fileId,
         type:        r.fileType        || "note",
         title:       r.fileTitle       || "",
         description: r.fileDescription || "",
+        access:      accessList,          // ← NEW: stored on every file
       };
       if (r.fileUrl)      file.url      = r.fileUrl;
       if (r.fileDuration) file.duration = r.fileDuration;
@@ -203,44 +205,10 @@ async function loadLMSData() {
       dayRegistry[r.courseId][r.dayId].files.push(file);
     });
 
-  // Attach days to courses (preserving sheet order).
+  // Attach days to courses.
   Object.entries(dayRegistry).forEach(([courseId, days]) => {
     if (courseMap.has(courseId)) {
       courseMap.get(courseId).days = Object.values(days);
-    }
-  });
-
-  // ── Questions → Tests ──────────────────────────────────
-  // testRegistry[courseId][testId] = { id, title, duration, questions[] }
-  const testRegistry = {};
-  questionRows
-    .filter(r => r.courseId && r.testId && r.question)
-    .forEach(r => {
-      if (!testRegistry[r.courseId]) testRegistry[r.courseId] = {};
-      if (!testRegistry[r.courseId][r.testId]) {
-        testRegistry[r.courseId][r.testId] = {
-          id:        r.testId,
-          title:     r.testTitle    || r.testId,
-          duration:  r.testDuration || "20 min",
-          questions: [],
-        };
-      }
-      testRegistry[r.courseId][r.testId].questions.push({
-        q:       r.question || "",
-        options: [
-          r.option1 || "",
-          r.option2 || "",
-          r.option3 || "",
-          r.option4 || "",
-        ],
-        answer: parseInt(r.correctAnswer, 10) || 0,
-      });
-    });
-
-  // Attach tests to courses.
-  Object.entries(testRegistry).forEach(([courseId, tests]) => {
-    if (courseMap.has(courseId)) {
-      courseMap.get(courseId).tests = Object.values(tests);
     }
   });
 
@@ -251,8 +219,23 @@ async function loadLMSData() {
   };
 }
 
+// ── ACCESS HELPER ─────────────────────────────────────────
+// Call this anywhere in lms.html to check if a file is visible
+// to the currently logged-in user.
+//
+//   canAccessFile(file, currentUser, isAdmin)
+//
+//   • isAdmin = true  → always returns true (admins see everything)
+//   • file.access is empty []  → returns true (open to all enrolled)
+//   • file.access has IDs      → returns true only if currentUser.id is listed
+//
+function canAccessFile(file, user, adminFlag) {
+  if (adminFlag) return true;                          // admins see all
+  if (!file.access || file.access.length === 0) return true;  // no restriction
+  return file.access.includes(user.id);               // student must be listed
+}
+
 // ── BOOTSTRAP ─────────────────────────────────────────────
-// lms.html waits on this promise before calling init().
 let LMS_DATA = null;
 
 const LMS_DATA_PROMISE = loadLMSData()
