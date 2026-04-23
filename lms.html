@@ -6,7 +6,7 @@
 <title>MicroMind Lab</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-<link rel="stylesheet" href="assests/css/lms.css"/>
+<link rel="stylesheet" href="assests/css/lms.css" />
 </head>
 <body>
 
@@ -24,7 +24,7 @@
 <div id="login-screen" style="display:none;">
   <div class="login-box">
     <div class="login-logo">
-      <div class="logo-icon-wrap"><img src="assests/img/logo.png"  style="width: 100%;" alt="Logo"/></div>
+      <div class="logo-icon-wrap"><img src="assests/img/logo.png" style="width:100%;" alt="Logo"/></div>
       <h1>MicroMind<span> Lab</span></h1>
       <p>The Way to Smart Future</p>
     </div>
@@ -36,9 +36,7 @@
       <label>Password</label>
       <input type="password" id="login-pass" placeholder="Enter your password"/>
     </div>
-    <button class="login-btn" onclick="doLogin()">
-      Sign In
-    </button>
+    <button class="login-btn" onclick="doLogin()">Sign In</button>
     <div class="login-error" id="login-error">
       <i data-lucide="alert-circle"></i> Invalid username or password. Please try again.
     </div>
@@ -52,10 +50,9 @@
   <nav class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <div class="sidebar-logo">
-        <div class="logo-mark"><img src="assests/img/logo.png"  style="width: 100%;" alt="Logo"/></div>
+        <div class="logo-mark"><img src="assests/img/logo.png" style="width:100%;" alt="Logo"/></div>
         MicroMind<span> Lab</span>
       </div>
-      
     </div>
     <div class="sidebar-nav" id="sidebar-nav"></div>
     <div class="sidebar-footer">
@@ -101,7 +98,6 @@
         <h1>Admin Panel</h1>
         <p><i data-lucide="calendar"></i><span id="admin-date"></span></p>
       </div>
-      <!-- <div class="admin-badge-header"><i data-lucide="shield"></i> Administrator Access</div> -->
       <div class="stats-grid" id="admin-stats"></div>
       <div class="section-title">
         <span class="stitle-icon"><i data-lucide="book-open"></i></span> All Courses
@@ -371,14 +367,32 @@ function openCourse(courseId) {
   render();
 }
 
+/* ── BUILD DAYS ──────────────────────────────────────────────────
+   KEY CHANGE: Files are filtered per-user using canAccessFile().
+   • Students  → only see files they have access to;
+                 days with zero visible files are hidden entirely.
+   • Admins    → see all files; restricted ones show a small lock badge
+                 so the admin knows who can see them.
+   ────────────────────────────────────────────────────────────── */
 function buildDays(course) {
   const container = document.getElementById('days-list');
   container.innerHTML = '';
-  course.days.forEach((day,idx) => {
+
+  course.days.forEach((day, idx) => {
+
+    // ── Filter files for the current viewer ──────────────────
+    const visibleFiles = isAdmin
+      ? day.files                                          // admin sees all
+      : day.files.filter(f => canAccessFile(f, currentUser, false)); // student filter
+
+    // Students: skip the entire day folder if nothing is visible
+    if (!isAdmin && visibleFiles.length === 0) return;
+
     const dateStr = new Date(day.date).toLocaleDateString('en-US',{day:'2-digit',month:'short',year:'numeric'});
-    const folder = document.createElement('div');
+    const folder  = document.createElement('div');
     folder.className = 'day-folder fade-in';
-    folder.style.animationDelay = (idx*.06)+'s';
+    folder.style.animationDelay = (idx * .06) + 's';
+
     folder.innerHTML = `
       <div class="day-folder-header" onclick="toggleFolder(this)">
         <div class="folder-icon-box">${icon('folder')}</div>
@@ -387,12 +401,14 @@ function buildDays(course) {
           <div class="folder-date">${icon('calendar')} ${dateStr}</div>
         </div>
         <div class="folder-meta">
-          <span class="file-count">${day.files.length} files</span>
+          <span class="file-count">${visibleFiles.length} file${visibleFiles.length !== 1 ? 's' : ''}</span>
           <span class="folder-chevron">${icon('chevron-right')}</span>
         </div>
       </div>
       <div class="day-folder-body">
-        <div class="file-list">${day.files.map(f=>buildFileItem(f,course.id,day.id)).join('')}</div>
+        <div class="file-list">
+          ${visibleFiles.map(f => buildFileItem(f, course.id, day.id)).join('')}
+        </div>
       </div>
     `;
     container.appendChild(folder);
@@ -400,17 +416,33 @@ function buildDays(course) {
   render();
 }
 
+/* ── BUILD FILE ITEM ─────────────────────────────────────────────
+   Admin view: if a file has access restrictions, show a small
+   "🔒 s1, s2" badge so the admin can see who it's restricted to.
+   Student view: no badge needed (they only see their own files).
+   ────────────────────────────────────────────────────────────── */
 function buildFileItem(file, courseId, dayId) {
-  const fi = FILE_ICONS[file.type]||'file';
-  const labels = {video:'Video',note:'Notes',link:'Link',pdf:'PDF',image:'Image'};
+  const fi     = FILE_ICONS[file.type] || 'file';
+  const labels = { video:'Video', note:'Notes', link:'Link', pdf:'PDF', image:'Image' };
+
+  // Admin: show lock badge when file has a restricted access list
+  let restrictedBadge = '';
+  if (isAdmin && file.access && file.access.length > 0) {
+    restrictedBadge = `
+      <span class="file-item-restricted">
+        ${icon('lock')} ${file.access.join(', ')}
+      </span>
+    `;
+  }
+
   return `
     <div class="file-item" onclick="openContent('${courseId}','${dayId}','${file.id}')">
       <div class="file-type-box">${icon(fi)}</div>
       <div class="file-item-info">
-        <div class="fname">${file.title}</div>
+        <div class="fname">${file.title}${restrictedBadge}</div>
         <div class="fdesc">${file.description}</div>
       </div>
-      <span class="file-item-badge">${file.duration||labels[file.type]||''}</span>
+      <span class="file-item-badge">${file.duration || labels[file.type] || ''}</span>
     </div>
   `;
 }
@@ -427,6 +459,10 @@ function openContent(courseId, dayId, fileId) {
   const course = LMS_DATA.courses.find(c=>c.id===courseId);
   const day    = course.days.find(d=>d.id===dayId);
   const file   = day.files.find(f=>f.id===fileId);
+
+  // Extra safety: block students who somehow trigger a restricted file
+  if (!isAdmin && !canAccessFile(file, currentUser, false)) return;
+
   pushPage(()=>openCourse(courseId));
   let body = '';
   if (file.type==='video') {
