@@ -135,7 +135,7 @@
   </div>
 </div>
 
-<script src="data.js"></script>
+<script src="assests/constant/lms.js"></script>
 <script>
 const COURSE_ICONS = ['cpu','flask-conical','globe','layers','code-2','atom','bar-chart-2','zap','database','settings-2'];
 const FILE_ICONS   = { video:'play-circle', note:'file-text', link:'link-2', pdf:'file', image:'image' };
@@ -164,7 +164,7 @@ let currentUser = null, isAdmin = false, currentCourse = null, pageHistory = [],
     loaderMsg.style.display = 'none';
     document.querySelector('.loader-bar-wrap').style.display = 'none';
     loaderErr.style.display = 'block';
-    loaderErr.innerHTML = `<strong>Failed to load data from Database.</strong><br><br>Make sure you have:<br>1. Created your Google Sheet with the required tabs.<br>2. Published it to web as CSV.<br>3. Pasted the CSV URLs into <code>data.js</code>.<br><br><em style="font-size:.8em;opacity:.7;">${err.message}</em>`;
+    loaderErr.innerHTML = `<strong>Failed to load data from Database.</strong><br><br>Make sure you have:<br>1. Created your Google Sheet with the required tabs.<br>2. Published it to web as CSV.<br>3. Pasted the CSV URLs into <code>lms.js</code>.<br><br><em style="font-size:.8em;opacity:.7;">${err.message}</em>`;
     loaderBtn.style.display = 'inline-block';
   }
 })();
