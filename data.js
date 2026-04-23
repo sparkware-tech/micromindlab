@@ -15,11 +15,11 @@
 //
 // ─────────────────────────────────────────────────────────
 //  TAB: Admin   (Row 1 = headers)
-//  ┌──────────┬──────────┬───────────────┬────────┐
-//  │ username │ password │ name          │ avatar │
-//  ├──────────┼──────────┼───────────────┼────────┤
-//  │ admin    │ admin123 │ Administrator │ 🛡️    │
-//  └──────────┴──────────┴───────────────┴────────┘
+//  ┌──────────┬──────────┬───────────────┬
+//  │ username │ password │ name          │ 
+//  ├──────────┼──────────┼───────────────
+//  │ admin    │ admin123 │ Administrator │ 
+//  └──────────┴──────────┴───────────────┴─
 //
 //  TAB: Students   (Row 1 = headers)
 //  ┌────┬──────────┬──────────┬──────────────┬────────┬─────────────────┐
@@ -48,15 +48,6 @@
 //  └──────────┴───────┴──────────────────────────┴────────────┴────────┴──────────┴───────────────────┴─────────────────┴────────────────────────────────────┴──────────────┴─────────────────────────┘
 //  fileType options: video | note | link | pdf
 //
-//  TAB: Questions   (Row 1 = headers)
-//  One row per QUESTION. Multiple questions share the same testId → they form one quiz.
-//  ┌──────────┬────────┬──────────────────────┬──────────────┬─────────────────────┬─────────┬─────────┬─────────┬─────────┬───────────────┐
-//  │ courseId │ testId │ testTitle            │ testDuration │ question            │ option1 │ option2 │ option3 │ option4 │ correctAnswer │
-//  ├──────────┼────────┼──────────────────────┼──────────────┼─────────────────────┼─────────┼─────────┼─────────┼─────────┼───────────────┤
-//  │ c1       │ t1     │ Computer Basics Quiz │ 20 min       │ What is a computer? │ A tool  │ A device│ A robot │ A lamp  │ 1             │
-//  └──────────┴────────┴──────────────────────┴──────────────┴─────────────────────┴─────────┴─────────┴─────────┴─────────┴───────────────┘
-//  correctAnswer = 0-based index  (0 = option1, 1 = option2, 2 = option3, 3 = option4)
-//
 // ============================================================
 
 const SHEET_URLS = {
@@ -64,7 +55,6 @@ const SHEET_URLS = {
   students:  "https://docs.google.com/spreadsheets/d/e/2PACX-1vR1gzbWJxXrI-bLNDMdhLCAszPLOsoY-84AmYyoRblZ3oexNRIOeLoJK8r7hJgVUb7_Zgd0Sr5F2iQ3/pub?gid=26403546&single=true&output=csv",
   courses:   "https://docs.google.com/spreadsheets/d/e/2PACX-1vR1gzbWJxXrI-bLNDMdhLCAszPLOsoY-84AmYyoRblZ3oexNRIOeLoJK8r7hJgVUb7_Zgd0Sr5F2iQ3/pub?gid=2102519719&single=true&output=csv",
   files:     "https://docs.google.com/spreadsheets/d/e/2PACX-1vR1gzbWJxXrI-bLNDMdhLCAszPLOsoY-84AmYyoRblZ3oexNRIOeLoJK8r7hJgVUb7_Zgd0Sr5F2iQ3/pub?gid=424331607&single=true&output=csv",
-  questions: "https://docs.google.com/spreadsheets/d/e/2PACX-1vR1gzbWJxXrI-bLNDMdhLCAszPLOsoY-84AmYyoRblZ3oexNRIOeLoJK8r7hJgVUb7_Zgd0Sr5F2iQ3/pub?gid=1514774377&single=true&output=csv",
 };
 
 // ── CSV PARSER ────────────────────────────────────────────
@@ -124,13 +114,12 @@ async function fetchSheet(name, url) {
 async function loadLMSData() {
 
   // Fetch all five tabs in parallel.
-  const [adminRows, studentRows, courseRows, fileRows, questionRows] =
+  const [adminRows, studentRows, courseRows, fileRows] =
     await Promise.all([
       fetchSheet("admin",     SHEET_URLS.admin),
       fetchSheet("students",  SHEET_URLS.students),
       fetchSheet("courses",   SHEET_URLS.courses),
       fetchSheet("files",     SHEET_URLS.files),
-      fetchSheet("questions", SHEET_URLS.questions),
     ]);
 
   // ── Admin ──────────────────────────────────────────────
@@ -210,39 +199,6 @@ async function loadLMSData() {
     }
   });
 
-  // ── Questions → Tests ──────────────────────────────────
-  // testRegistry[courseId][testId] = { id, title, duration, questions[] }
-  const testRegistry = {};
-  questionRows
-    .filter(r => r.courseId && r.testId && r.question)
-    .forEach(r => {
-      if (!testRegistry[r.courseId]) testRegistry[r.courseId] = {};
-      if (!testRegistry[r.courseId][r.testId]) {
-        testRegistry[r.courseId][r.testId] = {
-          id:        r.testId,
-          title:     r.testTitle    || r.testId,
-          duration:  r.testDuration || "20 min",
-          questions: [],
-        };
-      }
-      testRegistry[r.courseId][r.testId].questions.push({
-        q:       r.question || "",
-        options: [
-          r.option1 || "",
-          r.option2 || "",
-          r.option3 || "",
-          r.option4 || "",
-        ],
-        answer: parseInt(r.correctAnswer, 10) || 0,
-      });
-    });
-
-  // Attach tests to courses.
-  Object.entries(testRegistry).forEach(([courseId, tests]) => {
-    if (courseMap.has(courseId)) {
-      courseMap.get(courseId).tests = Object.values(tests);
-    }
-  });
 
   return {
     admin,
