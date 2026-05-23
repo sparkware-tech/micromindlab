@@ -154,7 +154,7 @@ background: rgba(255,255,255,0.15);
 .diff-dot.lit-red   { background: #F87171; }
 
 /* SECTION LABEL */
-.projects-section { padding: 4rem 1.5rem; }
+.projects-section { padding: 0rem 1.5rem 4rem 1.5rem; }
 .proj-section-head { text-align: center; margin-bottom: 3rem; }
 
 /* COMING SOON CARD */
