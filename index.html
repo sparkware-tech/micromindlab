@@ -52,7 +52,19 @@
     <li><a href="#about">About</a></li>
     <li><a href="#instructor">Instructor</a></li>
     <li><a href="#curriculum">Programs</a></li>
-    <li><a href="projects.html">Projects</a></li>
+    <li class="nav-dropdown">
+      <a href="#">
+        Projects
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2 4 6 8 10 4"/></svg>
+      </a>
+      <div class="dropdown-menu">
+        <a href="projects.html">DIY Projects</a>
+        <div class="dropdown-divider"></div>
+        <a href="#howitworks">How It Works</a>
+        <div class="dropdown-divider"></div>
+        <a href="shop.html">Shop</a>
+      </div>
+    </li>
     <li><a href="#contact">Contact</a></li>
   </ul>
   <a href="lms.html" target="_blank" class="nav-cta">Log in to LMS</a>
@@ -67,7 +79,14 @@
     <li><a href="#about" onclick="closeMenu()">About</a></li>
     <li><a href="#instructor" onclick="closeMenu()">Instructor</a></li>
     <li><a href="#curriculum" onclick="closeMenu()">Programs</a></li>
-    <li><a href="projects.html" onclick="closeMenu()">Projects</a></li>
+    <li class="mobile-dropdown">
+      <span class="mobile-dropdown-label">Projects</span>
+      <ul class="mobile-sub">
+        <li><a href="projects.html" onclick="closeMenu()">DIY Projects</a></li>
+        <li><a href="#howitworks" onclick="closeMenu()">How It Works</a></li>
+        <li><a href="shop.html" onclick="closeMenu()">Shop</a></li>
+      </ul>
+    </li>
     <li><a href="#contact" onclick="closeMenu()">Contact</a></li>
   </ul>
   <a href="lms.html" target="_blank" class="mobile-menu-cta">Log in to LMS</a>

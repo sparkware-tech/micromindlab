@@ -98,6 +98,40 @@ nav {
   white-space: nowrap;
 }
 .nav-cta:hover { background: rgba(52, 211, 153,0.25); border-color: rgba(52, 211, 153,0.6); }
+/* Desktop dropdown */
+.nav-dropdown { position: relative; }
+.nav-dropdown > a { display: flex; align-items: center; gap: 5px; }
+.nav-dropdown > a svg { transition: transform .2s; flex-shrink: 0; }
+.nav-dropdown:hover > a svg { transform: rotate(180deg); }
+.nav-dropdown:hover > a { color: #34D399; }
+
+.dropdown-menu {
+  display: none;
+  position: absolute; top: calc(100% + 0px); left: 50%;
+  transform: translateX(-50%);
+  background: rgba(8,15,8,0.97);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px; padding: 8px;
+  min-width: 190px; z-index: 200;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+}
+.nav-dropdown:hover .dropdown-menu { display: block; }
+
+.dropdown-menu a {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 9px;
+  text-decoration: none; color: rgba(255,255,255,0.55);
+  font-size: 13.5px; font-weight: 500;
+  transition: all .15s; white-space: nowrap;
+}
+.dropdown-menu a:hover { background: rgba(52,211,153,0.1); color: #34D399; }
+.dropdown-menu .d-icon {
+  width: 28px; height: 28px; border-radius: 7px;
+  background: rgba(52,211,153,0.12); border: 1px solid rgba(52,211,153,0.2);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.dropdown-menu .d-icon i { color: #34D399; font-size: 12px; }
+.dropdown-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 4px; }
 
 /* Mobile nav toggle */
 .nav-hamburger {
@@ -137,6 +171,20 @@ nav {
   font-size: 15px; font-weight: 700; text-align: center;
   text-decoration: none; font-family: 'Sora', sans-serif;
 }
+/* Mobile sub-menu */
+.mobile-dropdown-label {
+  display: block; padding: 12px 0;
+  color: rgba(255,255,255,0.65); font-size: 16px; font-weight: 500;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.mobile-sub { list-style: none; padding-left: 1rem; }
+.mobile-sub li a {
+  display: block; padding: 10px 0;
+  color: rgba(255,255,255,0.45); font-size: 15px;
+  text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: color .2s;
+}
+.mobile-sub li a:hover { color: #34D399; }
 
 /* ═══ HERO ═══ */
 .hero {

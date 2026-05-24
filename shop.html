@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MicroMind Lab</title>
+    <meta name="description" content="Explore real student projects built at MicroMind Lab — robotics, electronics, IoT, and STEM builds with full step-by-step guides.">
+    <link rel="icon" type="image/png" href="assests/img/favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="assests/css/index.css">
+    <link rel="stylesheet" href="assests/css/projects.css">
+  </head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class=""><img src="assests/img/logo.png" alt="MicroMind Lab Logo" style="width: 50px;"></div>
+    MicroMind Lab
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#instructor">Instructor</a></li>
+    <li><a href="index.html#curriculum">Programs</a></li>
+    <li class="nav-dropdown">
+      <a href="#">
+        Projects
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2 4 6 8 10 4"/></svg>
+      </a>
+      <div class="dropdown-menu">
+        <a href="projects.html">DIY Projects</a>
+        <div class="dropdown-divider"></div>
+        <a href="howitworks.html">How It Works</a>
+        <div class="dropdown-divider"></div>
+        <a href="shop.html">Shop</a>
+      </div>
+    </li>
+    <li><a href="index.html#contact">Contact</a></li>
+  </ul>
+  <a href="lms.html" target="_blank" class="nav-cta">Log in to LMS</a>
+  <button class="nav-hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <ul>
+    <li><a href="index.html#about" onclick="closeMenu()">About</a></li>
+    <li><a href="index.html#instructor" onclick="closeMenu()">Instructor</a></li>
+    <li><a href="index.html#curriculum" onclick="closeMenu()">Programs</a></li>
+    <li class="mobile-dropdown">
+      <span class="mobile-dropdown-label">Projects</span>
+      <ul class="mobile-sub">
+        <li><a href="projects.html" onclick="closeMenu()">DIY Projects</a></li>
+        <li><a href="howitworks.html" onclick="closeMenu()">How It Works</a></li>
+        <li><a href="shop.html" onclick="closeMenu()">Shop</a></li>
+      </ul>
+    </li>
+    <li><a href="index.html#contact" onclick="closeMenu()">Contact</a></li>
+  </ul>
+  <a href="lms.html" target="_blank" class="mobile-menu-cta">Log in to LMS</a>
+</div>
+
+<!-- HERO -->
+<div class="projects-hero">
+  <div class="projects-hero-orb-1"></div>
+  <!-- <div class="sec-label" style="margin-bottom:0.75rem;">Real Builds · Hands-On Guides</div> -->
+  <h1>Shop</span></h1>
+  <p>comming soon!</p>
+</div>
+
+<!-- PROJECTS SECTION -->
+
+<!-- FLOATING WHATSAPP -->
+<a href="https://wa.me/94769011856" target="_blank" class="wa-float" aria-label="Chat on WhatsApp">
+  <i class="fa-brands fa-whatsapp"></i>
+  <span class="wa-float-label">Chat with us</span>
+  <span class="wa-float-ping"></span>
+</a>
+
+<!-- FOOTER -->
+<!-- <footer>
+  <div class="footer-brand">
+    <div class=""><img src="assests/img/logo.png" alt="MicroMind Lab Logo" style="width: 50px;"></div>
+    MicroMind Lab
+  </div>
+  <p class="footer-tagline">The way to a smart future — Galle, Sri Lanka</p>
+  <p class="footer-copy">© 2026 MicroMind Lab</p>
+</footer> -->
+
+<script>
+function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
+function closeMenu()  { document.getElementById('mobileMenu').classList.remove('open'); }
+document.addEventListener('click', function(e) {
+  const menu = document.getElementById('mobileMenu');
+  const hamburger = document.querySelector('.nav-hamburger');
+  if (menu.classList.contains('open') && !menu.contains(e.target) && !hamburger.contains(e.target)) {
+    menu.classList.remove('open');
+  }
+});
+
+function filterCards(tag, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.proj-card').forEach(card => {
+    const tags = card.getAttribute('data-tags') || '';
+    if (tag === 'all' || tags.includes(tag)) {
+      card.style.display = 'block';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }, i * 80);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.proj-card').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(24px)';
+  el.style.transition = 'opacity 0.55s ease, transform 0.55s cubic-bezier(0.16,1,0.3,1)';
+  observer.observe(el);
+});
+</script>
+</body>
+</html>
