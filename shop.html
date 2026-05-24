@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shop — MicroMind Lab</title>
+  <title>MicroMind Lab</title>
   <link rel="icon" type="image/png" href="assests/img/favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@0,400;0,500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -18,26 +18,13 @@
     <img src="assests/img/logo.png" alt="MicroMind Lab" style="width:50px;">
     MicroMind Lab
   </a>
-  <ul class="nav-links">
-    <li><a href="index.html#about">About</a></li>
-    <li><a href="index.html#curriculum">Programs</a></li>
-    <li class="nav-dropdown">
-      <a href="#">Projects <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2 4 6 8 10 4"/></svg></a>
-      <div class="dropdown-menu">
-        <a href="projects.html">DIY Projects</a>
-        <div class="dropdown-divider"></div>
-        <a href="shop.html">Shop</a>
-      </div>
-    </li>
-    <li><a href="index.html#contact">Contact</a></li>
-  </ul>
   <div style="display:flex;align-items:center;gap:10px;">
+    <a class="cart-nav-btn" href="index.html">Home</a>
     <a href="#" class="cart-nav-btn" id="cartNavBtn" onclick="showCart()" style="display:none;">
       <i class="fa-solid fa-cart-shopping"></i> Cart
       <span class="cart-badge" id="cartBadge">0</span>
     </a>
     <button class="nav-cta" id="logoutBtn" onclick="logout()" style="display:none;">Logout</button>
-    <a href="lms.html" target="_blank" class="nav-cta">LMS</a>
   </div>
   <button class="nav-hamburger" onclick="toggleMenu()" aria-label="Menu">
     <span></span><span></span><span></span>
@@ -46,11 +33,7 @@
 
 <!-- Mobile Menu -->
 <div class="mobile-menu" id="mobileMenu">
-  <ul>
-    <li><a href="index.html#about" onclick="closeMenu()">About</a></li>
-    <li><a href="index.html#curriculum" onclick="closeMenu()">Programs</a></li>
-    <li><a href="projects.html" onclick="closeMenu()">DIY Projects</a></li>
-  </ul>
+  <a class="mobile-menu-cta" href="index.html">Home</a>
   <a href="#" onclick="showCart();closeMenu();" class="mobile-menu-cta" id="mobileCartBtn" style="display:none;">View Cart</a>
   <button onclick="logout()" class="mobile-menu-cta" id="mobileLogoutBtn" style="display:none;margin-top:8px;">Logout</button>
 </div>
@@ -429,7 +412,13 @@ async function checkout() {
     });
   } catch(e) { console.warn('Order save failed', e); }
 
-  // Generate PDF
+  try {
+
+    if (!window.jspdf) {
+      alert("jsPDF library not loaded.");
+      return;
+    }
+// Generate PDF
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
   const pageW = doc.internal.pageSize.getWidth();
@@ -457,9 +446,11 @@ async function checkout() {
   doc.setFontSize(11); doc.setFont('helvetica','bold'); doc.setTextColor(0,0,0);
   doc.text('Bill To:', 14, 82);
   doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(50,50,50);
-  doc.text(currentUser.name,    14, 90);
-  doc.text(currentUser.phone,   14, 97);
-  doc.text(currentUser.address, 14, 104, { maxWidth: 120 });
+  doc.text(String(currentUser.name || ''), 14, 90);
+  doc.text(String(currentUser.phone || ''), 14, 97);
+  doc.text(String(currentUser.address || ''), 14, 104, {
+    maxWidth: 120
+  });
 
   // Table header
   let y = 120;
@@ -496,6 +487,16 @@ async function checkout() {
   doc.text('micromindlab.edu.lk', pageW/2, y+7, {align:'center'});
 
   doc.save(`MicroMind-Quotation-${orderId}.pdf`);
+
+  } catch(err) {
+
+    console.error(err);
+
+    alert("PDF generation failed. Check console.");
+
+  }
+
+  
 
   // Clear cart
   cart = []; localStorage.removeItem('mml_cart');
