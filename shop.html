@@ -1,44 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MicroMind Lab</title>
-    <meta name="description" content="Explore real student projects built at MicroMind Lab — robotics, electronics, IoT, and STEM builds with full step-by-step guides.">
-    <link rel="icon" type="image/png" href="assests/img/favicon.png">
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="assests/css/index.css">
-    <link rel="stylesheet" href="assests/css/projects.css">
-  </head>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop — MicroMind Lab</title>
+  <link rel="icon" type="image/png" href="assests/img/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@0,400;0,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="assests/css/index.css">
+  <link rel="stylesheet" href="assests/css/shop.css">
+</head>
 <body>
 
 <!-- NAV -->
 <nav>
   <a href="index.html" class="nav-logo">
-    <div class=""><img src="assests/img/logo.png" alt="MicroMind Lab Logo" style="width: 50px;"></div>
+    <img src="assests/img/logo.png" alt="MicroMind Lab" style="width:50px;">
     MicroMind Lab
   </a>
   <ul class="nav-links">
     <li><a href="index.html#about">About</a></li>
-    <li><a href="index.html#instructor">Instructor</a></li>
     <li><a href="index.html#curriculum">Programs</a></li>
     <li class="nav-dropdown">
-      <a href="#">
-        Projects
-        <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2 4 6 8 10 4"/></svg>
-      </a>
+      <a href="#">Projects <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2 4 6 8 10 4"/></svg></a>
       <div class="dropdown-menu">
         <a href="projects.html">DIY Projects</a>
-        <div class="dropdown-divider"></div>
-        <a href="howitworks.html">How It Works</a>
         <div class="dropdown-divider"></div>
         <a href="shop.html">Shop</a>
       </div>
     </li>
     <li><a href="index.html#contact">Contact</a></li>
   </ul>
-  <a href="lms.html" target="_blank" class="nav-cta">Log in to LMS</a>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <a href="#" class="cart-nav-btn" id="cartNavBtn" onclick="showCart()" style="display:none;">
+      <i class="fa-solid fa-cart-shopping"></i> Cart
+      <span class="cart-badge" id="cartBadge">0</span>
+    </a>
+    <button class="nav-cta" id="logoutBtn" onclick="logout()" style="display:none;">Logout</button>
+    <a href="lms.html" target="_blank" class="nav-cta">LMS</a>
+  </div>
   <button class="nav-hamburger" onclick="toggleMenu()" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
@@ -48,90 +48,478 @@
 <div class="mobile-menu" id="mobileMenu">
   <ul>
     <li><a href="index.html#about" onclick="closeMenu()">About</a></li>
-    <li><a href="index.html#instructor" onclick="closeMenu()">Instructor</a></li>
     <li><a href="index.html#curriculum" onclick="closeMenu()">Programs</a></li>
-    <li class="mobile-dropdown">
-      <span class="mobile-dropdown-label">Projects</span>
-      <ul class="mobile-sub">
-        <li><a href="projects.html" onclick="closeMenu()">DIY Projects</a></li>
-        <li><a href="howitworks.html" onclick="closeMenu()">How It Works</a></li>
-        <li><a href="shop.html" onclick="closeMenu()">Shop</a></li>
-      </ul>
-    </li>
-    <li><a href="index.html#contact" onclick="closeMenu()">Contact</a></li>
+    <li><a href="projects.html" onclick="closeMenu()">DIY Projects</a></li>
   </ul>
-  <a href="lms.html" target="_blank" class="mobile-menu-cta">Log in to LMS</a>
+  <a href="#" onclick="showCart();closeMenu();" class="mobile-menu-cta" id="mobileCartBtn" style="display:none;">View Cart</a>
+  <button onclick="logout()" class="mobile-menu-cta" id="mobileLogoutBtn" style="display:none;margin-top:8px;">Logout</button>
 </div>
 
-<!-- HERO -->
-<div class="projects-hero">
-  <div class="projects-hero-orb-1"></div>
-  <!-- <div class="sec-label" style="margin-bottom:0.75rem;">Real Builds · Hands-On Guides</div> -->
-  <h1>Shop</span></h1>
-  <p>comming soon!</p>
+<!-- ════════════════════════════
+     VIEW: AUTH (login/signup)
+═════════════════════════════ -->
+<div id="view-auth">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="nav-logo" style="margin-bottom:1.5rem;justify-content:center;">
+        <img src="assests/img/logo.png" alt="" style="width:40px;">
+        MicroMind Lab
+      </div>
+      <p class="auth-sub" style="text-align:center;">Sign in to access the shop</p>
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchTab('login')">Login</button>
+        <button class="auth-tab" onclick="switchTab('signup')">Sign Up</button>
+      </div>
+
+      <!-- Login Form -->
+      <div id="form-login">
+        <p class="auth-err" id="login-err"></p>
+        <div class="fg"><label>Email</label><input type="email" id="login-email" placeholder="you@example.com"></div>
+        <div class="fg"><label>Password</label><input type="password" id="login-pass" placeholder="Your password"></div>
+        <button class="submit" onclick="doLogin()" id="login-btn">Login</button>
+      </div>
+
+      <!-- Signup Form -->
+      <div id="form-signup" style="display:none;">
+        <p class="auth-err" id="signup-err"></p>
+        <div class="fg"><label>Full Name</label><input type="text" id="su-name" placeholder="e.g. Nimal Perera"></div>
+        <div class="fg"><label>Email</label><input type="email" id="su-email" placeholder="you@example.com"></div>
+        <div class="fg"><label>Password</label><input type="password" id="su-pass" placeholder="Choose a password"></div>
+        <div class="fg"><label>Phone / WhatsApp</label><input type="tel" id="su-phone" placeholder="+94 7X XXX XXXX"></div>
+        <div class="fg"><label>Delivery Address</label><textarea id="su-address" placeholder="No, Street, City"></textarea></div>
+        <button class="submit" onclick="doSignup()" id="signup-btn">Create Account</button>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- PROJECTS SECTION -->
+<!-- ════════════════════════════
+     VIEW: SHOP
+═════════════════════════════ -->
+<div id="view-shop" style="display:none;">
+  <div class="shop-wrap">
+    <!-- Sidebar -->
+    <aside class="shop-sidebar" id="shopSidebar">
+      <div class="sidebar-label">Categories</div>
+      <button class="cat-btn active" onclick="filterCat('All',this)">
+        <i class="fa-solid fa-border-all"></i> All Products
+      </button>
+      <!-- Categories injected here by JS -->
+      <div id="catList"></div>
 
-<!-- FLOATING WHATSAPP -->
+      <div style="margin-top:2rem;border-top:1px solid rgba(255,255,255,0.07);padding-top:1.5rem;">
+        <div class="sidebar-label">Account</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.4);padding:0 0.5rem;" id="sidebarUser"></div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="shop-main">
+      <div class="shop-topbar">
+        <h2 id="shopCatTitle">All Products</h2>
+        <input class="shop-search" type="text" placeholder="Search products…" oninput="searchProducts(this.value)">
+      </div>
+      <div class="product-grid" id="productGrid">
+        <div style="color:rgba(255,255,255,0.3);font-size:14px;grid-column:1/-1;text-align:center;padding:3rem 0;">
+          <span class="spinner"></span>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     VIEW: CART
+═════════════════════════════ -->
+<div id="view-cart" style="display:none;">
+  <div class="cart-wrap">
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:2rem;">
+      <button onclick="showShop()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.6);padding:8px 14px;border-radius:9px;cursor:pointer;font-size:13px;font-family:'Sora',sans-serif;">
+        <i class="fa-solid fa-arrow-left"></i> Back to Shop
+      </button>
+      <h1 class="cart-title" style="margin:0;">Your Cart</h1>
+    </div>
+    <div id="cartItems"></div>
+    <div id="cartSummaryWrap"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     PRODUCT MODAL
+═════════════════════════════ -->
+<div class="modal-overlay" id="productModal" onclick="closeModal(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModalBtn()"><i class="fa-solid fa-xmark"></i></button>
+    <img id="modalMainImg" class="modal-img-main" src="" alt="">
+    <div id="modalThumbs" class="modal-images"></div>
+    <div class="modal-prod-name" id="modalName"></div>
+    <div class="modal-prod-price" id="modalPrice"></div>
+    <div class="modal-prod-desc" id="modalDesc"></div>
+    <button class="modal-add-btn" id="modalAddBtn">
+      <i class="fa-solid fa-cart-plus"></i> Add to Cart
+    </button>
+  </div>
+</div>
+
+<!-- Floating WhatsApp -->
 <a href="https://wa.me/94769011856" target="_blank" class="wa-float" aria-label="Chat on WhatsApp">
   <i class="fa-brands fa-whatsapp"></i>
   <span class="wa-float-label">Chat with us</span>
   <span class="wa-float-ping"></span>
 </a>
 
-<!-- FOOTER -->
-<!-- <footer>
-  <div class="footer-brand">
-    <div class=""><img src="assests/img/logo.png" alt="MicroMind Lab Logo" style="width: 50px;"></div>
-    MicroMind Lab
-  </div>
-  <p class="footer-tagline">The way to a smart future — Galle, Sri Lanka</p>
-  <p class="footer-copy">© 2026 MicroMind Lab</p>
-</footer> -->
+<!-- jsPDF for quotation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script>
+// ══════════════════════════════════════════
+//  CONFIG — paste your Apps Script URL here
+// ══════════════════════════════════════════
+const API_URL = 'https://script.google.com/macros/s/AKfycbwaMENmfrW9_5vPAFkYr_TibNs6hgWiViQhmvAil0INXYRZApH0Tw6Tp3phmDISHaRLog/exec';
+
+// ── State ──
+let currentUser  = JSON.parse(localStorage.getItem('mml_user') || 'null');
+let allProducts  = [];
+let cart         = JSON.parse(localStorage.getItem('mml_cart') || '[]');
+let currentCat   = 'All';
+let currentSearch= '';
+let modalProduct = null;
+
+// ── Init ──
+window.addEventListener('DOMContentLoaded', () => {
+  if (currentUser) {
+    showShop();
+    loadProducts();
+  } else {
+    showAuth();
+  }
+  updateCartBadge();
+});
+
+// ══ VIEWS ══
+function showAuth()  { setView('auth'); }
+function showShop()  { setView('shop'); }
+function showCart()  { setView('cart'); renderCart(); }
+function setView(v)  {
+  document.getElementById('view-auth').style.display = v==='auth'  ? '' : 'none';
+  document.getElementById('view-shop').style.display = v==='shop'  ? '' : 'none';
+  document.getElementById('view-cart').style.display = v==='cart'  ? '' : 'none';
+  document.getElementById('cartNavBtn').style.display   = currentUser ? 'flex' : 'none';
+  document.getElementById('logoutBtn').style.display    = currentUser ? '' : 'none';
+  document.getElementById('mobileCartBtn').style.display  = currentUser ? '' : 'none';
+  document.getElementById('mobileLogoutBtn').style.display = currentUser ? '' : 'none';
+  if (currentUser && v==='shop') document.getElementById('sidebarUser').textContent = currentUser.name;
+}
+
+// ══ AUTH ══
+function switchTab(t) {
+  document.getElementById('form-login').style.display  = t==='login'  ? '' : 'none';
+  document.getElementById('form-signup').style.display = t==='signup' ? '' : 'none';
+  document.querySelectorAll('.auth-tab').forEach((b,i) => {
+    b.classList.toggle('active', (i===0 && t==='login') || (i===1 && t==='signup'));
+  });
+}
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-pass').value;
+  const err   = document.getElementById('login-err');
+  const btn   = document.getElementById('login-btn');
+  if (!email || !pass) { showErr(err,'Please fill all fields.'); return; }
+  btn.innerHTML = '<span class="spinner"></span>';
+  try {
+    const res = await postAPI({ action:'login', email, password:pass });
+    if (res.success) { currentUser = res.user; localStorage.setItem('mml_user', JSON.stringify(res.user)); showShop(); loadProducts(); }
+    else showErr(err, res.message);
+  } catch(e) { showErr(err,'Connection error. Try again.'); }
+  btn.innerHTML = 'Login';
+}
+
+async function doSignup() {
+  const name    = document.getElementById('su-name').value.trim();
+  const email   = document.getElementById('su-email').value.trim();
+  const pass    = document.getElementById('su-pass').value;
+  const phone   = document.getElementById('su-phone').value.trim();
+  const address = document.getElementById('su-address').value.trim();
+  const err     = document.getElementById('signup-err');
+  const btn     = document.getElementById('signup-btn');
+  if (!name||!email||!pass||!phone||!address) { showErr(err,'Please fill all fields.'); return; }
+  btn.innerHTML = '<span class="spinner"></span>';
+  try {
+    const res = await postAPI({ action:'signup', name, email, password:pass, phone, address });
+    if (res.success) { currentUser = res.user; localStorage.setItem('mml_user', JSON.stringify(res.user)); showShop(); loadProducts(); }
+    else showErr(err, res.message);
+  } catch(e) { showErr(err,'Connection error. Try again.'); }
+  btn.innerHTML = 'Create Account';
+}
+
+function logout() {
+  currentUser = null; localStorage.removeItem('mml_user');
+  cart = []; localStorage.removeItem('mml_cart');
+  updateCartBadge(); showAuth();
+}
+
+function showErr(el, msg) { el.textContent = msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'), 4000); }
+
+// ══ PRODUCTS ══
+async function loadProducts() {
+  try {
+    const res = await fetch(API_URL + '?action=products');
+    allProducts = await res.json();
+    renderCategories();
+    renderProducts();
+  } catch(e) {
+    document.getElementById('productGrid').innerHTML = '<p style="color:rgba(255,255,255,0.3);grid-column:1/-1;text-align:center;padding:3rem 0;">Could not load products.</p>';
+  }
+}
+
+function renderCategories() {
+  const cats = [...new Set(allProducts.map(p => p.category))].filter(Boolean);
+  const icons = { 'Arduino':'fa-microchip','Sensors':'fa-satellite-dish','Kits':'fa-boxes-stacked','Components':'fa-puzzle-piece','Cables':'fa-plug','Tools':'fa-screwdriver-wrench' };
+  document.getElementById('catList').innerHTML = cats.map(c =>
+    `<button class="cat-btn" onclick="filterCat('${c}',this)">
+      <i class="fa-solid ${icons[c]||'fa-tag'}"></i> ${c}
+    </button>`
+  ).join('');
+}
+
+function filterCat(cat, btn) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('shopCatTitle').textContent = cat === 'All' ? 'All Products' : cat;
+  renderProducts();
+}
+
+function searchProducts(val) { currentSearch = val.toLowerCase(); renderProducts(); }
+
+function renderProducts() {
+  let list = allProducts;
+  if (currentCat !== 'All') list = list.filter(p => p.category === currentCat);
+  if (currentSearch) list = list.filter(p => p.name.toLowerCase().includes(currentSearch) || (p.description||'').toLowerCase().includes(currentSearch));
+
+  if (!list.length) {
+    document.getElementById('productGrid').innerHTML = '<p style="color:rgba(255,255,255,0.3);grid-column:1/-1;text-align:center;padding:3rem 0;">No products found.</p>';
+    return;
+  }
+  document.getElementById('productGrid').innerHTML = list.map(p => `
+    <div class="prod-card" onclick="openModal(${JSON.stringify(p).replace(/"/g,'&quot;')})">
+      <img class="prod-img" src="${p.image1||'assests/img/logo.png'}" alt="${p.name}" onerror="this.src='assests/img/logo.png'">
+      <div class="prod-body">
+        <div class="prod-name">${p.name}</div>
+        <div class="prod-price">Rs. ${Number(p.price).toLocaleString()}</div>
+        <button class="prod-add-btn" onclick="event.stopPropagation();addToCart(${JSON.stringify(p).replace(/"/g,'&quot;')})">
+          <i class="fa-solid fa-cart-plus"></i> Add to Cart
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ══ MODAL ══
+function openModal(p) {
+  modalProduct = p;
+  const imgs = [p.image1, p.image2, p.image3].filter(Boolean);
+  document.getElementById('modalMainImg').src = imgs[0] || 'assests/img/logo.png';
+  document.getElementById('modalName').textContent  = p.name;
+  document.getElementById('modalPrice').textContent = 'Rs. ' + Number(p.price).toLocaleString();
+  document.getElementById('modalDesc').textContent  = p.description || '';
+  document.getElementById('modalThumbs').innerHTML  = imgs.map((img,i) =>
+    `<img class="modal-img-thumb ${i===0?'active':''}" src="${img}" onclick="switchModalImg('${img}',this)">`
+  ).join('');
+  document.getElementById('modalAddBtn').onclick = () => { addToCart(p); closeModalBtn(); };
+  document.getElementById('productModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function switchModalImg(src, el) {
+  document.getElementById('modalMainImg').src = src;
+  document.querySelectorAll('.modal-img-thumb').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+function closeModal(e) { if (e.target === document.getElementById('productModal')) closeModalBtn(); }
+function closeModalBtn() {
+  document.getElementById('productModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ══ CART ══
+function addToCart(p) {
+  const existing = cart.find(i => i.id === p.id);
+  if (existing) existing.qty++;
+  else cart.push({ id:p.id, name:p.name, price:Number(p.price), image:p.image1||'', qty:1 });
+  localStorage.setItem('mml_cart', JSON.stringify(cart));
+  updateCartBadge();
+  // Flash feedback
+  const btn = event.target.closest('button');
+  if (btn) { const orig = btn.innerHTML; btn.innerHTML = '<i class="fa-solid fa-check"></i> Added!'; setTimeout(()=>btn.innerHTML=orig, 1200); }
+}
+
+function updateCartBadge() {
+  const total = cart.reduce((s,i) => s+i.qty, 0);
+  document.getElementById('cartBadge').textContent = total;
+  document.getElementById('cartBadge').style.display = total ? 'flex' : 'none';
+}
+
+function renderCart() {
+  const itemsEl   = document.getElementById('cartItems');
+  const summaryEl = document.getElementById('cartSummaryWrap');
+  if (!cart.length) {
+    itemsEl.innerHTML = `<div class="cart-empty"><i class="fa-solid fa-cart-shopping"></i>Your cart is empty.<br><br><button class="btn-green" onclick="showShop()">Browse Products</button></div>`;
+    summaryEl.innerHTML = '';
+    return;
+  }
+  itemsEl.innerHTML = cart.map((item,idx) => `
+    <div class="cart-item">
+      <img class="cart-item-img" src="${item.image||'assests/img/logo.png'}" alt="${item.name}" onerror="this.src='assests/img/logo.png'">
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-price">Rs. ${(item.price * item.qty).toLocaleString()}</div>
+      </div>
+      <div class="cart-qty">
+        <button class="qty-btn" onclick="changeQty(${idx},-1)">−</button>
+        <span class="qty-val">${item.qty}</span>
+        <button class="qty-btn" onclick="changeQty(${idx},1)">+</button>
+      </div>
+      <button class="cart-del" onclick="removeFromCart(${idx})"><i class="fa-solid fa-trash"></i></button>
+    </div>
+  `).join('');
+
+  const total = cart.reduce((s,i) => s + i.price * i.qty, 0);
+  summaryEl.innerHTML = `
+    <div class="cart-summary">
+      <div class="cart-total-row">
+        <span class="cart-total-label">Total (${cart.reduce((s,i)=>s+i.qty,0)} items)</span>
+        <span class="cart-total-val">Rs. ${total.toLocaleString()}</span>
+      </div>
+      <button class="submit" onclick="checkout()"><i class="fa-solid fa-file-invoice" style="margin-right:8px;"></i>Checkout & Download Quotation</button>
+    </div>`;
+}
+
+function changeQty(idx, delta) {
+  cart[idx].qty += delta;
+  if (cart[idx].qty < 1) cart.splice(idx,1);
+  localStorage.setItem('mml_cart', JSON.stringify(cart));
+  updateCartBadge(); renderCart();
+}
+function removeFromCart(idx) {
+  cart.splice(idx,1);
+  localStorage.setItem('mml_cart', JSON.stringify(cart));
+  updateCartBadge(); renderCart();
+}
+
+// ══ CHECKOUT + PDF ══
+async function checkout() {
+  if (!cart.length) return;
+  const btn = document.querySelector('.cart-summary .submit');
+  btn.innerHTML = '<span class="spinner"></span> Processing…';
+
+  const total = cart.reduce((s,i) => s + i.price * i.qty, 0);
+  const orderId = 'ORD-' + Date.now();
+
+  // Save to Google Sheet
+  try {
+    await postAPI({
+      action: 'order',
+      userId:   currentUser.id,
+      userName: currentUser.name,
+      phone:    currentUser.phone,
+      address:  currentUser.address,
+      items:    cart,
+      total
+    });
+  } catch(e) { console.warn('Order save failed', e); }
+
+  // Generate PDF
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const pageW = doc.internal.pageSize.getWidth();
+
+  // Header
+  doc.setFillColor(8, 15, 8);
+  doc.rect(0, 0, pageW, 40, 'F');
+  doc.setTextColor(52, 211, 153);
+  doc.setFontSize(20); doc.setFont('helvetica','bold');
+  doc.text('MicroMind Lab', 14, 18);
+  doc.setFontSize(10); doc.setFont('helvetica','normal');
+  doc.setTextColor(160, 220, 160);
+  doc.text('Galle, Sri Lanka  |  +94 76 901 1856  |  micromindlablk@gmail.com', 14, 28);
+
+  // Quotation title
+  doc.setTextColor(0,0,0);
+  doc.setFontSize(16); doc.setFont('helvetica','bold');
+  doc.text('QUOTATION', pageW/2, 54, { align:'center' });
+  doc.setFontSize(10); doc.setFont('helvetica','normal');
+  doc.setTextColor(100,100,100);
+  doc.text(`Order ID: ${orderId}`, pageW/2, 62, { align:'center' });
+  doc.text(`Date: ${new Date().toLocaleDateString('en-GB')}`, pageW/2, 69, { align:'center' });
+
+  // Customer details
+  doc.setFontSize(11); doc.setFont('helvetica','bold'); doc.setTextColor(0,0,0);
+  doc.text('Bill To:', 14, 82);
+  doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(50,50,50);
+  doc.text(currentUser.name,    14, 90);
+  doc.text(currentUser.phone,   14, 97);
+  doc.text(currentUser.address, 14, 104, { maxWidth: 120 });
+
+  // Table header
+  let y = 120;
+  doc.setFillColor(8,15,8); doc.rect(14, y-6, pageW-28, 10, 'F');
+  doc.setTextColor(52,211,153); doc.setFont('helvetica','bold'); doc.setFontSize(10);
+  doc.text('Item', 16, y);
+  doc.text('Qty', 120, y, {align:'right'});
+  doc.text('Unit Price', 152, y, {align:'right'});
+  doc.text('Total', pageW-16, y, {align:'right'});
+  y += 8;
+
+  doc.setTextColor(30,30,30); doc.setFont('helvetica','normal');
+  cart.forEach((item, i) => {
+    if (i % 2 === 0) { doc.setFillColor(245,250,245); doc.rect(14, y-4, pageW-28, 9, 'F'); }
+    doc.text(item.name.substring(0,40), 16, y);
+    doc.text(String(item.qty), 120, y, {align:'right'});
+    doc.text('Rs. ' + item.price.toLocaleString(), 152, y, {align:'right'});
+    doc.text('Rs. ' + (item.price*item.qty).toLocaleString(), pageW-16, y, {align:'right'});
+    y += 9;
+  });
+
+  // Total row
+  y += 4;
+  doc.setDrawColor(52,211,153); doc.line(14, y, pageW-14, y); y += 8;
+  doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(0,0,0);
+  doc.text('TOTAL', 14, y);
+  doc.setTextColor(20,120,70);
+  doc.text('Rs. ' + total.toLocaleString(), pageW-16, y, {align:'right'});
+
+  // Footer
+  y += 20;
+  doc.setFontSize(9); doc.setFont('helvetica','italic'); doc.setTextColor(150,150,150);
+  doc.text('Thank you for shopping at MicroMind Lab! We will contact you to confirm your order.', pageW/2, y, {align:'center'});
+  doc.text('micromindlab.edu.lk', pageW/2, y+7, {align:'center'});
+
+  doc.save(`MicroMind-Quotation-${orderId}.pdf`);
+
+  // Clear cart
+  cart = []; localStorage.removeItem('mml_cart');
+  updateCartBadge();
+  btn.innerHTML = '<i class="fa-solid fa-check"></i> Done! PDF downloaded.';
+  setTimeout(() => { renderCart(); }, 2000);
+}
+
+// ══ API helpers ══
+async function postAPI(data) {
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    body: JSON.stringify(data)
+  });
+  return res.json();
+}
+
+// ══ Nav helpers ══
 function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
 function closeMenu()  { document.getElementById('mobileMenu').classList.remove('open'); }
 document.addEventListener('click', function(e) {
   const menu = document.getElementById('mobileMenu');
-  const hamburger = document.querySelector('.nav-hamburger');
-  if (menu.classList.contains('open') && !menu.contains(e.target) && !hamburger.contains(e.target)) {
-    menu.classList.remove('open');
-  }
-});
-
-function filterCards(tag, btn) {
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  document.querySelectorAll('.proj-card').forEach(card => {
-    const tags = card.getAttribute('data-tags') || '';
-    if (tag === 'all' || tags.includes(tag)) {
-      card.style.display = 'block';
-    } else {
-      card.style.display = 'none';
-    }
-  });
-}
-
-// Scroll reveal
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((entry, i) => {
-    if (entry.isIntersecting) {
-      setTimeout(() => {
-        entry.target.style.opacity = '1';
-        entry.target.style.transform = 'translateY(0)';
-      }, i * 80);
-      observer.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.08 });
-
-document.querySelectorAll('.proj-card').forEach(el => {
-  el.style.opacity = '0';
-  el.style.transform = 'translateY(24px)';
-  el.style.transition = 'opacity 0.55s ease, transform 0.55s cubic-bezier(0.16,1,0.3,1)';
-  observer.observe(el);
+  const ham  = document.querySelector('.nav-hamburger');
+  if (menu.classList.contains('open') && !menu.contains(e.target) && !ham.contains(e.target)) menu.classList.remove('open');
 });
 </script>
 </body>
