@@ -9,17 +9,18 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="assests/css/index.css">
   <link rel="stylesheet" href="assests/css/shop.css">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>emailjs.init('QtsJNKdPc57DkoLgW');</script>
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <a href="index.html" class="nav-logo">
+<!-- NAV — hidden on auth view -->
+<nav id="mainNav">
+  <a href="shop.html" class="nav-logo">
     <img src="assests/img/logo.png" alt="MicroMind Lab" style="width:50px;">
     MicroMind Lab
   </a>
   <div style="display:flex;align-items:center;gap:10px;">
-    <a class="cart-nav-btn" href="index.html">Home</a>
     <a href="#" class="cart-nav-btn" id="cartNavBtn" onclick="showCart()" style="display:none;">
       <i class="fa-solid fa-cart-shopping"></i> Cart
       <span class="cart-badge" id="cartBadge">0</span>
@@ -33,7 +34,6 @@
 
 <!-- Mobile Menu -->
 <div class="mobile-menu" id="mobileMenu">
-  <a class="mobile-menu-cta" href="index.html">Home</a>
   <a href="#" onclick="showCart();closeMenu();" class="mobile-menu-cta" id="mobileCartBtn" style="display:none;">View Cart</a>
   <button onclick="logout()" class="mobile-menu-cta" id="mobileLogoutBtn" style="display:none;margin-top:8px;">Logout</button>
 </div>
@@ -87,12 +87,14 @@
       <button class="cat-btn active" onclick="filterCat('All',this)">
         <i class="fa-solid fa-border-all"></i> All Products
       </button>
-      <!-- Categories injected here by JS -->
       <div id="catList"></div>
 
       <div style="margin-top:2rem;border-top:1px solid rgba(255,255,255,0.07);padding-top:1.5rem;">
         <div class="sidebar-label">Account</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.4);padding:0 0.5rem;" id="sidebarUser"></div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.5);padding:0 0.5rem;margin-bottom:0.75rem;" id="sidebarUser"></div>
+        <button class="cat-btn" onclick="showProfile()" style="color:rgba(255,255,255,0.5);">
+          <i class="fa-solid fa-user-pen"></i> Edit Profile
+        </button>
       </div>
     </aside>
 
@@ -128,6 +130,33 @@
 </div>
 
 <!-- ════════════════════════════
+     VIEW: PROFILE
+═════════════════════════════ -->
+<div id="view-profile" style="display:none;">
+  <div class="cart-wrap">
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:2rem;">
+      <button onclick="showShop()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.6);padding:8px 14px;border-radius:9px;cursor:pointer;font-size:13px;font-family:'Sora',sans-serif;">
+        <i class="fa-solid fa-arrow-left"></i> Back to Shop
+      </button>
+      <h1 class="cart-title" style="margin:0;">Edit Profile</h1>
+    </div>
+    <div class="auth-card" style="max-width:500px;">
+      <p class="auth-err" id="profile-err"></p>
+      <p class="auth-err" id="profile-ok" style="color:#34D399;"></p>
+      <div class="fg"><label>Full Name</label><input type="text" id="prof-name" placeholder="Full Name"></div>
+      <div class="fg"><label>Email</label><input type="email" id="prof-email" placeholder="Email" readonly style="opacity:0.5;cursor:not-allowed;"></div>
+      <div class="fg"><label>Phone / WhatsApp</label><input type="tel" id="prof-phone" placeholder="+94 7X XXX XXXX"></div>
+      <div class="fg"><label>Delivery Address</label><textarea id="prof-address" placeholder="No, Street, City"></textarea></div>
+      <div class="fg">
+        <label>New Password <span style="color:rgba(255,255,255,0.3);font-weight:400;">(leave blank to keep current)</span></label>
+        <input type="password" id="prof-pass" placeholder="New password">
+      </div>
+      <button class="submit" onclick="saveProfile()" id="save-profile-btn">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════
      PRODUCT MODAL
 ═════════════════════════════ -->
 <div class="modal-overlay" id="productModal" onclick="closeModal(event)">
@@ -151,22 +180,33 @@
   <span class="wa-float-ping"></span>
 </a>
 
-<!-- jsPDF for quotation -->
+<!-- jsPDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script>
 // ══════════════════════════════════════════
-//  CONFIG — paste your Apps Script URL here
+//  CONFIG
 // ══════════════════════════════════════════
 const API_URL = 'https://script.google.com/macros/s/AKfycbwaMENmfrW9_5vPAFkYr_TibNs6hgWiViQhmvAil0INXYRZApH0Tw6Tp3phmDISHaRLog/exec';
+const ADMIN_EMAIL = 'micromindlablk@gmail.com';
+const ADMIN_WA    = '94769011856';
 
 // ── State ──
 let currentUser  = JSON.parse(localStorage.getItem('mml_user') || 'null');
 let allProducts  = [];
 let cart         = JSON.parse(localStorage.getItem('mml_cart') || '[]');
 let currentCat   = 'All';
+let currentSubCat = '';
 let currentSearch= '';
 let modalProduct = null;
+
+// ── ID generators ──
+function genOrderId() {
+  // Get sequence from localStorage for consistent 4-digit format
+  let seq = parseInt(localStorage.getItem('mml_order_seq') || '0') + 1;
+  localStorage.setItem('mml_order_seq', seq);
+  return 'O' + String(seq).padStart(3, '0');
+}
 
 // ── Init ──
 window.addEventListener('DOMContentLoaded', () => {
@@ -180,18 +220,24 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // ══ VIEWS ══
-function showAuth()  { setView('auth'); }
-function showShop()  { setView('shop'); }
-function showCart()  { setView('cart'); renderCart(); }
-function setView(v)  {
-  document.getElementById('view-auth').style.display = v==='auth'  ? '' : 'none';
-  document.getElementById('view-shop').style.display = v==='shop'  ? '' : 'none';
-  document.getElementById('view-cart').style.display = v==='cart'  ? '' : 'none';
+function showAuth()    { setView('auth'); }
+function showShop()    { setView('shop'); }
+function showCart()    { setView('cart'); renderCart(); }
+function showProfile() { setView('profile'); populateProfile(); }
+
+function setView(v) {
+  ['auth','shop','cart','profile'].forEach(id => {
+    document.getElementById('view-'+id).style.display = v===id ? '' : 'none';
+  });
+  // Hide nav on auth
+  document.getElementById('mainNav').style.display = v==='auth' ? 'none' : '';
   document.getElementById('cartNavBtn').style.display   = currentUser ? 'flex' : 'none';
   document.getElementById('logoutBtn').style.display    = currentUser ? '' : 'none';
   document.getElementById('mobileCartBtn').style.display  = currentUser ? '' : 'none';
   document.getElementById('mobileLogoutBtn').style.display = currentUser ? '' : 'none';
-  if (currentUser && v==='shop') document.getElementById('sidebarUser').textContent = currentUser.name;
+  if (currentUser && v==='shop') {
+    document.getElementById('sidebarUser').textContent = currentUser.name;
+  }
 }
 
 // ══ AUTH ══
@@ -212,8 +258,15 @@ async function doLogin() {
   btn.innerHTML = '<span class="spinner"></span>';
   try {
     const res = await postAPI({ action:'login', email, password:pass });
-    if (res.success) { currentUser = res.user; localStorage.setItem('mml_user', JSON.stringify(res.user)); showShop(); loadProducts(); }
-    else showErr(err, res.message);
+    if (res.success) {
+      currentUser = res.user;
+      // Ensure userId has U prefix format
+      if (currentUser.id && !String(currentUser.id).startsWith('U')) {
+        currentUser.id = 'U' + String(currentUser.id).padStart(3,'0');
+      }
+      localStorage.setItem('mml_user', JSON.stringify(currentUser));
+      showShop(); loadProducts();
+    } else showErr(err, res.message);
   } catch(e) { showErr(err,'Connection error. Try again.'); }
   btn.innerHTML = 'Login';
 }
@@ -230,8 +283,14 @@ async function doSignup() {
   btn.innerHTML = '<span class="spinner"></span>';
   try {
     const res = await postAPI({ action:'signup', name, email, password:pass, phone, address });
-    if (res.success) { currentUser = res.user; localStorage.setItem('mml_user', JSON.stringify(res.user)); showShop(); loadProducts(); }
-    else showErr(err, res.message);
+    if (res.success) {
+      currentUser = res.user;
+      if (currentUser.id && !String(currentUser.id).startsWith('U')) {
+        currentUser.id = 'U' + String(currentUser.id).padStart(3,'0');
+      }
+      localStorage.setItem('mml_user', JSON.stringify(currentUser));
+      showShop(); loadProducts();
+    } else showErr(err, res.message);
   } catch(e) { showErr(err,'Connection error. Try again.'); }
   btn.innerHTML = 'Create Account';
 }
@@ -243,6 +302,42 @@ function logout() {
 }
 
 function showErr(el, msg) { el.textContent = msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'), 4000); }
+
+// ══ PROFILE ══
+function populateProfile() {
+  if (!currentUser) return;
+  document.getElementById('prof-name').value    = currentUser.name    || '';
+  document.getElementById('prof-email').value   = currentUser.email   || '';
+  document.getElementById('prof-phone').value   = currentUser.phone   || '';
+  document.getElementById('prof-address').value = currentUser.address || '';
+  document.getElementById('prof-pass').value    = '';
+}
+
+async function saveProfile() {
+  const name    = document.getElementById('prof-name').value.trim();
+  const phone   = document.getElementById('prof-phone').value.trim();
+  const address = document.getElementById('prof-address').value.trim();
+  const pass    = document.getElementById('prof-pass').value;
+  const err     = document.getElementById('profile-err');
+  const ok      = document.getElementById('profile-ok');
+  const btn     = document.getElementById('save-profile-btn');
+  if (!name||!phone||!address) { showErr(err,'Name, phone and address are required.'); return; }
+  btn.innerHTML = '<span class="spinner"></span>';
+  try {
+    const payload = { action:'updateProfile', userId: currentUser.id, name, phone, address };
+    if (pass) payload.password = pass;
+    const res = await postAPI(payload);
+    if (res.success) {
+      currentUser = { ...currentUser, name, phone, address };
+      localStorage.setItem('mml_user', JSON.stringify(currentUser));
+      document.getElementById('sidebarUser').textContent = currentUser.name;
+      ok.textContent = 'Profile updated successfully!';
+      ok.classList.add('show');
+      setTimeout(() => ok.classList.remove('show'), 3000);
+    } else showErr(err, res.message || 'Update failed.');
+  } catch(e) { showErr(err,'Connection error. Try again.'); }
+  btn.innerHTML = 'Save Changes';
+}
 
 // ══ PRODUCTS ══
 async function loadProducts() {
@@ -257,20 +352,84 @@ async function loadProducts() {
 }
 
 function renderCategories() {
-  const cats = [...new Set(allProducts.map(p => p.category))].filter(Boolean);
-  const icons = { 'Arduino':'fa-microchip','Sensors':'fa-satellite-dish','Kits':'fa-boxes-stacked','Components':'fa-puzzle-piece','Cables':'fa-plug','Tools':'fa-screwdriver-wrench' };
-  document.getElementById('catList').innerHTML = cats.map(c =>
+  // Separate DIY sub-categories from regular categories
+  const allCats = [...new Set(allProducts.map(p => p.category))].filter(Boolean);
+  
+  const regularCats = allCats.filter(c => !c.startsWith('DIY'));
+  const diySubCats  = allCats.filter(c => c.startsWith('DIY'));
+
+  const icons = {
+    'Arduino':'fa-microchip',
+    'Sensors':'fa-satellite-dish',
+    'Kits':'fa-boxes-stacked',
+    'Components':'fa-puzzle-piece',
+    'Cables':'fa-plug',
+    'Tools':'fa-screwdriver-wrench'
+  };
+
+  let html = '';
+
+  // Regular categories
+  html += regularCats.map(c =>
     `<button class="cat-btn" onclick="filterCat('${c}',this)">
       <i class="fa-solid ${icons[c]||'fa-tag'}"></i> ${c}
     </button>`
   ).join('');
+
+  // DIY Projects accordion
+  if (diySubCats.length > 0) {
+    html += `
+      <button class="cat-btn cat-diy-toggle" onclick="toggleDIY(this)" id="diyParentBtn">
+        <i class="fa-solid fa-flask-vial"></i> DIY Projects
+        <i class="fa-solid fa-chevron-down diy-chevron" style="margin-left:auto;font-size:10px;transition:transform 0.2s;"></i>
+      </button>
+      <div class="diy-sub-list" id="diySubList" style="display:none;">
+        <button class="cat-btn cat-sub-btn" onclick="filterDIYAll(this)">
+          <i class="fa-solid fa-layer-group"></i> All DIY
+        </button>
+        ${diySubCats.map(c => {
+          const label = c.replace(/^DIY[\s\-_]*/i, '').trim() || c;
+          return `<button class="cat-btn cat-sub-btn" onclick="filterCat('${c}',this)">
+            <i class="fa-solid fa-screwdriver-wrench"></i> ${label}
+          </button>`;
+        }).join('')}
+      </div>
+    `;
+  }
+
+  document.getElementById('catList').innerHTML = html;
+}
+
+function toggleDIY(btn) {
+  const sub = document.getElementById('diySubList');
+  const chev = btn.querySelector('.diy-chevron');
+  const isOpen = sub.style.display !== 'none';
+  sub.style.display = isOpen ? 'none' : 'block';
+  if (chev) chev.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+}
+
+function filterDIYAll(btn) {
+  currentCat = 'DIY_ALL';
+  currentSubCat = '';
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('shopCatTitle').textContent = 'DIY Projects';
+  renderProducts();
 }
 
 function filterCat(cat, btn) {
   currentCat = cat;
+  currentSubCat = '';
   document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  document.getElementById('shopCatTitle').textContent = cat === 'All' ? 'All Products' : cat;
+  // Keep DIY parent highlighted if sub-cat selected
+  if (cat.startsWith('DIY')) {
+    document.getElementById('diyParentBtn') && document.getElementById('diyParentBtn').classList.add('active-parent');
+    const label = cat.replace(/^DIY[\s\-_]*/i,'').trim() || cat;
+    document.getElementById('shopCatTitle').textContent = label;
+  } else {
+    document.getElementById('shopCatTitle').textContent = cat === 'All' ? 'All Products' : cat;
+  }
   renderProducts();
 }
 
@@ -278,8 +437,14 @@ function searchProducts(val) { currentSearch = val.toLowerCase(); renderProducts
 
 function renderProducts() {
   let list = allProducts;
-  if (currentCat !== 'All') list = list.filter(p => p.category === currentCat);
-  if (currentSearch) list = list.filter(p => p.name.toLowerCase().includes(currentSearch) || (p.description||'').toLowerCase().includes(currentSearch));
+  if (currentCat === 'DIY_ALL') {
+    list = list.filter(p => p.category && p.category.startsWith('DIY'));
+  } else if (currentCat !== 'All') {
+    list = list.filter(p => p.category === currentCat);
+  }
+  if (currentSearch) list = list.filter(p =>
+    p.name.toLowerCase().includes(currentSearch) || (p.description||'').toLowerCase().includes(currentSearch)
+  );
 
   if (!list.length) {
     document.getElementById('productGrid').innerHTML = '<p style="color:rgba(255,255,255,0.3);grid-column:1/-1;text-align:center;padding:3rem 0;">No products found.</p>';
@@ -332,7 +497,6 @@ function addToCart(p) {
   else cart.push({ id:p.id, name:p.name, price:Number(p.price), image:p.image1||'', qty:1 });
   localStorage.setItem('mml_cart', JSON.stringify(cart));
   updateCartBadge();
-  // Flash feedback
   const btn = event.target.closest('button');
   if (btn) { const orig = btn.innerHTML; btn.innerHTML = '<i class="fa-solid fa-check"></i> Added!'; setTimeout(()=>btn.innerHTML=orig, 1200); }
 }
@@ -390,35 +554,8 @@ function removeFromCart(idx) {
   updateCartBadge(); renderCart();
 }
 
-// ══ CHECKOUT + PDF ══
-async function checkout() {
-  if (!cart.length) return;
-  const btn = document.querySelector('.cart-summary .submit');
-  btn.innerHTML = '<span class="spinner"></span> Processing…';
-
-  const total = cart.reduce((s,i) => s + i.price * i.qty, 0);
-  const orderId = 'ORD-' + Date.now();
-
-  // Save to Google Sheet
-  try {
-    await postAPI({
-      action: 'order',
-      userId:   currentUser.id,
-      userName: currentUser.name,
-      phone:    currentUser.phone,
-      address:  currentUser.address,
-      items:    cart,
-      total
-    });
-  } catch(e) { console.warn('Order save failed', e); }
-
-  try {
-
-    if (!window.jspdf) {
-      alert("jsPDF library not loaded.");
-      return;
-    }
-// Generate PDF
+// ══ PDF GENERATION ══
+function generatePDF(orderId, total) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
   const pageW = doc.internal.pageSize.getWidth();
@@ -446,14 +583,13 @@ async function checkout() {
   doc.setFontSize(11); doc.setFont('helvetica','bold'); doc.setTextColor(0,0,0);
   doc.text('Bill To:', 14, 82);
   doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(50,50,50);
-  doc.text(String(currentUser.name || ''), 14, 90);
-  doc.text(String(currentUser.phone || ''), 14, 97);
-  doc.text(String(currentUser.address || ''), 14, 104, {
-    maxWidth: 120
-  });
+  doc.text(`Customer ID: ${currentUser.id || ''}`, 14, 89);
+  doc.text(String(currentUser.name || ''), 14, 96);
+  doc.text(String(currentUser.phone || ''), 14, 103);
+  doc.text(String(currentUser.address || ''), 14, 110, { maxWidth: 120 });
 
   // Table header
-  let y = 120;
+  let y = 126;
   doc.setFillColor(8,15,8); doc.rect(14, y-6, pageW-28, 10, 'F');
   doc.setTextColor(52,211,153); doc.setFont('helvetica','bold'); doc.setFontSize(10);
   doc.text('Item', 16, y);
@@ -486,17 +622,100 @@ async function checkout() {
   doc.text('Thank you for shopping at MicroMind Lab! We will contact you to confirm your order.', pageW/2, y, {align:'center'});
   doc.text('micromindlab.edu.lk', pageW/2, y+7, {align:'center'});
 
-  doc.save(`MicroMind-Quotation-${orderId}.pdf`);
+  return doc;
+}
 
+// ══ SEND NOTIFICATIONS ══
+async function sendNotifications(orderId, total) {
+  const itemsText = cart.map(i =>
+    `${i.name}  x${i.qty}  —  Rs.${(i.price * i.qty).toLocaleString()}`
+  ).join('\n');
+  const dateStr = new Date().toLocaleDateString('en-GB');
+
+  const billText = `
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   MICROMIND LAB — QUOTATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Order ID : ${orderId}
+Date     : ${dateStr}
+Customer : ${currentUser.name}
+User ID  : ${currentUser.id}
+Phone    : ${currentUser.phone}
+Address  : ${currentUser.address}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ITEMS:
+${itemsText}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TOTAL    : Rs.${total.toLocaleString()}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Thank you for shopping at MicroMind Lab!
+We will contact you to confirm your order.
+micromindlab.edu.lk | +94 76 901 1856
+  `.trim();
+
+  const SERVICE_ID  = 'service_q3iw6gz';
+  const TEMPLATE_ID = 'template_4q07tx8';
+
+  // Send to user and admin simultaneously
+  await Promise.all([
+    // User email
+    emailjs.send(SERVICE_ID, TEMPLATE_ID, {
+      to_email: currentUser.email,
+      subject:  `Your MicroMind Lab Quotation — ${orderId}`,
+      message:  `Dear ${currentUser.name},\n\nThank you for your order!\n\n${billText}`
+    }),
+    // Admin email
+    emailjs.send(SERVICE_ID, TEMPLATE_ID, {
+      to_email: ADMIN_EMAIL,
+      subject:  `New Order Received — ${orderId} | ${currentUser.name}`,
+      message:  billText
+    })
+  ]);
+}
+
+// ══ CHECKOUT ══
+async function checkout() {
+  if (!cart.length) return;
+  const btn = document.querySelector('.cart-summary .submit');
+  btn.innerHTML = '<span class="spinner"></span> Processing…';
+  btn.disabled = true;
+
+  const total   = cart.reduce((s,i) => s + i.price * i.qty, 0);
+  const orderId = genOrderId();
+
+  // Save to Google Sheet
+  try {
+    await postAPI({
+      action:   'order',
+      orderId,
+      userId:   currentUser.id,
+      userName: currentUser.name,
+      phone:    currentUser.phone,
+      address:  currentUser.address,
+      items:    cart,
+      total
+    });
+  } catch(e) { console.warn('Order save failed', e); }
+
+  // Generate PDF
+  let pdfDoc, pdfBase64;
+  try {
+    if (!window.jspdf) throw new Error('jsPDF not loaded');
+    pdfDoc    = generatePDF(orderId, total);
+    pdfBase64 = pdfDoc.output('datauristring').split(',')[1];
+    pdfDoc.save(`MicroMind-Quotation-${orderId}.pdf`);
+
+    await sendNotifications(orderId, total);
   } catch(err) {
-
-    console.error(err);
-
-    alert("PDF generation failed. Check console.");
-
+    console.error('PDF generation failed', err);
+    alert('PDF generation failed. Check console.');
+    btn.innerHTML = '<i class="fa-solid fa-file-invoice"></i> Checkout & Download Quotation';
+    btn.disabled = false;
+    return;
   }
 
-  
+  // Send notifications (email + WhatsApp)
+  await sendNotifications(orderId, total, pdfBase64);
 
   // Clear cart
   cart = []; localStorage.removeItem('mml_cart');
@@ -507,10 +726,7 @@ async function checkout() {
 
 // ══ API helpers ══
 async function postAPI(data) {
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    body: JSON.stringify(data)
-  });
+  const res = await fetch(API_URL, { method:'POST', body: JSON.stringify(data) });
   return res.json();
 }
 
@@ -520,7 +736,8 @@ function closeMenu()  { document.getElementById('mobileMenu').classList.remove('
 document.addEventListener('click', function(e) {
   const menu = document.getElementById('mobileMenu');
   const ham  = document.querySelector('.nav-hamburger');
-  if (menu.classList.contains('open') && !menu.contains(e.target) && !ham.contains(e.target)) menu.classList.remove('open');
+  if (menu.classList.contains('open') && !menu.contains(e.target) && !ham.contains(e.target))
+    menu.classList.remove('open');
 });
 </script>
 </body>
