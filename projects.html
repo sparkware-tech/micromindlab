@@ -84,14 +84,13 @@
       <button class="filter-btn" onclick="filterCards('embedded', this)">Embedded Systems</button>
       <button class="filter-btn" onclick="filterCards('iot', this)">IoT</button>
       <button class="filter-btn" onclick="filterCards('robotics', this)">Robotics</button>
-      <button class="filter-btn" onclick="filterCards('coding', this)">Coding</button>
     </div>
 
     <!-- PROJECTS GRID -->
     <div class="projects-grid" id="projectsGrid">
       <!-- CARD 1 — Smart Plant Watering System -->
-      <a href="projects/smart-plant-watering-system.html" target="_blank" class="proj-card" data-tags="embedded">
-        <div class="new-badge">New</div>
+      <a href="" target="_blank" class="proj-card" data-tags="embedded" data-locked="true" data-href="projects/smart-plant-watering-system.html">
+        <div class="lock-badge"><i class="fa-solid fa-lock"></i> Subscribers Only</div>
         <div class="proj-thumb">
           <img src="assests/img/projects/smart-plant-watering-system.png" alt="Smart Plant Watering System">
           <div class="proj-thumb-overlay"></div>
@@ -100,29 +99,6 @@
         <div class="proj-body">
           <h3>Smart Plant Watering System</h3>
           <p>Build an automated watering system for your plants using sensors and microcontrollers. Learn about soil moisture detection, relay control, and programming.</p>
-          <div class="proj-footer">
-            <div class="proj-level">
-              <i class="fa-solid fa-signal"></i> Beginner
-              <div class="diff-dots">
-                <div class="diff-dot lit"></div>
-                <div class="diff-dot"></div>
-                <div class="diff-dot"></div>
-              </div>
-            </div>
-            <div class="proj-arrow"><i class="fa-solid fa-arrow-right"></i></div>
-          </div>
-        </div>
-      </a>
-
-      <!-- CARD 2 — Line Follower -->
-      <a href="#" class="proj-card coming-soon" data-tags="robotics electronics">
-        <div class="soon-badge">Coming Soon</div>
-        <div class="proj-thumb">
-          <i class="proj-thumb-icon fa-solid fa-robot"></i>
-        </div>
-        <div class="proj-body">
-          <h3>Line-Following Robot</h3>
-          <p>Program a robot to automatically follow a black line on the floor using IR sensors. Learn sensor input, logic, and motor control.</p>
           <div class="proj-footer">
             <div class="proj-level">
               <i class="fa-solid fa-signal"></i> Intermediate
@@ -137,12 +113,98 @@
         </div>
       </a>
 
+      <!-- CARD 2 — Line Follower -->
+      <a href="#" class="proj-card coming-soon" data-tags="robotics">
+        <div class="soon-badge">Coming Soon</div>
+        <div class="proj-thumb">
+          <i class="proj-thumb-icon fa-solid fa-robot"></i>
+        </div>
+        <div class="proj-body">
+          <h3>Line-Following Robot</h3>
+          <p>Program a robot to follow a black line using IR sensors. Learn sensor input, decision-making logic, and motor control for autonomous movement.</p>
+          <div class="proj-footer">
+            <div class="proj-level">
+              <i class="fa-solid fa-signal"></i> Advanced
+              <div class="diff-dots">
+                <div class="diff-dot lit"></div>
+                <div class="diff-dot lit"></div>
+                <div class="diff-dot lit"></div>
+              </div>
+            </div>
+            <div class="proj-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+          </div>
+        </div>
+      </a>
+
+      <!-- CARD 3 — Smart Home-->
+      <a href="#" class="proj-card coming-soon" data-tags="iot">
+        <div class="soon-badge">Coming Soon</div>
+        <div class="proj-thumb">
+          <i class="proj-thumb-icon fa-solid fa-house"></i>
+        </div>
+        <div class="proj-body">
+          <h3>Smart Home</h3>
+          <p>Build a fully automated home environment with IoT devices and microcontrollers. Learn about home automation, sensor integration, and remote control.</p>
+          <div class="proj-footer">
+            <div class="proj-level">
+              <i class="fa-solid fa-signal"></i> Advanced
+              <div class="diff-dots">
+                <div class="diff-dot lit"></div>
+                <div class="diff-dot lit"></div>
+                <div class="diff-dot lit"></div>
+              </div>
+            </div>
+            <div class="proj-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+          </div>
+        </div>
+      </a>
+
+      <!-- CARD 4 — Multi Vibrator Circuit -->
+      <a href="#" class="proj-card coming-soon" data-tags="electronics">
+        <div class="soon-badge">Coming Soon</div>
+        <div class="proj-thumb">
+          <i class="proj-thumb-icon fa-solid fa-bolt"></i>
+        </div>
+        <div class="proj-body">
+          <h3>Multi-Vibrator Circuit</h3>
+          <p>Build a frequency generator circuit using transistors and capacitors. Learn about oscillations, signal generation, and basic electronic circuit design.</p>
+          <div class="proj-footer">
+            <div class="proj-level">
+              <i class="fa-solid fa-signal"></i> Beginner
+              <div class="diff-dots">
+                <div class="diff-dot lit"></div>
+                <div class="diff-dot"></div>
+                <div class="diff-dot"></div>
+              </div>
+            </div>
+            <div class="proj-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+          </div>
+        </div>
+      </a>
+
     </div>
 
     <!-- <div style="text-align:center; margin-top:4rem;">
       <p style="color:rgba(255,255,255,0.25); font-size:13px; margin-bottom:1.25rem;">Want to build one of these? Start with a free discussion.</p>
       <a href="index.html#contact" class="btn-green">Book a Free Discussion &rarr;</a>
     </div> -->
+  </div>
+</div>
+
+<!-- SUBSCRIPTION GATE MODAL -->
+<div class="gate-overlay" id="gateOverlay" style="display:none">
+  <div class="gate-modal">
+    <button class="gate-close" onclick="closeGate()">✕</button>
+    <div class="gate-icon"><i class="fa-solid fa-lock"></i></div>
+    <h2>Subscribers Only</h2>
+    <p>This project is available to MicroMind Lab subscribers. Enter your Gmail to verify your access.</p>
+    <input type="email" id="gateEmail" placeholder="yourname@gmail.com" />
+    <button class="gate-btn" id="gateCheckBtn" onclick="verifyAccess()">Verify Access</button>
+    <div class="gate-spinner" id="gateSpin"></div>
+    <div class="gate-msg" id="gateMsg"></div>
+    <div class="gate-footer">
+      Not subscribed? <a href="https://wa.me/94769011856" target="_blank">Contact the instructor →</a>
+    </div>
   </div>
 </div>
 
@@ -164,14 +226,15 @@
 </footer>
 
 <script>
+const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSoE6XWFes0UkH5TBgba26-j2r3i_TGRH1EqOT0N2pBmfy1Ts8ywDQArAuT3yRM9bgmnUSDfHNvYHtr/pub?gid=0&single=true&output=csv';
+
 function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
 function closeMenu()  { document.getElementById('mobileMenu').classList.remove('open'); }
 document.addEventListener('click', function(e) {
   const menu = document.getElementById('mobileMenu');
   const hamburger = document.querySelector('.nav-hamburger');
-  if (menu.classList.contains('open') && !menu.contains(e.target) && !hamburger.contains(e.target)) {
+  if (menu.classList.contains('open') && !menu.contains(e.target) && !hamburger.contains(e.target))
     menu.classList.remove('open');
-  }
 });
 
 function filterCards(tag, btn) {
@@ -179,31 +242,71 @@ function filterCards(tag, btn) {
   btn.classList.add('active');
   document.querySelectorAll('.proj-card').forEach(card => {
     const tags = card.getAttribute('data-tags') || '';
-    if (tag === 'all' || tags.includes(tag)) {
-      card.style.display = 'block';
-    } else {
-      card.style.display = 'none';
-    }
+    card.style.display = (tag === 'all' || tags.includes(tag)) ? 'block' : 'none';
   });
+}
+
+// Gate click handler
+document.querySelectorAll('.proj-card[data-locked="true"]').forEach(card => {
+  card.addEventListener('click', function(e) {
+    e.preventDefault();
+    document.getElementById('gateOverlay').style.display = 'flex';
+    document.getElementById('gateOverlay').dataset.target = this.getAttribute('data-href');
+  });
+});
+
+function closeGate() {
+  document.getElementById('gateOverlay').style.display = 'none';
+  document.getElementById('gateEmail').value = '';
+  document.getElementById('gateMsg').className = 'gate-msg';
+  document.getElementById('gateMsg').textContent = '';
+}
+document.getElementById('gateOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeGate();
+});
+
+async function verifyAccess() {
+  const email = document.getElementById('gateEmail').value.trim().toLowerCase();
+  if (!email || !email.includes('@')) { showGateMsg('Please enter a valid email address.', 'error'); return; }
+  const btn = document.getElementById('gateCheckBtn');
+  const spin = document.getElementById('gateSpin');
+  btn.disabled = true; spin.style.display = 'block';
+  document.getElementById('gateMsg').className = 'gate-msg';
+
+  try {
+    const res = await fetch(SHEET_CSV_URL);
+    const text = await res.text();
+    const emails = text.split('\n').map(r => r.split(',')[0].trim().toLowerCase().replace(/"/g,''));
+    spin.style.display = 'none'; btn.disabled = false;
+    if (emails.includes(email)) {
+      showGateMsg('✓ Access granted! Opening project…', 'success');
+      const target = document.getElementById('gateOverlay').dataset.target;
+      setTimeout(() => { closeGate(); if (target) window.open(target, '_blank'); }, 1500);
+    } else {
+      showGateMsg('This email is not in our subscriber list. Please contact the instructor to get access.', 'error');
+    }
+  } catch {
+    spin.style.display = 'none'; btn.disabled = false;
+    showGateMsg('Could not verify. Please try again or contact the instructor.', 'error');
+  }
+}
+function showGateMsg(text, type) {
+  const m = document.getElementById('gateMsg');
+  m.textContent = text; m.className = 'gate-msg ' + type;
 }
 
 // Scroll reveal
 const observer = new IntersectionObserver((entries) => {
   entries.forEach((entry, i) => {
     if (entry.isIntersecting) {
-      setTimeout(() => {
-        entry.target.style.opacity = '1';
-        entry.target.style.transform = 'translateY(0)';
-      }, i * 80);
+      setTimeout(() => { entry.target.style.opacity='1'; entry.target.style.transform='translateY(0)'; }, i*80);
       observer.unobserve(entry.target);
     }
   });
 }, { threshold: 0.08 });
-
 document.querySelectorAll('.proj-card').forEach(el => {
-  el.style.opacity = '0';
-  el.style.transform = 'translateY(24px)';
-  el.style.transition = 'opacity 0.55s ease, transform 0.55s cubic-bezier(0.16,1,0.3,1)';
+  el.style.opacity='0'; el.style.transform='translateY(24px)';
+  el.style.transition='opacity 0.55s ease, transform 0.55s cubic-bezier(0.16,1,0.3,1)';
   observer.observe(el);
 });
 </script>
