@@ -116,11 +116,26 @@
 ═════════════════════════════ -->
 <div id="view-cart" style="display:none;">
   <div class="cart-wrap">
-    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:2rem;">
-      <button onclick="showShop()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.6);padding:8px 14px;border-radius:9px;cursor:pointer;font-size:13px;font-family:'Sora',sans-serif;">
-        <i class="fa-solid fa-arrow-left"></i> Back to Shop
-      </button>
-      <h1 class="cart-title" style="margin:0;">Your Cart</h1>
+    <div style="margin-bottom:2rem;">
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <button onclick="showShop()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.6);padding:8px 14px;border-radius:9px;cursor:pointer;font-size:13px;font-family:'Sora',sans-serif;">
+          <i class="fa-solid fa-arrow-left"></i> Back to Shop
+        </button>
+        <h1 class="cart-title" style="margin:0;">Your Cart</h1>
+      </div>
+
+      <p style="margin-top:20px;color:rgba(255,255,255,0.7);font-size:14px;line-height:1.6;">
+        Please send the payment slip and Order ID via WhatsApp (076 901 1856) to confirm your order.
+        You can get the Order ID from the downloaded bill.
+        Payment can be made to the bank account below.
+      </p>
+      <ul style="margin-top:12px;color:rgba(255,255,255,0.75);font-size:14px;line-height:1.8;list-style-type: none;">
+        <li><strong>Bank Name:</strong> Commercial Bank</li>
+        <li><strong>Account Name:</strong> MicroMind Lab Pvt Ltd</li>
+        <li><strong>Account Number:</strong> 1234567890</li>
+        <li><strong>Branch:</strong> Yakkalamulla</li>
+      </ul>
+
     </div>
     <div id="cartItems"></div>
     <div id="cartSummaryWrap"></div>
@@ -576,12 +591,11 @@ function generatePDF(orderId, total) {
   doc.setTextColor(160, 220, 160);
   doc.text('Galle, Sri Lanka  |  +94 76 901 1856  |  micromindlablk@gmail.com', 14, 28);
 
-  // Quotation title
+  // Order details
   doc.setTextColor(0,0,0);
   doc.setFontSize(10);
   doc.setFont('helvetica','normal');
   doc.setTextColor(100,100,100);
-
   doc.text(`Order ID: ${orderId}`, 14, 62, { align: 'left' });
   doc.text(`Date: ${new Date().toLocaleDateString('en-GB')}`, 14, 69, { align: 'left' });
 
@@ -622,11 +636,81 @@ function generatePDF(orderId, total) {
   doc.setTextColor(20,120,70);
   doc.text('Rs. ' + total.toLocaleString(), pageW-16, y, {align:'right'});
 
+   // Payment instructions
+  y += 18;
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(70, 70, 70);
+
+  doc.text(
+    'Please send the payment slip and Order ID via WhatsApp (076 901 1856) to confirm your order.',
+    14,
+    y
+  );
+
+  y += 7;
+
+  doc.text(
+    'You can see Order ID at the top of the bill.',
+    14,
+    y
+  );
+
+  y += 7;
+
+  doc.text(
+    'Payment can be made to the bank account below.',
+    14,
+    y
+  );
+
+  // Bank details
+  y += 14;
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  doc.setTextColor(0, 0, 0);
+
+  doc.text('Bank Details:', 14, y);
+
+  y += 8;
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(60, 60, 60);
+
+  doc.text('Bank Name: Commercial Bank', 14, y);
+  y += 7;
+
+  doc.text('Account Name: MicroMind Lab Pvt Ltd', 14, y);
+  y += 7;
+
+  doc.text('Account Number: 1234567890', 14, y);
+  y += 7;
+
+  doc.text('Branch: Yakkalamulla', 14, y);
+
   // Footer
   y += 20;
-  doc.setFontSize(9); doc.setFont('helvetica','italic'); doc.setTextColor(150,150,150);
-  doc.text('Thank you for shopping at MicroMind Lab! We will contact you to confirm your order.', pageW/2, y, {align:'center'});
-  doc.text('https://micromindlab.edu.lk/store.html', pageW/2, y+7, {align:'center'});
+
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'italic');
+  doc.setTextColor(150, 150, 150);
+
+  doc.text(
+    'Thank you for shopping at MicroMind Lab! We will contact you to confirm your order.',
+    pageW / 2,
+    y,
+    { align: 'center' }
+  );
+
+  doc.text(
+    'https://micromindlab.edu.lk/store.html',
+    pageW / 2,
+    y + 7,
+    { align: 'center' }
+  );
 
   return doc;
 }
@@ -645,7 +729,7 @@ async function sendNotifications(orderId, total) {
   ).join('');
 
   const buildHtml = (greeting) => `
-  <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:620px;margin:0 auto;background:#ffffff;">
+  <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:620px;background:#ffffff;">
     <!-- Header -->
     <div style="background:#080f08;padding:24px 28px;border-radius:8px 8px 0 0;">
       <h1 style="color:#34D399;margin:0;font-size:22px;font-weight:700;letter-spacing:-0.5px;">MicroMind Lab</h1>
@@ -653,13 +737,12 @@ async function sendNotifications(orderId, total) {
     </div>
 
     <!-- Title bar -->
-    <div style="background:#f0fdf4;padding:18px 28px;border-left:4px solid #34D399;">
-      <h2 style="margin:0;font-size:18px;color:#065f46;font-weight:700;">QUOTATION</h2>
+    <div style="background:#f0fdf4;padding:18px 28px;">
       <p style="margin:4px 0 0;font-size:13px;color:#6b7280;">Order ID: <strong>${orderId}</strong> &nbsp;|&nbsp; Date: ${dateStr}</p>
     </div>
 
     <!-- Body -->
-    <div style="padding:24px 28px;">
+    <div style="padding:18px 28px;">
       <p style="margin:0 0 20px;color:#374151;font-size:14px;">${greeting}</p>
 
       <!-- Customer info -->
@@ -704,10 +787,28 @@ async function sendNotifications(orderId, total) {
       </table>
     </div>
 
+    <!-- Payment Instructions -->
+    <div style="margin-top:24px;padding:18px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;">
+
+      <p style="margin:0 0 12px;color:#374151;font-size:13px;line-height:1.7;">
+        Please send the payment slip and Order ID via WhatsApp (076 901 1856) to confirm your order.
+        You can see Order ID at the top of the bill.
+        Payment can be made to the bank account below.
+      </p>
+
+      <div style="font-size:13px;color:#111827;line-height:1.9;">
+        <div><strong>Bank Name:</strong> Commercial Bank</div>
+        <div><strong>Account Name:</strong> MicroMind Lab Pvt Ltd</div>
+        <div><strong>Account Number:</strong> 1234567890</div>
+        <div><strong>Branch:</strong> Yakkalamulla</div>
+      </div>
+
+    </div>
+
     <!-- Footer -->
     <div style="background:#f9fafb;padding:18px 28px;border-top:1px solid #e5e7eb;border-radius:0 0 8px 8px;text-align:center;">
       <p style="margin:0;font-size:13px;color:#6b7280;">We will contact you shortly to confirm your order.</p>
-      <p style="margin:6px 0 0;font-size:13px;color:#34D399;font-weight:600;">micromindlab.edu.lk</p>
+      <p style="margin:6px 0 0;font-size:13px;color:#34D399;font-weight:600;">https://micromindlab.edu.lk/store.html</p>
     </div>
   </div>`;
 
@@ -717,8 +818,8 @@ async function sendNotifications(orderId, total) {
   await Promise.all([
     emailjs.send(SERVICE_ID, TEMPLATE_ID, {
       to_email:     currentUser.email,
-      subject:      `Your MicroMind Lab Quotation — ${orderId}`,
-      html_message: buildHtml(`Dear ${currentUser.name},<br><br>Thank you for your order! Here is your quotation summary.`)
+      subject:      `MicroMind Lab Invoice — ${orderId}`,
+      html_message: buildHtml(`Dear ${currentUser.name},<br><br>Thank you for your order! Here is your invoice.`)
     }),
     emailjs.send(SERVICE_ID, TEMPLATE_ID, {
       to_email:     ADMIN_EMAIL,
