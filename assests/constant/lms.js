@@ -32,9 +32,9 @@
 //
 //  TAB: Courses   (Row 1 = headers)
 //  ┌────┬────────────────────┬──────┬─────────┬─────────────────────────┬──────────────────────┐
-//  │ id │ title              │ icon │ color   │ description             │ instructor           │
+//  │ id │ title              │ description   │ instructor           
 //  ├────┼────────────────────┼──────┼─────────┼─────────────────────────┼──────────────────────┤
-//  │ c1 │ Miss IT - Grade 6  │ 🐍   │ #6C63FF │ ICT for Grade 6         │ Ms. Shammi Dodangoda │
+//  │ c1 │ Miss IT - Grade 6  │  ICT for Grade 6 Ms. Shammi Dodangoda 
 //  └────┴────────────────────┴──────┴─────────┴─────────────────────────┴──────────────────────┘
 //
 //  TAB: Files   (Row 1 = headers)
