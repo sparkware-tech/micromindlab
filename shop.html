@@ -627,48 +627,97 @@ function generatePDF(orderId, total) {
 
 // ══ SEND NOTIFICATIONS ══
 async function sendNotifications(orderId, total) {
-  const itemsText = cart.map(i =>
-    `${i.name}  x${i.qty}  —  Rs.${(i.price * i.qty).toLocaleString()}`
-  ).join('\n');
   const dateStr = new Date().toLocaleDateString('en-GB');
 
-  const billText = `
-━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   MICROMIND LAB — QUOTATION
-━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Order ID : ${orderId}
-Date     : ${dateStr}
-Customer : ${currentUser.name}
-User ID  : ${currentUser.id}
-Phone    : ${currentUser.phone}
-Address  : ${currentUser.address}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ITEMS:
-${itemsText}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━
-TOTAL    : Rs.${total.toLocaleString()}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Thank you for shopping at MicroMind Lab!
-We will contact you to confirm your order.
-micromindlab.edu.lk | +94 76 901 1856
-  `.trim();
+  const rowsHtml = cart.map((i, idx) => `
+    <tr style="background:${idx % 2 === 0 ? '#f9fafb' : '#ffffff'};">
+      <td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;">${i.name}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;text-align:center;">${i.qty}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;text-align:right;">Rs. ${i.price.toLocaleString()}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;text-align:right;">Rs. ${(i.price * i.qty).toLocaleString()}</td>
+    </tr>`
+  ).join('');
+
+  const buildHtml = (greeting) => `
+  <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:620px;margin:0 auto;background:#ffffff;">
+    <!-- Header -->
+    <div style="background:#080f08;padding:24px 28px;border-radius:8px 8px 0 0;">
+      <h1 style="color:#34D399;margin:0;font-size:22px;font-weight:700;letter-spacing:-0.5px;">MicroMind Lab</h1>
+      <p style="color:#a7f3d0;margin:4px 0 0;font-size:13px;">Galle, Sri Lanka &nbsp;|&nbsp; +94 76 901 1856 &nbsp;|&nbsp; micromindlablk@gmail.com</p>
+    </div>
+
+    <!-- Title bar -->
+    <div style="background:#f0fdf4;padding:18px 28px;border-left:4px solid #34D399;">
+      <h2 style="margin:0;font-size:18px;color:#065f46;font-weight:700;">QUOTATION</h2>
+      <p style="margin:4px 0 0;font-size:13px;color:#6b7280;">Order ID: <strong>${orderId}</strong> &nbsp;|&nbsp; Date: ${dateStr}</p>
+    </div>
+
+    <!-- Body -->
+    <div style="padding:24px 28px;">
+      <p style="margin:0 0 20px;color:#374151;font-size:14px;">${greeting}</p>
+
+      <!-- Customer info -->
+      <table style="width:100%;border-collapse:collapse;margin-bottom:24px;font-size:13px;">
+        <tr>
+          <td style="padding:6px 0;color:#6b7280;width:130px;">Customer ID</td>
+          <td style="padding:6px 0;color:#111827;font-weight:600;">${currentUser.id || ''}</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 0;color:#6b7280;">Name</td>
+          <td style="padding:6px 0;color:#111827;">${currentUser.name}</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 0;color:#6b7280;">Phone</td>
+          <td style="padding:6px 0;color:#111827;">${currentUser.phone}</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 0;color:#6b7280;">Address</td>
+          <td style="padding:6px 0;color:#111827;">${currentUser.address}</td>
+        </tr>
+      </table>
+
+      <!-- Items table -->
+      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px;">
+        <thead>
+          <tr style="background:#080f08;">
+            <th style="padding:10px 14px;text-align:left;color:#34D399;font-weight:600;">Item</th>
+            <th style="padding:10px 14px;text-align:center;color:#34D399;font-weight:600;">Qty</th>
+            <th style="padding:10px 14px;text-align:right;color:#34D399;font-weight:600;">Unit Price</th>
+            <th style="padding:10px 14px;text-align:right;color:#34D399;font-weight:600;">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rowsHtml}
+        </tbody>
+        <tfoot>
+          <tr style="background:#f0fdf4;">
+            <td colspan="3" style="padding:12px 14px;font-weight:700;font-size:14px;color:#065f46;">TOTAL</td>
+            <td style="padding:12px 14px;text-align:right;font-weight:700;font-size:15px;color:#065f46;">Rs. ${total.toLocaleString()}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- Footer -->
+    <div style="background:#f9fafb;padding:18px 28px;border-top:1px solid #e5e7eb;border-radius:0 0 8px 8px;text-align:center;">
+      <p style="margin:0;font-size:13px;color:#6b7280;">We will contact you shortly to confirm your order.</p>
+      <p style="margin:6px 0 0;font-size:13px;color:#34D399;font-weight:600;">micromindlab.edu.lk</p>
+    </div>
+  </div>`;
 
   const SERVICE_ID  = 'service_q3iw6gz';
   const TEMPLATE_ID = 'template_4q07tx8';
 
-  // Send to user and admin simultaneously
   await Promise.all([
-    // User email
     emailjs.send(SERVICE_ID, TEMPLATE_ID, {
-      to_email: currentUser.email,
-      subject:  `Your MicroMind Lab Quotation — ${orderId}`,
-      message:  `Dear ${currentUser.name},\n\nThank you for your order!\n\n${billText}`
+      to_email:     currentUser.email,
+      subject:      `Your MicroMind Lab Quotation — ${orderId}`,
+      html_message: buildHtml(`Dear ${currentUser.name},<br><br>Thank you for your order! Here is your quotation summary.`)
     }),
-    // Admin email
     emailjs.send(SERVICE_ID, TEMPLATE_ID, {
-      to_email: ADMIN_EMAIL,
-      subject:  `New Order Received — ${orderId} | ${currentUser.name}`,
-      message:  billText
+      to_email:     ADMIN_EMAIL,
+      subject:      `New Order — ${orderId} | ${currentUser.name}`,
+      html_message: buildHtml(`New order received from <strong>${currentUser.name}</strong>.`)
     })
   ]);
 }
