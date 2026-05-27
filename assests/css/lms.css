@@ -159,7 +159,7 @@ body::before {
 
 .main { margin-left: 256px; min-height: 100vh; }
 .topbar { padding: 0 10px 0 10px; border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 14px; justify-content: space-between;
+  display: flex; align-items: center; gap: 14px;
   background: rgba(6,8,16,.68); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   position: sticky; top: 0; z-index: 50; }
 .topbar-back { background: rgba(255,255,255,.06); border: 1px solid var(--border); border-radius: var(--r-sm);
@@ -175,6 +175,12 @@ body::before {
 .menu-toggle i[data-lucide] svg { width: 18px; height: 18px; stroke-width: 1.8; }
 .page { display: none; padding: 0 36px 36px 36px; }
 .page.active { display: block; }
+.sidebar-user {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
 /* ══ DASHBOARD ══ */
 .dash-greeting { margin-bottom: 32px; }
@@ -314,7 +320,7 @@ body::before {
 .file-item-restricted i[data-lucide] svg { width: 11px; height: 11px; stroke-width: 2; }
 
 /* ══ CONTENT VIEWER ══ */
-.content-viewer { max-width: 820px; }
+.content-viewer { max-width: 100%; overflow: auto;}
 .content-title { font-size: 1.55rem; font-weight: 700; margin-bottom: 8px; }
 .content-meta  { font-size: .85rem; color: var(--text-2); margin-bottom: 28px; display: flex; align-items: center; gap: 14px; }
 .content-badge { padding: 4px 12px; border-radius: 99px; font-size: .75rem; font-weight: 700;
@@ -342,6 +348,8 @@ body::before {
   transition: opacity .15s, transform .15s; }
 .open-link-btn i[data-lucide] svg { width: 16px; height: 16px; stroke-width: 2; }
 .open-link-btn:hover { opacity: .88; transform: translateY(-1px); }
+.doc-container {width: 100%; height: 3000px; overflow: auto; }
+.doc-container iframe { width: 100%; height: 100%; border: none; }
 
 /* ══ RESPONSIVE ══ */
 @media (max-width: 768px) {
@@ -363,3 +371,71 @@ body::before {
 #topbar-title { display: none !important; }
 
 #topbar-crumb { display: none !important; }
+
+/* ═══ FLOATING WHATSAPP BUTTON ═══ */
+.wa-float {
+  position: fixed;
+  bottom: 1.75rem;
+  right: 1.75rem;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #34D399;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 50px;
+  padding: 13px 22px 13px 16px;
+  font-family: 'Sora', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 6px 24px rgba(37,211,102,0.45), 0 2px 8px rgba(0,0,0,0.35);
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  letter-spacing: 0.01em;
+}
+.wa-float i {
+  font-size: 24px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.15));
+}
+.wa-float-label {
+  white-space: nowrap;
+}
+.wa-float-ping {
+  position: absolute;
+  top: -4px; right: -4px;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2.5px solid #34D399;
+}
+.wa-float-ping::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 2px solid rgba(37,211,102,0.7);
+  animation: waPing 1.8s ease-out infinite;
+}
+@keyframes waPing {
+  0%   { transform: scale(0.6); opacity: 1; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+.wa-float:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 14px 40px rgba(52, 211, 153,0.55), 0 4px 12px rgba(0,0,0,0.3);
+  /* background: #1fbc5a; */
+}
+/* On mobile: collapse to icon-only circle */
+@media (max-width: 480px) {
+  .wa-float {
+    padding: 15px;
+    border-radius: 50%;
+    bottom: 1.25rem;
+    right: 1.25rem;
+    width: 58px;
+    height: 58px;
+    justify-content: center;
+  }
+  .wa-float-label { display: none; }
+}

@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="assests/img/favicon.png">
+  <title>MicroMind Lab</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@0,400;0,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="assests/css/store.css">
+</head>
+<body>
+
+<!-- NAV — hidden on auth view -->
+<nav id="mainNav">
+  <a href="#" class="nav-logo">
+    <img src="assests/img/logo.png" alt="MicroMind Lab" style="width:50px;">
+    MicroMind Lab
+  </a>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <a href="#" class="cart-nav-btn" id="cartNavBtn" onclick="showCart()" style="display:none;">
+      <i class="fa-solid fa-cart-shopping"></i> Cart
+      <span class="cart-badge" id="cartBadge">0</span>
+    </a>
+    <button class="nav-cta" id="logoutBtn" onclick="logout()" style="display:none;">Logout</button>
+  </div>
+  <button class="nav-hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#" onclick="showCart();closeMenu();" class="mobile-menu-cta" id="mobileCartBtn" style="display:none;">View Cart</a>
+  <button onclick="logout()" class="mobile-menu-cta" id="mobileLogoutBtn" style="display:none;margin-top:8px;">Logout</button>
+</div>
+
+<!-- ════════════════════════════
+     VIEW: AUTH (login/signup)
+═════════════════════════════ -->
+<div id="view-auth">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="login-logo">
+        <div class="logo-icon-wrap"><img src="assests/img/logo.png" style="width:100%;" alt="Logo"/></div>
+        <h1>MicroMind<span> Lab</span></h1>
+        <p>The Way to Smart Future</p>
+      </div>
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchTab('login')">Login</button>
+        <button class="auth-tab" onclick="switchTab('signup')">Sign Up</button>
+      </div>
+
+      <!-- Login Form -->
+      <div id="form-login">
+        <p class="auth-err" id="login-err"></p>
+        <div class="fg"><label>Email</label><input type="email" id="login-email" placeholder="you@example.com"></div>
+        <div class="fg"><label>Password</label><input type="password" id="login-pass" placeholder="Your password"></div>
+        <button class="submit" onclick="doLogin()" id="login-btn">Login</button>
+      </div>
+
+      <!-- Signup Form -->
+      <div id="form-signup" style="display:none;">
+        <p class="auth-err" id="signup-err"></p>
+        <div class="fg"><label>Full Name</label><input type="text" id="su-name" placeholder="e.g. Nimal Perera"></div>
+        <div class="fg"><label>Email</label><input type="email" id="su-email" placeholder="you@example.com"></div>
+        <div class="fg"><label>Password</label><input type="password" id="su-pass" placeholder="Choose a password"></div>
+        <div class="fg"><label>Phone / WhatsApp</label><input type="tel" id="su-phone" placeholder="07X XXX XXXX"></div>
+        <div class="fg"><label>Delivery Address / Location</label><textarea id="su-address" placeholder="No, Street, City"></textarea></div>
+        <button class="submit" onclick="doSignup()" id="signup-btn">Create Account</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     VIEW: SHOP
+═════════════════════════════ -->
+<div id="view-shop" style="display:none;">
+  <div class="shop-wrap">
+    <!-- Sidebar -->
+    <aside class="shop-sidebar" id="shopSidebar">
+      <div class="sidebar-label">Categories</div>
+      <button class="cat-btn active" onclick="filterCat('All',this)">
+        <i class="fa-solid fa-border-all"></i> All Products
+      </button>
+      <div id="catList"></div>
+
+      <div style="margin-top:2rem;border-top:1px solid rgba(255,255,255,0.07);padding-top:1.5rem;">
+        <div class="sidebar-label">Account</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.5);padding:0 0.5rem;margin-bottom:0.75rem;" id="sidebarUser"></div>
+        <button class="cat-btn" onclick="showProfile()" style="color:rgba(255,255,255,0.5);">
+          <i class="fa-solid fa-user-pen"></i> Edit Profile
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="shop-main">
+      <div class="shop-topbar">
+        <h2 id="shopCatTitle">All Products</h2>
+        <input class="shop-search" type="text" placeholder="Search products…" oninput="searchProducts(this.value)">
+      </div>
+      <div class="product-grid" id="productGrid">
+        <div style="color:rgba(255,255,255,0.3);font-size:14px;grid-column:1/-1;text-align:center;padding:3rem 0;">
+          <span class="spinner"></span>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     VIEW: CART
+═════════════════════════════ -->
+<div id="view-cart" style="display:none;">
+  <div class="cart-wrap">
+    <div style="margin-bottom:2rem;">
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <button onclick="showShop()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.6);padding:8px 14px;border-radius:9px;cursor:pointer;font-size:13px;font-family:'Sora',sans-serif;">
+          <i class="fa-solid fa-arrow-left"></i> Back to Shop
+        </button>
+        <h1 class="cart-title" style="margin:0;">Your Cart</h1>
+      </div>
+
+      <p style="margin-top:20px;color:rgba(255,255,255,0.7);font-size:14px;line-height:1.6;">
+        Please send the payment slip and Order ID via WhatsApp (076 901 1856) to confirm your order.
+        You can get the Order ID from the downloaded bill.
+        Payment can be made to the bank account below.
+      </p>
+      <ul style="margin-top:12px;color:rgba(255,255,255,0.75);font-size:14px;line-height:1.8;list-style-type: none;">
+        <li><strong>Bank Name:</strong> Commercial Bank</li>
+        <li><strong>Account Name:</strong> MicroMind Lab Pvt Ltd</li>
+        <li><strong>Account Number:</strong> 1234567890</li>
+        <li><strong>Branch:</strong> Yakkalamulla</li>
+      </ul>
+
+    </div>
+    <div id="cartItems"></div>
+    <div id="cartSummaryWrap"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     VIEW: PROFILE
+═════════════════════════════ -->
+<div id="view-profile" style="display:none;">
+  <div class="cart-wrap">
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:2rem;">
+      <button onclick="showShop()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.6);padding:8px 14px;border-radius:9px;cursor:pointer;font-size:13px;font-family:'Sora',sans-serif;">
+        <i class="fa-solid fa-arrow-left"></i> Back to Shop
+      </button>
+      <h1 class="cart-title" style="margin:0;">Edit Profile</h1>
+    </div>
+    <div class="auth-card" style="max-width:500px;">
+      <p class="auth-err" id="profile-err"></p>
+      <p class="auth-err" id="profile-ok" style="color:#34D399;"></p>
+      <div class="fg"><label>Full Name</label><input type="text" id="prof-name" placeholder="Full Name"></div>
+      <div class="fg"><label>Email</label><input type="email" id="prof-email" placeholder="Email" readonly style="opacity:0.5;cursor:not-allowed;"></div>
+      <div class="fg"><label>Phone / WhatsApp</label><input type="tel" id="prof-phone" placeholder="07X XXX XXXX"></div>
+      <div class="fg"><label>Delivery Address / Location</label><textarea id="prof-address" placeholder="No, Street, City"></textarea></div>
+      <div class="fg">
+        <label>New Password <span style="color:rgba(255,255,255,0.3);font-weight:400;">(leave blank to keep current)</span></label>
+        <input type="password" id="prof-pass" placeholder="New password">
+      </div>
+      <button class="submit" onclick="saveProfile()" id="save-profile-btn">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     PRODUCT MODAL
+═════════════════════════════ -->
+<div class="modal-overlay" id="productModal" onclick="closeModal(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModalBtn()"><i class="fa-solid fa-xmark"></i></button>
+    <img id="modalMainImg" class="modal-img-main" src="" alt="">
+    <div id="modalThumbs" class="modal-images"></div>
+    <div class="modal-prod-name" id="modalName"></div>
+    <div class="modal-prod-price" id="modalPrice"></div>
+    <div class="modal-prod-desc" id="modalDesc"></div>
+    <button class="modal-add-btn" id="modalAddBtn">
+      <i class="fa-solid fa-cart-plus"></i> Add to Cart
+    </button>
+  </div>
+</div>
+
+<!-- Floating WhatsApp -->
+<a href="https://wa.me/94769011856" target="_blank" class="wa-float" aria-label="Chat on WhatsApp">
+  <i class="fa-brands fa-whatsapp"></i>
+  <span class="wa-float-label">Chat with us</span>
+  <span class="wa-float-ping"></span>
+</a>
+
+<!-- jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>emailjs.init('QtsJNKdPc57DkoLgW');</script>
+
+<script>
+// ══════════════════════════════════════════
+//  CONFIG
+// ══════════════════════════════════════════
+const API_URL = 'https://script.google.com/macros/s/AKfycbwaMENmfrW9_5vPAFkYr_TibNs6hgWiViQhmvAil0INXYRZApH0Tw6Tp3phmDISHaRLog/exec';
+const ADMIN_EMAIL = 'micromindlablk@gmail.com';
+const ADMIN_WA    = '94769011856';
+
+// ── State ──
+let currentUser  = JSON.parse(localStorage.getItem('mml_user') || 'null');
+let allProducts  = [];
+let cart         = JSON.parse(localStorage.getItem('mml_cart') || '[]');
+let currentCat   = 'All';
+let currentSubCat = '';
+let currentSearch= '';
+let modalProduct = null;
+
+// ── ID generators ──
+function genOrderId() {
+  const rand = Math.floor(10000 + Math.random() * 90000); // always 5 digits
+  return 'ORD-' + rand;
+}
+
+// ── Init ──
+window.addEventListener('DOMContentLoaded', () => {
+  if (currentUser) {
+    showShop();
+    loadProducts();
+  } else {
+    showAuth();
+  }
+  updateCartBadge();
+});
+
+// ══ VIEWS ══
+function showAuth()    { setView('auth'); }
+function showShop()    { setView('shop'); }
+function showCart()    { setView('cart'); renderCart(); }
+function showProfile() { setView('profile'); populateProfile(); }
+
+function setView(v) {
+  ['auth','shop','cart','profile'].forEach(id => {
+    document.getElementById('view-'+id).style.display = v===id ? '' : 'none';
+  });
+  // Hide nav on auth
+  document.getElementById('mainNav').style.display = v==='auth' ? 'none' : '';
+  document.getElementById('cartNavBtn').style.display   = currentUser ? 'flex' : 'none';
+  document.getElementById('logoutBtn').style.display    = currentUser ? '' : 'none';
+  document.getElementById('mobileCartBtn').style.display  = currentUser ? '' : 'none';
+  document.getElementById('mobileLogoutBtn').style.display = currentUser ? '' : 'none';
+  if (currentUser && v==='shop') {
+    document.getElementById('sidebarUser').textContent = currentUser.name;
+  }
+}
+
+// ══ AUTH ══
+function switchTab(t) {
+  document.getElementById('form-login').style.display  = t==='login'  ? '' : 'none';
+  document.getElementById('form-signup').style.display = t==='signup' ? '' : 'none';
+  document.querySelectorAll('.auth-tab').forEach((b,i) => {
+    b.classList.toggle('active', (i===0 && t==='login') || (i===1 && t==='signup'));
+  });
+}
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-pass').value;
+  const err   = document.getElementById('login-err');
+  const btn   = document.getElementById('login-btn');
+  if (!email || !pass) { showErr(err,'Please fill all fields.'); return; }
+  btn.innerHTML = '<span class="spinner"></span>';
+  try {
+    const res = await postAPI({ action:'login', email, password:pass });
+    if (res.success) {
+      currentUser = res.user;
+      // Ensure userId has U prefix format
+      if (currentUser.id && !String(currentUser.id).startsWith('U')) {
+        currentUser.id = 'U' + String(currentUser.id).padStart(3,'0');
+      }
+      localStorage.setItem('mml_user', JSON.stringify(currentUser));
+      showShop(); loadProducts();
+    } else showErr(err, res.message);
+  } catch(e) { showErr(err,'Connection error. Try again.'); }
+  btn.innerHTML = 'Login';
+}
+
+async function doSignup() {
+  const name    = document.getElementById('su-name').value.trim();
+  const email   = document.getElementById('su-email').value.trim();
+  const pass    = document.getElementById('su-pass').value;
+  const phone   = document.getElementById('su-phone').value.trim();
+  const address = document.getElementById('su-address').value.trim();
+  const err     = document.getElementById('signup-err');
+  const btn     = document.getElementById('signup-btn');
+  if (!name||!email||!pass||!phone||!address) { showErr(err,'Please fill all fields.'); return; }
+  btn.innerHTML = '<span class="spinner"></span>';
+  try {
+    const res = await postAPI({ action:'signup', name, email, password:pass, phone, address });
+    if (res.success) {
+      currentUser = res.user;
+      if (currentUser.id && !String(currentUser.id).startsWith('U')) {
+        currentUser.id = 'U' + String(currentUser.id).padStart(3,'0');
+      }
+      localStorage.setItem('mml_user', JSON.stringify(currentUser));
+      showShop(); loadProducts();
+    } else showErr(err, res.message);
+  } catch(e) { showErr(err,'Connection error. Try again.'); }
+  btn.innerHTML = 'Create Account';
+}
+
+function logout() {
+  currentUser = null; localStorage.removeItem('mml_user');
+  cart = []; localStorage.removeItem('mml_cart');
+  updateCartBadge(); showAuth();
+}
+
+function showErr(el, msg) { el.textContent = msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'), 4000); }
+
+// ══ PROFILE ══
+function populateProfile() {
+  if (!currentUser) return;
+  document.getElementById('prof-name').value    = currentUser.name    || '';
+  document.getElementById('prof-email').value   = currentUser.email   || '';
+  document.getElementById('prof-phone').value   = currentUser.phone   || '';
+  document.getElementById('prof-address').value = currentUser.address || '';
+  document.getElementById('prof-pass').value    = '';
+}
+
+async function saveProfile() {
+  const name    = document.getElementById('prof-name').value.trim();
+  const phone   = document.getElementById('prof-phone').value.trim();
+  const address = document.getElementById('prof-address').value.trim();
+  const pass    = document.getElementById('prof-pass').value;
+  const err     = document.getElementById('profile-err');
+  const ok      = document.getElementById('profile-ok');
+  const btn     = document.getElementById('save-profile-btn');
+  if (!name||!phone||!address) { showErr(err,'Name, phone and address are required.'); return; }
+  btn.innerHTML = '<span class="spinner"></span>';
+  try {
+    const payload = { action:'updateProfile', userId: currentUser.id, name, phone, address };
+    if (pass) payload.password = pass;
+    const res = await postAPI(payload);
+    if (res.success) {
+      currentUser = { ...currentUser, name, phone, address };
+      localStorage.setItem('mml_user', JSON.stringify(currentUser));
+      document.getElementById('sidebarUser').textContent = currentUser.name;
+      ok.textContent = 'Profile updated successfully!';
+      ok.classList.add('show');
+      setTimeout(() => ok.classList.remove('show'), 3000);
+    } else showErr(err, res.message || 'Update failed.');
+  } catch(e) { showErr(err,'Connection error. Try again.'); }
+  btn.innerHTML = 'Save Changes';
+}
+
+// ══ PRODUCTS ══
+async function loadProducts() {
+  try {
+    const res = await fetch(API_URL + '?action=products');
+    allProducts = await res.json();
+    renderCategories();
+    renderProducts();
+  } catch(e) {
+    document.getElementById('productGrid').innerHTML = '<p style="color:rgba(255,255,255,0.3);grid-column:1/-1;text-align:center;padding:3rem 0;">Could not load products.</p>';
+  }
+}
+
+function renderCategories() {
+  // Split comma-separated categories and flatten
+  const allCats = [...new Set(
+    allProducts.flatMap(p =>
+      (p.category || '').split(',').map(c => c.trim()).filter(Boolean)
+    )
+  )];
+
+  const regularCats = allCats.filter(c => !c.startsWith('DIY'));
+  const diySubCats  = allCats.filter(c => c.startsWith('DIY'));
+
+  const icons = {
+    'Arduino':'fa-microchip',
+    'Sensors':'fa-satellite-dish',
+    'Kits':'fa-boxes-stacked',
+    'Components':'fa-puzzle-piece',
+    'Cables':'fa-plug',
+    'Tools':'fa-screwdriver-wrench'
+  };
+
+  let html = regularCats.map(c =>
+    `<button class="cat-btn" onclick="filterCat('${c}',this)">
+      <i class="fa-solid ${icons[c]||'fa-tag'}"></i> ${c}
+    </button>`
+  ).join('');
+
+  if (diySubCats.length > 0) {
+    html += `
+      <button class="cat-btn cat-diy-toggle" onclick="toggleDIY(this)" id="diyParentBtn">
+        <i class="fa-solid fa-flask-vial"></i> DIY Projects
+        <i class="fa-solid fa-chevron-down diy-chevron" style="margin-left:auto;font-size:10px;transition:transform 0.2s;"></i>
+      </button>
+      <div class="diy-sub-list" id="diySubList" style="display:none;">
+        <button class="cat-btn cat-sub-btn" onclick="filterDIYAll(this)">
+          <i class="fa-solid fa-layer-group"></i> All DIY
+        </button>
+        ${diySubCats.map(c => {
+          const label = c.replace(/^DIY[\s\-_]*/i, '').trim() || c;
+          return `<button class="cat-btn cat-sub-btn" onclick="filterCat('${c}',this)">
+            <i class="fa-solid fa-screwdriver-wrench"></i> ${label}
+          </button>`;
+        }).join('')}
+      </div>`;
+  }
+
+  document.getElementById('catList').innerHTML = html;
+}
+
+function toggleDIY(btn) {
+  const sub = document.getElementById('diySubList');
+  const chev = btn.querySelector('.diy-chevron');
+  const isOpen = sub.style.display !== 'none';
+  sub.style.display = isOpen ? 'none' : 'block';
+  if (chev) chev.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+}
+
+function filterDIYAll(btn) {
+  currentCat = 'DIY_ALL';
+  currentSubCat = '';
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('shopCatTitle').textContent = 'DIY Projects';
+  renderProducts();
+}
+
+function filterCat(cat, btn) {
+  currentCat = cat;
+  currentSubCat = '';
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (cat.startsWith('DIY')) {
+    const diyBtn = document.getElementById('diyParentBtn');
+    if (diyBtn) diyBtn.classList.add('active-parent');
+    const label = cat.replace(/^DIY[\s\-_]*/i, '').trim() || cat;
+    document.getElementById('shopCatTitle').textContent = label;
+  } else {
+    document.getElementById('shopCatTitle').textContent = cat === 'All' ? 'All Products' : cat;
+  }
+  renderProducts();
+}
+
+function searchProducts(val) { currentSearch = val.toLowerCase(); renderProducts(); }
+
+function renderProducts() {
+  let list = allProducts;
+
+  if (currentCat === 'DIY_ALL') {
+    list = list.filter(p =>
+      (p.category || '').split(',').map(c => c.trim()).some(c => c.startsWith('DIY'))
+    );
+  } else if (currentCat !== 'All') {
+    list = list.filter(p =>
+      (p.category || '').split(',').map(c => c.trim()).includes(currentCat)
+    );
+  }
+
+  if (currentSearch) list = list.filter(p =>
+    p.name.toLowerCase().includes(currentSearch) ||
+    (p.description || '').toLowerCase().includes(currentSearch)
+  );
+
+  if (!list.length) {
+    document.getElementById('productGrid').innerHTML =
+      '<p style="color:rgba(255,255,255,0.3);grid-column:1/-1;text-align:center;padding:3rem 0;">No products found.</p>';
+    return;
+  }
+
+  document.getElementById('productGrid').innerHTML = list.map(p => `
+    <div class="prod-card" onclick="openModal(${JSON.stringify(p).replace(/"/g,'&quot;')})">
+      <img class="prod-img" src="${p.image1||'assests/img/logo.png'}" alt="${p.name}" onerror="this.src='assests/img/logo.png'">
+      <div class="prod-body">
+        <div class="prod-name">${p.name}</div>
+        <div class="prod-price">Rs. ${Number(p.price).toLocaleString()}</div>
+        <button class="prod-add-btn" onclick="event.stopPropagation();addToCart(${JSON.stringify(p).replace(/"/g,'&quot;')})">
+          <i class="fa-solid fa-cart-plus"></i> Add to Cart
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ══ MODAL ══
+function openModal(p) {
+  modalProduct = p;
+  const imgs = [p.image1, p.image2, p.image3].filter(Boolean);
+  document.getElementById('modalMainImg').src = imgs[0] || 'assests/img/logo.png';
+  document.getElementById('modalName').textContent  = p.name;
+  document.getElementById('modalPrice').textContent = 'Rs. ' + Number(p.price).toLocaleString();
+  document.getElementById('modalDesc').textContent  = p.description || '';
+  document.getElementById('modalThumbs').innerHTML  = imgs.map((img,i) =>
+    `<img class="modal-img-thumb ${i===0?'active':''}" src="${img}" onclick="switchModalImg('${img}',this)">`
+  ).join('');
+  document.getElementById('modalAddBtn').onclick = () => { addToCart(p); closeModalBtn(); };
+  document.getElementById('productModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function switchModalImg(src, el) {
+  document.getElementById('modalMainImg').src = src;
+  document.querySelectorAll('.modal-img-thumb').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+function closeModal(e) { if (e.target === document.getElementById('productModal')) closeModalBtn(); }
+function closeModalBtn() {
+  document.getElementById('productModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ══ CART ══
+function addToCart(p) {
+  const existing = cart.find(i => i.id === p.id);
+  if (existing) existing.qty++;
+  else cart.push({ id:p.id, name:p.name, price:Number(p.price), image:p.image1||'', qty:1 });
+  localStorage.setItem('mml_cart', JSON.stringify(cart));
+  updateCartBadge();
+  const btn = event.target.closest('button');
+  if (btn) { const orig = btn.innerHTML; btn.innerHTML = '<i class="fa-solid fa-check"></i> Added!'; setTimeout(()=>btn.innerHTML=orig, 1200); }
+}
+
+function updateCartBadge() {
+  const total = cart.reduce((s,i) => s+i.qty, 0);
+  document.getElementById('cartBadge').textContent = total;
+  document.getElementById('cartBadge').style.display = total ? 'flex' : 'none';
+}
+
+function renderCart() {
+  const itemsEl   = document.getElementById('cartItems');
+  const summaryEl = document.getElementById('cartSummaryWrap');
+  if (!cart.length) {
+    itemsEl.innerHTML = `<div class="cart-empty"><i class="fa-solid fa-cart-shopping"></i>Your cart is empty.<br><br><button class="btn-green" onclick="showShop()">Browse Products</button></div>`;
+    summaryEl.innerHTML = '';
+    return;
+  }
+  itemsEl.innerHTML = cart.map((item,idx) => `
+    <div class="cart-item">
+      <img class="cart-item-img" src="${item.image||'assests/img/logo.png'}" alt="${item.name}" onerror="this.src='assests/img/logo.png'">
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-price">Rs. ${(item.price * item.qty).toLocaleString()}</div>
+      </div>
+      <div class="cart-qty">
+        <button class="qty-btn" onclick="changeQty(${idx},-1)">−</button>
+        <span class="qty-val">${item.qty}</span>
+        <button class="qty-btn" onclick="changeQty(${idx},1)">+</button>
+      </div>
+      <button class="cart-del" onclick="removeFromCart(${idx})"><i class="fa-solid fa-trash"></i></button>
+    </div>
+  `).join('');
+
+  const total = cart.reduce((s,i) => s + i.price * i.qty, 0);
+  summaryEl.innerHTML = `
+    <div class="cart-summary">
+      <div class="cart-total-row">
+        <span class="cart-total-label">Total (${cart.reduce((s,i)=>s+i.qty,0)} items)</span>
+        <span class="cart-total-val">Rs. ${total.toLocaleString()}</span>
+      </div>
+      <button class="submit" onclick="checkout()"><i class="fa-solid fa-file-invoice" style="margin-right:8px;"></i>Checkout & Download Bill</button>
+    </div>`;
+}
+
+function changeQty(idx, delta) {
+  cart[idx].qty += delta;
+  if (cart[idx].qty < 1) cart.splice(idx,1);
+  localStorage.setItem('mml_cart', JSON.stringify(cart));
+  updateCartBadge(); renderCart();
+}
+function removeFromCart(idx) {
+  cart.splice(idx,1);
+  localStorage.setItem('mml_cart', JSON.stringify(cart));
+  updateCartBadge(); renderCart();
+}
+
+// ══ PDF GENERATION ══
+function generatePDF(orderId, total) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const pageW = doc.internal.pageSize.getWidth();
+
+  // Header
+  doc.setFillColor(8, 15, 8);
+  doc.rect(0, 0, pageW, 40, 'F');
+  doc.setTextColor(52, 211, 153);
+  doc.setFontSize(20); doc.setFont('helvetica','bold');
+  doc.text('MicroMind Lab', 14, 18);
+  doc.setFontSize(10); doc.setFont('helvetica','normal');
+  doc.setTextColor(160, 220, 160);
+  doc.text('Galle, Sri Lanka  |  +94 76 901 1856  |  micromindlablk@gmail.com', 14, 28);
+
+  // Order details
+  doc.setTextColor(0,0,0);
+  doc.setFontSize(10);
+  doc.setFont('helvetica','normal');
+  doc.setTextColor(100,100,100);
+  doc.text(`Order ID: ${orderId}`, 14, 62, { align: 'left' });
+  doc.text(`Date: ${new Date().toLocaleDateString('en-GB')}`, 14, 69, { align: 'left' });
+
+  // Customer details
+  doc.setFontSize(11); doc.setFont('helvetica','bold'); doc.setTextColor(0,0,0);
+  doc.text('Bill To:', 14, 82);
+  doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(50,50,50);
+  doc.text(`Customer ID: ${currentUser.id || ''}`, 14, 89);
+  doc.text(String(currentUser.name || ''), 14, 96);
+  doc.text(String(currentUser.phone || ''), 14, 103);
+  doc.text(String(currentUser.address || ''), 14, 110, { maxWidth: 120 });
+
+  // Table header
+  let y = 126;
+  doc.setFillColor(8,15,8); doc.rect(14, y-6, pageW-28, 10, 'F');
+  doc.setTextColor(52,211,153); doc.setFont('helvetica','bold'); doc.setFontSize(10);
+  doc.text('Item', 16, y);
+  doc.text('Qty', 120, y, {align:'right'});
+  doc.text('Unit Price', 152, y, {align:'right'});
+  doc.text('Total', pageW-16, y, {align:'right'});
+  y += 8;
+
+  doc.setTextColor(30,30,30); doc.setFont('helvetica','normal');
+  cart.forEach((item, i) => {
+    if (i % 2 === 0) { doc.setFillColor(245,250,245); doc.rect(14, y-4, pageW-28, 9, 'F'); }
+    doc.text(item.name.substring(0,40), 16, y);
+    doc.text(String(item.qty), 120, y, {align:'right'});
+    doc.text('Rs. ' + item.price.toLocaleString(), 152, y, {align:'right'});
+    doc.text('Rs. ' + (item.price*item.qty).toLocaleString(), pageW-16, y, {align:'right'});
+    y += 9;
+  });
+
+  // Total row
+  y += 4;
+  doc.setDrawColor(52,211,153); doc.line(14, y, pageW-14, y); y += 8;
+  doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(0,0,0);
+  doc.text('TOTAL', 14, y);
+  doc.setTextColor(20,120,70);
+  doc.text('Rs. ' + total.toLocaleString(), pageW-16, y, {align:'right'});
+
+   // Payment instructions
+  y += 18;
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(70, 70, 70);
+
+  doc.text(
+    'Please send the payment slip and Order ID via WhatsApp (076 901 1856) to confirm your order.',
+    14,
+    y
+  );
+
+  y += 7;
+
+  doc.text(
+    'You can see Order ID at the top of the bill.',
+    14,
+    y
+  );
+
+  y += 7;
+
+  doc.text(
+    'Payment can be made to the bank account below.',
+    14,
+    y
+  );
+
+  // Bank details
+  y += 14;
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  doc.setTextColor(0, 0, 0);
+
+  doc.text('Bank Details:', 14, y);
+
+  y += 8;
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(60, 60, 60);
+
+  doc.text('Bank Name: Commercial Bank', 14, y);
+  y += 7;
+
+  doc.text('Account Name: MicroMind Lab Pvt Ltd', 14, y);
+  y += 7;
+
+  doc.text('Account Number: 1234567890', 14, y);
+  y += 7;
+
+  doc.text('Branch: Yakkalamulla', 14, y);
+
+  // Footer
+  y += 20;
+
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'italic');
+  doc.setTextColor(150, 150, 150);
+
+  doc.text(
+    'Thank you for shopping at MicroMind Lab! We will contact you to confirm your order.',
+    pageW / 2,
+    y,
+    { align: 'center' }
+  );
+
+  doc.text(
+    'https://micromindlab.edu.lk/store.html',
+    pageW / 2,
+    y + 7,
+    { align: 'center' }
+  );
+
+  return doc;
+}
+
+// ══ SEND NOTIFICATIONS ══
+async function sendNotifications(orderId, total) {
+  const dateStr = new Date().toLocaleDateString('en-GB');
+
+  const rowsHtml = cart.map((i, idx) => `
+    <tr style="background:${idx % 2 === 0 ? '#f9fafb' : '#ffffff'};">
+      <td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;">${i.name}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;text-align:center;">${i.qty}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;text-align:right;">Rs. ${i.price.toLocaleString()}</td>
+      <td style="padding:10px 14px;border-bottom:1px solid #e5e7eb;text-align:right;">Rs. ${(i.price * i.qty).toLocaleString()}</td>
+    </tr>`
+  ).join('');
+
+  const buildHtml = (greeting) => `
+  <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:620px;background:#ffffff;">
+    <!-- Header -->
+    <div style="background:#080f08;padding:24px 28px;border-radius:8px 8px 0 0;">
+      <h1 style="color:#34D399;margin:0;font-size:22px;font-weight:700;letter-spacing:-0.5px;">MicroMind Lab</h1>
+      <p style="color:#a7f3d0;margin:4px 0 0;font-size:13px;">Galle, Sri Lanka &nbsp;|&nbsp; +94 76 901 1856 &nbsp;|&nbsp; micromindlablk@gmail.com</p>
+    </div>
+
+    <!-- Title bar -->
+    <div style="background:#f0fdf4;padding:18px 28px;">
+      <p style="margin:4px 0 0;font-size:13px;color:#6b7280;">Order ID: <strong>${orderId}</strong> &nbsp;|&nbsp; Date: ${dateStr}</p>
+    </div>
+
+    <!-- Body -->
+    <div style="padding:18px 28px;">
+      <p style="margin:0 0 20px;color:#374151;font-size:14px;">${greeting}</p>
+
+      <!-- Customer info -->
+      <table style="width:100%;border-collapse:collapse;margin-bottom:24px;font-size:13px;">
+        <tr>
+          <td style="padding:6px 0;color:#6b7280;width:130px;">Customer ID</td>
+          <td style="padding:6px 0;color:#111827;font-weight:600;">${currentUser.id || ''}</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 0;color:#6b7280;">Name</td>
+          <td style="padding:6px 0;color:#111827;">${currentUser.name}</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 0;color:#6b7280;">Phone</td>
+          <td style="padding:6px 0;color:#111827;">${currentUser.phone}</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 0;color:#6b7280;">Address</td>
+          <td style="padding:6px 0;color:#111827;">${currentUser.address}</td>
+        </tr>
+      </table>
+
+      <!-- Items table -->
+      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px;">
+        <thead>
+          <tr style="background:#080f08;">
+            <th style="padding:10px 14px;text-align:left;color:#34D399;font-weight:600;">Item</th>
+            <th style="padding:10px 14px;text-align:center;color:#34D399;font-weight:600;">Qty</th>
+            <th style="padding:10px 14px;text-align:right;color:#34D399;font-weight:600;">Unit Price</th>
+            <th style="padding:10px 14px;text-align:right;color:#34D399;font-weight:600;">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rowsHtml}
+        </tbody>
+        <tfoot>
+          <tr style="background:#f0fdf4;">
+            <td colspan="3" style="padding:12px 14px;font-weight:700;font-size:14px;color:#065f46;">TOTAL</td>
+            <td style="padding:12px 14px;text-align:right;font-weight:700;font-size:15px;color:#065f46;">Rs. ${total.toLocaleString()}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- Payment Instructions -->
+    <div style="margin-top:24px;padding:18px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;">
+
+      <p style="margin:0 0 12px;color:#374151;font-size:13px;line-height:1.7;">
+        Please send the payment slip and Order ID via WhatsApp (076 901 1856) to confirm your order.
+        You can see Order ID at the top of the bill.
+        Payment can be made to the bank account below.
+      </p>
+
+      <div style="font-size:13px;color:#111827;line-height:1.9;">
+        <div><strong>Bank Name:</strong> Commercial Bank</div>
+        <div><strong>Account Name:</strong> MicroMind Lab Pvt Ltd</div>
+        <div><strong>Account Number:</strong> 1234567890</div>
+        <div><strong>Branch:</strong> Yakkalamulla</div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div style="background:#f9fafb;padding:18px 28px;border-top:1px solid #e5e7eb;border-radius:0 0 8px 8px;text-align:center;">
+      <p style="margin:0;font-size:13px;color:#6b7280;">We will contact you shortly to confirm your order.</p>
+      <p style="margin:6px 0 0;font-size:13px;color:#34D399;font-weight:600;">https://micromindlab.edu.lk/store.html</p>
+    </div>
+  </div>`;
+
+  const SERVICE_ID  = 'service_q3iw6gz';
+  const TEMPLATE_ID = 'template_4q07tx8';
+
+  await Promise.all([
+    emailjs.send(SERVICE_ID, TEMPLATE_ID, {
+      to_email:     currentUser.email,
+      subject:      `MicroMind Lab Invoice — ${orderId}`,
+      html_message: buildHtml(`Dear ${currentUser.name},<br><br>Thank you for your order! Here is your invoice.`)
+    }),
+    emailjs.send(SERVICE_ID, TEMPLATE_ID, {
+      to_email:     ADMIN_EMAIL,
+      subject:      `New Order — ${orderId} | ${currentUser.name}`,
+      html_message: buildHtml(`New order received from <strong>${currentUser.name}</strong>.`)
+    })
+  ]);
+}
+
+// ══ CHECKOUT ══
+async function checkout() {
+  if (!cart.length) return;
+  const btn = document.querySelector('.cart-summary .submit');
+  btn.innerHTML = '<span class="spinner"></span> Processing…';
+  btn.disabled = true;
+
+  const total   = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const orderId = genOrderId(); // ← generated in browser
+
+  // Save to sheet (pass orderId explicitly)
+  try {
+    await postAPI({
+      action:   'order',
+      orderId,                  // ← sent to sheet
+      userId:   currentUser.id,
+      userName: currentUser.name,
+      phone:    currentUser.phone,
+      address:  currentUser.address,
+      items:    cart,
+      total
+    });
+  } catch (e) {
+    console.warn('Order save failed', e);
+  }
+
+  // Generate PDF + send emails
+  try {
+    const pdfDoc = generatePDF(orderId, total);
+    pdfDoc.save(`MicroMind-Lab-${orderId}.pdf`);
+    await sendNotifications(orderId, total);
+  } catch (err) {
+    console.error('PDF/email failed', err);
+    alert('PDF generation failed. Check console.');
+    btn.innerHTML = '<i class="fa-solid fa-file-invoice"></i> Checkout & Download Bill';
+    btn.disabled = false;
+    return;
+  }
+
+  cart = [];
+  localStorage.removeItem('mml_cart');
+  updateCartBadge();
+  btn.innerHTML = '<i class="fa-solid fa-check"></i> Done! PDF downloaded.';
+  setTimeout(() => { renderCart(); }, 2000);
+}
+
+// ══ API helpers ══
+async function postAPI(data) {
+  const res = await fetch(API_URL, { method:'POST', body: JSON.stringify(data) });
+  return res.json();
+}
+
+// ══ Nav helpers ══
+function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
+function closeMenu()  { document.getElementById('mobileMenu').classList.remove('open'); }
+document.addEventListener('click', function(e) {
+  const menu = document.getElementById('mobileMenu');
+  const ham  = document.querySelector('.nav-hamburger');
+  if (menu.classList.contains('open') && !menu.contains(e.target) && !ham.contains(e.target))
+    menu.classList.remove('open');
+});
+</script>
+</body>
+</html>

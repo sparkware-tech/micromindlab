@@ -22,10 +22,10 @@
   <ul class="nav-links">
     <li><a href="index.html#about">About</a></li>
     <li><a href="index.html#instructor">Instructor</a></li>
-    <li><a href="index.html#curriculum">Programs</a></li>
+    <li><a href="index.html#programs">Programs</a></li>
     <li class="nav-dropdown">
       <a href="#">
-        Projects
+        Learn & Build
         <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2 4 6 8 10 4"/></svg>
       </a>
       <div class="dropdown-menu">
@@ -33,7 +33,7 @@
         <div class="dropdown-divider"></div>
         <a href="howitworks.html">How It Works</a>
         <div class="dropdown-divider"></div>
-        <a href="shop.html" target="_blank">Shop</a>
+        <a href="store.html" target="_blank">Store</a>
       </div>
     </li>
     <li><a href="index.html#contact">Contact</a></li>
@@ -49,13 +49,13 @@
   <ul>
     <li><a href="index.html#about" onclick="closeMenu()">About</a></li>
     <li><a href="index.html#instructor" onclick="closeMenu()">Instructor</a></li>
-    <li><a href="index.html#curriculum" onclick="closeMenu()">Programs</a></li>
+    <li><a href="index.html#programs" onclick="closeMenu()">Programs</a></li>
     <li class="mobile-dropdown">
-      <span class="mobile-dropdown-label">Projects</span>
+      <span class="mobile-dropdown-label">Learn & Build</span>
       <ul class="mobile-sub">
         <li><a href="projects.html" onclick="closeMenu()">DIY Projects</a></li>
         <li><a href="howitworks.html" onclick="closeMenu()">How It Works</a></li>
-        <li><a href="shop.html" target="_blank" onclick="closeMenu()">Shop</a></li>
+        <li><a href="store.html" target="_blank" onclick="closeMenu()">Store</a></li>
       </ul>
     </li>
     <li><a href="index.html#contact" onclick="closeMenu()">Contact</a></li>
@@ -71,7 +71,7 @@
   <p>comming soon!</p>
 </div>
 
-<!-- PROJECTS SECTION -->
+<!-- HOW IT WORKS SECTION -->
 
 <!-- FLOATING WHATSAPP -->
 <a href="https://wa.me/94769011856" target="_blank" class="wa-float" aria-label="Chat on WhatsApp">
@@ -81,14 +81,14 @@
 </a>
 
 <!-- FOOTER -->
-<!-- <footer>
+<footer>
   <div class="footer-brand">
     <div class=""><img src="assests/img/logo.png" alt="MicroMind Lab Logo" style="width: 50px;"></div>
     MicroMind Lab
   </div>
   <p class="footer-tagline">The way to a smart future — Galle, Sri Lanka</p>
   <p class="footer-copy">© 2026 MicroMind Lab</p>
-</footer> -->
+</footer>
 
 <script>
 function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
@@ -100,19 +100,6 @@ document.addEventListener('click', function(e) {
     menu.classList.remove('open');
   }
 });
-
-function filterCards(tag, btn) {
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  document.querySelectorAll('.proj-card').forEach(card => {
-    const tags = card.getAttribute('data-tags') || '';
-    if (tag === 'all' || tags.includes(tag)) {
-      card.style.display = 'block';
-    } else {
-      card.style.display = 'none';
-    }
-  });
-}
 
 // Scroll reveal
 const observer = new IntersectionObserver((entries) => {
@@ -127,7 +114,7 @@ const observer = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.08 });
 
-document.querySelectorAll('.proj-card').forEach(el => {
+document.querySelectorAll('.card').forEach(el => {
   el.style.opacity = '0';
   el.style.transform = 'translateY(24px)';
   el.style.transition = 'opacity 0.55s ease, transform 0.55s cubic-bezier(0.16,1,0.3,1)';

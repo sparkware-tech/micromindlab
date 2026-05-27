@@ -22,8 +22,20 @@
   <ul class="nav-links">
     <li><a href="../index.html#about">About</a></li>
     <li><a href="../index.html#instructor">Instructor</a></li>
-    <li><a href="../index.html#curriculum">Programs</a></li>
-    <li><a href="../projects.html">Projects</a></li>
+    <li><a href="../index.html#programs">Programs</a></li>
+    <li class="nav-dropdown">
+      <a href="#">
+        Learn & Build
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2 4 6 8 10 4"/></svg>
+      </a>
+      <div class="dropdown-menu">
+        <a href="../projects.html">DIY Projects</a>
+        <div class="dropdown-divider"></div>
+        <a href="../howitworks.html">How It Works</a>
+        <div class="dropdown-divider"></div>
+        <a href="../store.html" target="_blank">Store</a>
+      </div>
+    </li>
     <li><a href="../index.html#contact">Contact</a></li>
   </ul>
   <a href="../lms.html" target="_blank" class="nav-cta">Log in to LMS</a>
@@ -37,8 +49,15 @@
   <ul>
     <li><a href="../index.html#about" onclick="closeMenu()">About</a></li>
     <li><a href="../index.html#instructor" onclick="closeMenu()">Instructor</a></li>
-    <li><a href="../index.html#curriculum" onclick="closeMenu()">Programs</a></li>
-    <li><a href="../projects.html" onclick="closeMenu()">Projects</a></li>
+    <li><a href="../index.html#programs" onclick="closeMenu()">Programs</a></li>
+    <li class="mobile-dropdown">
+      <span class="mobile-dropdown-label">Learn & Build</span>
+      <ul class="mobile-sub">
+        <li><a href="../projects.html" onclick="closeMenu()">DIY Projects</a></li>
+        <li><a href="../howitworks.html" onclick="closeMenu()">How It Works</a></li>
+        <li><a href="../store.html" target="_blank" onclick="closeMenu()">Store</a></li>
+      </ul>
+    </li>
     <li><a href="../index.html#contact" onclick="closeMenu()">Contact</a></li>
   </ul>
   <a href="../lms.html" target="_blank" class="mobile-menu-cta">Log in to LMS</a>
@@ -69,7 +88,7 @@
 
   <!-- Cover photo -->
   <div class="proj-cover" style="max-width:800px; margin: 2.5rem auto 0; position:relative; z-index:1;">
-    <img src="../assests/img/projects/smart-watering-system.png" alt="Finished Smart Plant Watering System project">
+    <img src="../assests/img/projects/smart-plant-watering-system.png" alt="Finished Smart Plant Watering System project">
   </div>
 </div>
 
@@ -96,7 +115,7 @@
       <h2>Apparatus &amp; Parts List</h2>
     </div>
     <div class="proj-body-text" style="margin-bottom:1.25rem;">
-      <p>Everything you need can be sourced locally ordered from Sri Lanka electronics supplier.</p>
+      <p>Everything you need can be purchased from the <a href="../store.html" target="_blank">MicroMind Lab Store</a> or ordered locally from electronics suppliers in Sri Lanka.</p>
     </div>
     <table class="parts-table">
       <thead>
@@ -131,9 +150,7 @@
     <!-- Replace the placeholder below with your actual wiring diagram image -->
     <div class="diagram-placeholder">
       <i class="fa-solid fa-diagram-project"></i>
-      <p>Add your wiring diagram image here<br>
-        <code style="font-size:11px; color:rgba(255,255,255,0.2);">&lt;img src="assests/img/diagram-bt-car.png" alt="Wiring diagram"&gt;</code>
-      </p>
+      <!-- IMAGE GOES HERE -->
     </div>
     <div class="proj-body-text" style="margin-top:1.25rem;">
       <p><strong>Key connections summary:</strong></p>
@@ -236,11 +253,11 @@
     <!-- Replace images below with your own project photos -->
     <div class="proj-img-grid">
       <div class="proj-img-item">
-        <img src="../assests/img/projects/smart-watering-system.png" alt="Completed Smart Watering System">
+        <img src="../assests/img/projects/smart-plant-watering-system.png" alt="Completed Smart Watering System">
         <div class="proj-img-caption">Finished system — ready to use</div>
       </div>
       <div class="proj-img-item">
-        <img src="../assests/img/projects/smart-watering-system.png" alt="Smart Watering System in Action">
+        <img src="../assests/img/projects/smart-plant-watering-system.png" alt="Smart Watering System in Action">
         <div class="proj-img-caption">System in operation — detecting soil moisture</div>
       </div>
     </div>
