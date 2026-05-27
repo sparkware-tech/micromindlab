@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>MicroMind Lab</title>
-<link rel="icon" type="image/png" href="assests/img/favicon.png">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-<link rel="stylesheet" href="assests/css/lms.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="icon" type="image/png" href="assests/img/favicon.png">
+  <title>MicroMind Lab</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <link rel="stylesheet" href="assests/css/lms.css" />
 </head>
 <body>
 
@@ -15,7 +16,7 @@
 <div id="loading-screen">
   <div class="loader-logo"><i data-lucide="graduation-cap"></i></div>
   <div class="loader-title">MicroMind<span> Lab</span></div>
-  <div class="loader-msg" id="loader-msg">Loading data from Database…</div>
+  <div class="loader-msg" id="loader-msg">Loading…</div>
   <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
   <div class="loader-error" id="loader-error"></div>
   <button class="loader-retry" id="loader-retry" onclick="location.reload()">Retry</button>
@@ -30,7 +31,7 @@
       <p>The Way to Smart Future</p>
     </div>
     <div class="form-group">
-      <label>Username</label>
+      <label>Email</label>
       <input type="text" id="login-user" placeholder="Enter your username" autocomplete="off"/>
     </div>
     <div class="form-group">
@@ -153,9 +154,8 @@ let currentUser = null, isAdmin = false, currentCourse = null, pageHistory = [],
   const loaderErr = document.getElementById('loader-error');
   const loaderBtn = document.getElementById('loader-retry');
   try {
-    loaderMsg.textContent = 'Loading data…';
+    loaderMsg.textContent = 'Loading…';
     await LMS_DATA_PROMISE;
-    loaderMsg.textContent = 'Data loaded';
     await new Promise(r => setTimeout(r, 400));
     loaderEl.style.display = 'none';
     document.getElementById('login-screen').style.display = 'flex';
@@ -369,7 +369,6 @@ function openCourse(courseId) {
 }
 
 /* ── BUILD DAYS ──────────────────────────────────────────────────
-   KEY CHANGE: Files are filtered per-user using canAccessFile().
    • Students  → only see files they have access to;
                  days with zero visible files are hidden entirely.
    • Admins    → see all files; restricted ones show a small lock badge
