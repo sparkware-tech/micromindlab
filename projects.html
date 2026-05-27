@@ -3,9 +3,11 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MicroMind Lab</title>
-    <meta name="description" content="Explore real student projects built at MicroMind Lab — robotics, electronics, IoT, and STEM builds with full step-by-step guides.">
     <link rel="icon" type="image/png" href="assests/img/favicon.png">
+    <title>MicroMind Lab</title>
+
+    <meta name="description" content="Explore real student projects built at MicroMind Lab — robotics, electronics, IoT, and STEM builds with full step-by-step guides.">
+    
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="assests/css/index.css">
@@ -22,10 +24,10 @@
   <ul class="nav-links">
     <li><a href="index.html#about">About</a></li>
     <li><a href="index.html#instructor">Instructor</a></li>
-    <li><a href="index.html#curriculum">Programs</a></li>
+    <li><a href="index.html#programs">Programs</a></li>
     <li class="nav-dropdown">
       <a href="#">
-        Projects
+        Learn & Build
         <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2 4 6 8 10 4"/></svg>
       </a>
       <div class="dropdown-menu">
@@ -49,9 +51,9 @@
   <ul>
     <li><a href="index.html#about" onclick="closeMenu()">About</a></li>
     <li><a href="index.html#instructor" onclick="closeMenu()">Instructor</a></li>
-    <li><a href="index.html#curriculum" onclick="closeMenu()">Programs</a></li>
+    <li><a href="index.html#programs" onclick="closeMenu()">Programs</a></li>
     <li class="mobile-dropdown">
-      <span class="mobile-dropdown-label">Projects</span>
+      <span class="mobile-dropdown-label">Learn & Build</span>
       <ul class="mobile-sub">
         <li><a href="projects.html" onclick="closeMenu()">DIY Projects</a></li>
         <li><a href="howitworks.html" onclick="closeMenu()">How It Works</a></li>
@@ -87,37 +89,6 @@
 
     <!-- PROJECTS GRID -->
     <div class="projects-grid" id="projectsGrid">
-
-      <!-- CARD — Sample -->
-      <!-- <a href="project-bluetooth-car.html" target="_blank" class="proj-card" data-tags="robotics electronics">
-        <div class="new-badge">New</div>
-        <div class="proj-thumb">
-          <img src="assests/img/g4.jpeg" alt="Bluetooth Controlled Car">
-          <div class="proj-thumb-overlay"></div>
-          <div class="proj-view-hint">View Project →</div>
-        </div>
-        <div class="proj-body">
-          <div class="proj-tags">
-            <span class="proj-tag">Robotics</span>
-            <span class="proj-tag">Electronics</span>
-            <span class="proj-tag tag-amber">Arduino</span>
-          </div>
-          <h3>Bluetooth-Controlled Car</h3>
-          <p>Build a 4-wheel robot car you can drive from your smartphone via Bluetooth. Covers motor drivers, Arduino programming, and wireless control.</p>
-          <div class="proj-footer">
-            <div class="proj-level">
-              <i class="fa-solid fa-signal"></i> Beginner
-              <div class="diff-dots">
-                <div class="diff-dot lit"></div>
-                <div class="diff-dot"></div>
-                <div class="diff-dot"></div>
-              </div>
-            </div>
-            <div class="proj-arrow"><i class="fa-solid fa-arrow-right"></i></div>
-          </div>
-        </div>
-      </a> -->
-
       <!-- CARD 1 — Smart Watering System -->
       <a href="projects/smart-watering-system.html" target="_blank" class="proj-card" data-tags="embedded">
         <div class="new-badge">New</div>
@@ -127,11 +98,6 @@
           <div class="proj-view-hint">View Project →</div>
         </div>
         <div class="proj-body">
-          <!-- <div class="proj-tags">
-            <span class="proj-tag">Embedded Systems</span>
-            <span class="proj-tag">Electronics</span>
-            <span class="proj-tag tag-amber">Arduino</span>
-          </div> -->
           <h3>Smart Watering System</h3>
           <p>Build an automated watering system for your plants using sensors and microcontrollers. Learn about soil moisture detection, relay control, and programming.</p>
           <div class="proj-footer">
@@ -155,10 +121,6 @@
           <i class="proj-thumb-icon fa-solid fa-robot"></i>
         </div>
         <div class="proj-body">
-          <!-- <div class="proj-tags">
-            <span class="proj-tag">Robotics</span>
-            <span class="proj-tag tag-amber">Arduino</span>
-          </div> -->
           <h3>Line-Following Robot</h3>
           <p>Program a robot to automatically follow a black line on the floor using IR sensors. Learn sensor input, logic, and motor control.</p>
           <div class="proj-footer">
@@ -175,13 +137,12 @@
         </div>
       </a>
 
-    </div><!-- /projects-grid -->
+    </div>
 
     <!-- <div style="text-align:center; margin-top:4rem;">
       <p style="color:rgba(255,255,255,0.25); font-size:13px; margin-bottom:1.25rem;">Want to build one of these? Start with a free discussion.</p>
       <a href="index.html#contact" class="btn-green">Book a Free Discussion &rarr;</a>
     </div> -->
-
   </div>
 </div>
 
