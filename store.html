@@ -3,20 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MicroMind Lab</title>
   <link rel="icon" type="image/png" href="assests/img/favicon.png">
+  <title>MicroMind Lab</title>
+
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@0,400;0,500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="assests/css/index.css">
   <link rel="stylesheet" href="assests/css/store.css">
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script>emailjs.init('QtsJNKdPc57DkoLgW');</script>
 </head>
 <body>
 
 <!-- NAV — hidden on auth view -->
 <nav id="mainNav">
-  <a href="shop.html" class="nav-logo">
+  <a href="#" class="nav-logo">
     <img src="assests/img/logo.png" alt="MicroMind Lab" style="width:50px;">
     MicroMind Lab
   </a>
@@ -44,11 +42,11 @@
 <div id="view-auth">
   <div class="auth-wrap">
     <div class="auth-card">
-      <div class="nav-logo" style="margin-bottom:1.5rem;justify-content:center;">
-        <img src="assests/img/logo.png" alt="" style="width:40px;">
-        MicroMind Lab
+      <div class="login-logo">
+        <div class="logo-icon-wrap"><img src="assests/img/logo.png" style="width:100%;" alt="Logo"/></div>
+        <h1>MicroMind<span> Lab</span></h1>
+        <p>The Way to Smart Future</p>
       </div>
-      <p class="auth-sub" style="text-align:center;">Sign in to access the shop</p>
       <div class="auth-tabs">
         <button class="auth-tab active" onclick="switchTab('login')">Login</button>
         <button class="auth-tab" onclick="switchTab('signup')">Sign Up</button>
@@ -182,6 +180,8 @@
 
 <!-- jsPDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>emailjs.init('QtsJNKdPc57DkoLgW');</script>
 
 <script>
 // ══════════════════════════════════════════
