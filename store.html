@@ -66,8 +66,8 @@
         <div class="fg"><label>Full Name</label><input type="text" id="su-name" placeholder="e.g. Nimal Perera"></div>
         <div class="fg"><label>Email</label><input type="email" id="su-email" placeholder="you@example.com"></div>
         <div class="fg"><label>Password</label><input type="password" id="su-pass" placeholder="Choose a password"></div>
-        <div class="fg"><label>Phone / WhatsApp</label><input type="tel" id="su-phone" placeholder="+94 7X XXX XXXX"></div>
-        <div class="fg"><label>Delivery Address</label><textarea id="su-address" placeholder="No, Street, City"></textarea></div>
+        <div class="fg"><label>Phone / WhatsApp</label><input type="tel" id="su-phone" placeholder="07X XXX XXXX"></div>
+        <div class="fg"><label>Delivery Address / Location</label><textarea id="su-address" placeholder="No, Street, City"></textarea></div>
         <button class="submit" onclick="doSignup()" id="signup-btn">Create Account</button>
       </div>
     </div>
@@ -143,8 +143,8 @@
       <p class="auth-err" id="profile-ok" style="color:#34D399;"></p>
       <div class="fg"><label>Full Name</label><input type="text" id="prof-name" placeholder="Full Name"></div>
       <div class="fg"><label>Email</label><input type="email" id="prof-email" placeholder="Email" readonly style="opacity:0.5;cursor:not-allowed;"></div>
-      <div class="fg"><label>Phone / WhatsApp</label><input type="tel" id="prof-phone" placeholder="+94 7X XXX XXXX"></div>
-      <div class="fg"><label>Delivery Address</label><textarea id="prof-address" placeholder="No, Street, City"></textarea></div>
+      <div class="fg"><label>Phone / WhatsApp</label><input type="tel" id="prof-phone" placeholder="07X XXX XXXX"></div>
+      <div class="fg"><label>Delivery Address / Location</label><textarea id="prof-address" placeholder="No, Street, City"></textarea></div>
       <div class="fg">
         <label>New Password <span style="color:rgba(255,255,255,0.3);font-weight:400;">(leave blank to keep current)</span></label>
         <input type="password" id="prof-pass" placeholder="New password">
@@ -202,10 +202,8 @@ let modalProduct = null;
 
 // ── ID generators ──
 function genOrderId() {
-  // Get sequence from localStorage for consistent 4-digit format
-  let seq = parseInt(localStorage.getItem('mml_order_seq') || '0') + 1;
-  localStorage.setItem('mml_order_seq', seq);
-  return 'O' + String(seq).padStart(3, '0');
+  const rand = Math.floor(10000 + Math.random() * 90000); // always 5 digits
+  return 'ORD-' + rand;
 }
 
 // ── Init ──
@@ -352,9 +350,13 @@ async function loadProducts() {
 }
 
 function renderCategories() {
-  // Separate DIY sub-categories from regular categories
-  const allCats = [...new Set(allProducts.map(p => p.category))].filter(Boolean);
-  
+  // Split comma-separated categories and flatten
+  const allCats = [...new Set(
+    allProducts.flatMap(p =>
+      (p.category || '').split(',').map(c => c.trim()).filter(Boolean)
+    )
+  )];
+
   const regularCats = allCats.filter(c => !c.startsWith('DIY'));
   const diySubCats  = allCats.filter(c => c.startsWith('DIY'));
 
@@ -367,16 +369,12 @@ function renderCategories() {
     'Tools':'fa-screwdriver-wrench'
   };
 
-  let html = '';
-
-  // Regular categories
-  html += regularCats.map(c =>
+  let html = regularCats.map(c =>
     `<button class="cat-btn" onclick="filterCat('${c}',this)">
       <i class="fa-solid ${icons[c]||'fa-tag'}"></i> ${c}
     </button>`
   ).join('');
 
-  // DIY Projects accordion
   if (diySubCats.length > 0) {
     html += `
       <button class="cat-btn cat-diy-toggle" onclick="toggleDIY(this)" id="diyParentBtn">
@@ -393,8 +391,7 @@ function renderCategories() {
             <i class="fa-solid fa-screwdriver-wrench"></i> ${label}
           </button>`;
         }).join('')}
-      </div>
-    `;
+      </div>`;
   }
 
   document.getElementById('catList').innerHTML = html;
@@ -422,10 +419,10 @@ function filterCat(cat, btn) {
   currentSubCat = '';
   document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  // Keep DIY parent highlighted if sub-cat selected
   if (cat.startsWith('DIY')) {
-    document.getElementById('diyParentBtn') && document.getElementById('diyParentBtn').classList.add('active-parent');
-    const label = cat.replace(/^DIY[\s\-_]*/i,'').trim() || cat;
+    const diyBtn = document.getElementById('diyParentBtn');
+    if (diyBtn) diyBtn.classList.add('active-parent');
+    const label = cat.replace(/^DIY[\s\-_]*/i, '').trim() || cat;
     document.getElementById('shopCatTitle').textContent = label;
   } else {
     document.getElementById('shopCatTitle').textContent = cat === 'All' ? 'All Products' : cat;
@@ -437,19 +434,28 @@ function searchProducts(val) { currentSearch = val.toLowerCase(); renderProducts
 
 function renderProducts() {
   let list = allProducts;
+
   if (currentCat === 'DIY_ALL') {
-    list = list.filter(p => p.category && p.category.startsWith('DIY'));
+    list = list.filter(p =>
+      (p.category || '').split(',').map(c => c.trim()).some(c => c.startsWith('DIY'))
+    );
   } else if (currentCat !== 'All') {
-    list = list.filter(p => p.category === currentCat);
+    list = list.filter(p =>
+      (p.category || '').split(',').map(c => c.trim()).includes(currentCat)
+    );
   }
+
   if (currentSearch) list = list.filter(p =>
-    p.name.toLowerCase().includes(currentSearch) || (p.description||'').toLowerCase().includes(currentSearch)
+    p.name.toLowerCase().includes(currentSearch) ||
+    (p.description || '').toLowerCase().includes(currentSearch)
   );
 
   if (!list.length) {
-    document.getElementById('productGrid').innerHTML = '<p style="color:rgba(255,255,255,0.3);grid-column:1/-1;text-align:center;padding:3rem 0;">No products found.</p>';
+    document.getElementById('productGrid').innerHTML =
+      '<p style="color:rgba(255,255,255,0.3);grid-column:1/-1;text-align:center;padding:3rem 0;">No products found.</p>';
     return;
   }
+
   document.getElementById('productGrid').innerHTML = list.map(p => `
     <div class="prod-card" onclick="openModal(${JSON.stringify(p).replace(/"/g,'&quot;')})">
       <img class="prod-img" src="${p.image1||'assests/img/logo.png'}" alt="${p.name}" onerror="this.src='assests/img/logo.png'">
@@ -538,7 +544,7 @@ function renderCart() {
         <span class="cart-total-label">Total (${cart.reduce((s,i)=>s+i.qty,0)} items)</span>
         <span class="cart-total-val">Rs. ${total.toLocaleString()}</span>
       </div>
-      <button class="submit" onclick="checkout()"><i class="fa-solid fa-file-invoice" style="margin-right:8px;"></i>Checkout & Download Quotation</button>
+      <button class="submit" onclick="checkout()"><i class="fa-solid fa-file-invoice" style="margin-right:8px;"></i>Checkout & Download Bill</button>
     </div>`;
 }
 
@@ -572,12 +578,12 @@ function generatePDF(orderId, total) {
 
   // Quotation title
   doc.setTextColor(0,0,0);
-  doc.setFontSize(16); doc.setFont('helvetica','bold');
-  doc.text('QUOTATION', pageW/2, 54, { align:'center' });
-  doc.setFontSize(10); doc.setFont('helvetica','normal');
+  doc.setFontSize(10);
+  doc.setFont('helvetica','normal');
   doc.setTextColor(100,100,100);
-  doc.text(`Order ID: ${orderId}`, pageW/2, 62, { align:'center' });
-  doc.text(`Date: ${new Date().toLocaleDateString('en-GB')}`, pageW/2, 69, { align:'center' });
+
+  doc.text(`Order ID: ${orderId}`, 14, 62, { align: 'left' });
+  doc.text(`Date: ${new Date().toLocaleDateString('en-GB')}`, 14, 69, { align: 'left' });
 
   // Customer details
   doc.setFontSize(11); doc.setFont('helvetica','bold'); doc.setTextColor(0,0,0);
@@ -620,7 +626,7 @@ function generatePDF(orderId, total) {
   y += 20;
   doc.setFontSize(9); doc.setFont('helvetica','italic'); doc.setTextColor(150,150,150);
   doc.text('Thank you for shopping at MicroMind Lab! We will contact you to confirm your order.', pageW/2, y, {align:'center'});
-  doc.text('micromindlab.edu.lk', pageW/2, y+7, {align:'center'});
+  doc.text('https://micromindlab.edu.lk/store.html', pageW/2, y+7, {align:'center'});
 
   return doc;
 }
@@ -729,14 +735,14 @@ async function checkout() {
   btn.innerHTML = '<span class="spinner"></span> Processing…';
   btn.disabled = true;
 
-  const total   = cart.reduce((s,i) => s + i.price * i.qty, 0);
-  const orderId = genOrderId();
+  const total   = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const orderId = genOrderId(); // ← generated in browser
 
-  // Save to Google Sheet
+  // Save to sheet (pass orderId explicitly)
   try {
     await postAPI({
       action:   'order',
-      orderId,
+      orderId,                  // ← sent to sheet
       userId:   currentUser.id,
       userName: currentUser.name,
       phone:    currentUser.phone,
@@ -744,30 +750,25 @@ async function checkout() {
       items:    cart,
       total
     });
-  } catch(e) { console.warn('Order save failed', e); }
+  } catch (e) {
+    console.warn('Order save failed', e);
+  }
 
-  // Generate PDF
-  let pdfDoc, pdfBase64;
+  // Generate PDF + send emails
   try {
-    if (!window.jspdf) throw new Error('jsPDF not loaded');
-    pdfDoc    = generatePDF(orderId, total);
-    pdfBase64 = pdfDoc.output('datauristring').split(',')[1];
+    const pdfDoc = generatePDF(orderId, total);
     pdfDoc.save(`MicroMind-Quotation-${orderId}.pdf`);
-
     await sendNotifications(orderId, total);
-  } catch(err) {
-    console.error('PDF generation failed', err);
+  } catch (err) {
+    console.error('PDF/email failed', err);
     alert('PDF generation failed. Check console.');
-    btn.innerHTML = '<i class="fa-solid fa-file-invoice"></i> Checkout & Download Quotation';
+    btn.innerHTML = '<i class="fa-solid fa-file-invoice"></i> Checkout & Download Bill';
     btn.disabled = false;
     return;
   }
 
-  // Send notifications (email + WhatsApp)
-  await sendNotifications(orderId, total, pdfBase64);
-
-  // Clear cart
-  cart = []; localStorage.removeItem('mml_cart');
+  cart = [];
+  localStorage.removeItem('mml_cart');
   updateCartBadge();
   btn.innerHTML = '<i class="fa-solid fa-check"></i> Done! PDF downloaded.';
   setTimeout(() => { renderCart(); }, 2000);
