@@ -757,7 +757,7 @@ async function checkout() {
   // Generate PDF + send emails
   try {
     const pdfDoc = generatePDF(orderId, total);
-    pdfDoc.save(`MicroMind-Quotation-${orderId}.pdf`);
+    pdfDoc.save(`MicroMind-Lab-${orderId}.pdf`);
     await sendNotifications(orderId, total);
   } catch (err) {
     console.error('PDF/email failed', err);
