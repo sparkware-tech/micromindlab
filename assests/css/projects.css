@@ -154,7 +154,7 @@ background: rgba(255,255,255,0.15);
 .diff-dot.lit-red   { background: #F87171; }
 
 /* SECTION LABEL */
-.projects-section { padding: 0rem 1.5rem 4rem 1.5rem; }
+.projects-section { padding: 3rem 1.5rem 4rem 1.5rem; }
 .proj-section-head { text-align: center; margin-bottom: 3rem; }
 
 /* COMING SOON CARD */
@@ -264,6 +264,7 @@ font-size: 13px; font-family: 'Sora', sans-serif;
 
 /* CONTENT AREA */
 .proj-content { max-width: 800px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+.proj-content-hero { max-width: 800px; margin: 0 auto; padding: 100px 1.5rem 5rem; }
 
 /* SECTION BLOCKS */
 .proj-section {
