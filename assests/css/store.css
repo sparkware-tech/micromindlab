@@ -297,6 +297,25 @@ body::before {
   transition: background .2s, border-color .2s;
 }
 .prod-add-btn:hover { background: rgba(52,211,153,.25); border-color: rgba(52,211,153,.6); }
+.prod-add-btn:disabled,
+.prod-add-btn.is-disabled,
+.modal-add-btn:disabled,
+.modal-add-btn.is-disabled {
+  cursor: not-allowed;
+  background: rgba(255,255,255,.045);
+  border-color: rgba(255,255,255,.1);
+  color: var(--text-3);
+  opacity: .8;
+}
+.prod-add-btn:disabled:hover,
+.prod-add-btn.is-disabled:hover,
+.modal-add-btn:disabled:hover,
+.modal-add-btn.is-disabled:hover {
+  background: rgba(255,255,255,.045);
+  border-color: rgba(255,255,255,.1);
+  transform: none;
+  box-shadow: none;
+}
 
 /* ══ PRODUCT MODAL ══ */
 .modal-overlay {

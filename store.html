@@ -447,6 +447,18 @@ function filterCat(cat, btn) {
 
 function searchProducts(val) { currentSearch = val.toLowerCase(); renderProducts(); }
 
+function getProductStock(p) {
+  const raw = p.stock ?? p.Stock ?? p.STOCK ?? p.sock ?? p.Sock ?? p.SOCK;
+  if (raw === undefined || raw === null || raw === '') return null;
+  const stock = Number(raw);
+  return Number.isFinite(stock) ? stock : null;
+}
+
+function isOutOfStock(p) {
+  const stock = getProductStock(p);
+  return stock !== null && stock <= 0;
+}
+
 function renderProducts() {
   let list = allProducts;
 
@@ -471,18 +483,21 @@ function renderProducts() {
     return;
   }
 
-  document.getElementById('productGrid').innerHTML = list.map(p => `
+  document.getElementById('productGrid').innerHTML = list.map(p => {
+    const outOfStock = isOutOfStock(p);
+    return `
     <div class="prod-card" onclick="openModal(${JSON.stringify(p).replace(/"/g,'&quot;')})">
       <img class="prod-img" src="${p.image1||'assests/img/logo.png'}" alt="${p.name}" onerror="this.src='assests/img/logo.png'">
       <div class="prod-body">
         <div class="prod-name">${p.name}</div>
         <div class="prod-price">Rs. ${Number(p.price).toLocaleString()}</div>
-        <button class="prod-add-btn" onclick="event.stopPropagation();addToCart(${JSON.stringify(p).replace(/"/g,'&quot;')})">
-          <i class="fa-solid fa-cart-plus"></i> Add to Cart
+        <button class="prod-add-btn ${outOfStock ? 'is-disabled' : ''}" ${outOfStock ? 'disabled aria-disabled="true"' : ''} onclick="event.stopPropagation();addToCart(${JSON.stringify(p).replace(/"/g,'&quot;')}, event)">
+          <i class="fa-solid ${outOfStock ? 'fa-ban' : 'fa-cart-plus'}"></i> ${outOfStock ? 'Out of Stock' : 'Add to Cart'}
         </button>
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 
 // ══ MODAL ══
@@ -496,7 +511,20 @@ function openModal(p) {
   document.getElementById('modalThumbs').innerHTML  = imgs.map((img,i) =>
     `<img class="modal-img-thumb ${i===0?'active':''}" src="${img}" onclick="switchModalImg('${img}',this)">`
   ).join('');
-  document.getElementById('modalAddBtn').onclick = () => { addToCart(p); closeModalBtn(); };
+  const modalAddBtn = document.getElementById('modalAddBtn');
+  if (isOutOfStock(p)) {
+    modalAddBtn.disabled = true;
+    modalAddBtn.setAttribute('aria-disabled', 'true');
+    modalAddBtn.classList.add('is-disabled');
+    modalAddBtn.innerHTML = '<i class="fa-solid fa-ban"></i> Out of Stock';
+    modalAddBtn.onclick = null;
+  } else {
+    modalAddBtn.disabled = false;
+    modalAddBtn.removeAttribute('aria-disabled');
+    modalAddBtn.classList.remove('is-disabled');
+    modalAddBtn.innerHTML = '<i class="fa-solid fa-cart-plus"></i> Add to Cart';
+    modalAddBtn.onclick = event => { addToCart(p, event); closeModalBtn(); };
+  }
   document.getElementById('productModal').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -512,13 +540,14 @@ function closeModalBtn() {
 }
 
 // ══ CART ══
-function addToCart(p) {
+function addToCart(p, evt) {
+  if (isOutOfStock(p)) return;
   const existing = cart.find(i => i.id === p.id);
   if (existing) existing.qty++;
   else cart.push({ id:p.id, name:p.name, price:Number(p.price), image:p.image1||'', qty:1 });
   localStorage.setItem('mml_cart', JSON.stringify(cart));
   updateCartBadge();
-  const btn = event.target.closest('button');
+  const btn = evt?.target?.closest('button');
   if (btn) { const orig = btn.innerHTML; btn.innerHTML = '<i class="fa-solid fa-check"></i> Added!'; setTimeout(()=>btn.innerHTML=orig, 1200); }
 }
 
