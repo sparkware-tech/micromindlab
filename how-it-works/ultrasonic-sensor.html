@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MicroMind Lab</title>
+    <meta name="description" content="Learn how ultrasonic sensors measure distance using sound pulses and echo timing.">
+    <link rel="icon" type="image/png" href="../assests/img/favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="../assests/css/index.css">
+    <link rel="stylesheet" href="../assests/css/projects.css">
+  </head>
+<body>
+<nav>
+  <a href="../index.html" class="nav-logo"><div><img src="../assests/img/logo.png" alt="MicroMind Lab Logo" style="width: 50px;"></div>MicroMind Lab</a>
+  <ul class="nav-links">
+    <li><a href="../index.html#about">About</a></li>
+    <li><a href="../index.html#instructor">Instructor</a></li>
+    <li><a href="../index.html#programs">Programs</a></li>
+    <li class="nav-dropdown"><a href="#">Learn &amp; Build <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2 4 6 8 10 4"/></svg></a><div class="dropdown-menu"><a href="../projects.html">DIY Projects</a><div class="dropdown-divider"></div><a href="../howitworks.html">How It Works</a><div class="dropdown-divider"></div><a href="../store.html" target="_blank">Store</a></div></li>
+    <li><a href="../index.html#contact">Contact</a></li>
+  </ul>
+  <a href="../lms.html" target="_blank" class="nav-cta">Log in to LMS</a>
+  <button class="nav-hamburger" onclick="toggleMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <ul>
+    <li><a href="../index.html#about" onclick="closeMenu()">About</a></li>
+    <li><a href="../index.html#instructor" onclick="closeMenu()">Instructor</a></li>
+    <li><a href="../index.html#programs" onclick="closeMenu()">Programs</a></li>
+    <li class="mobile-dropdown"><span class="mobile-dropdown-label">Learn &amp; Build</span><ul class="mobile-sub"><li><a href="../projects.html" onclick="closeMenu()">DIY Projects</a></li><li><a href="../howitworks.html" onclick="closeMenu()">How It Works</a></li><li><a href="../store.html" target="_blank" onclick="closeMenu()">Store</a></li></ul></li>
+    <li><a href="../index.html#contact" onclick="closeMenu()">Contact</a></li>
+  </ul>
+  <a href="../lms.html" target="_blank" class="mobile-menu-cta">Log in to LMS</a>
+</div>
+
+<div class="proj-detail-hero">
+  <div class="proj-detail-orb"></div>
+  <div class="proj-detail-hero-inner">
+    <a href="../howitworks.html" class="proj-back"><i class="fa-solid fa-arrow-left"></i> Back to How It Works</a>
+    <div class="proj-meta-row"><span class="proj-meta-tag">Sensor</span><span class="proj-meta-level"><i class="fa-solid fa-wave-square" style="color:#34D399;font-size:11px;"></i> Echo distance</span></div>
+    <h1>How Ultrasonic Sensors Work</h1>
+    <p class="lead">An ultrasonic sensor measures distance by sending a high-frequency sound pulse and measuring how long the echo takes to return.</p>
+    <div class="proj-stats">
+      <div class="proj-stat"><i class="fa-solid fa-volume-high"></i><span>Signal</span><strong>Sound pulse</strong></div>
+      <div class="proj-stat"><i class="fa-solid fa-clock"></i><span>Measures</span><strong>Time</strong></div>
+      <div class="proj-stat"><i class="fa-solid fa-ruler"></i><span>Output</span><strong>Distance</strong></div>
+    </div>
+  </div>
+  <div class="proj-cover"><img src="../assests/img/howitworks/ultrasonic sensor.jpg" alt="Electronics project representing ultrasonic sensor learning"></div>
+</div>
+
+<div class="proj-content">
+  <div class="proj-section"><div class="proj-section-label"><div class="proj-section-icon"><i class="fa-solid fa-book-open"></i></div><h2>Simple Idea</h2></div><div class="proj-body-text"><p>The sensor has a transmitter and receiver. The transmitter sends a short sound burst. If an object is in front of it, the sound bounces back as an echo.</p><p>The controller measures the travel time. Since sound speed is known, the distance can be calculated from the echo time.</p></div></div>
+  <div class="proj-divider"></div>
+  <div class="proj-section"><div class="proj-section-label"><div class="proj-section-icon"><i class="fa-solid fa-list-check"></i></div><h2>How It Works</h2></div><div class="steps-list">
+    <div class="step-item"><div class="step-num-circle">1</div><div class="step-item-body"><h4>Trigger pulse</h4><p>The microcontroller sends a short trigger signal to start the measurement.</p></div></div>
+    <div class="step-item"><div class="step-num-circle">2</div><div class="step-item-body"><h4>Sound travels</h4><p>The sensor sends ultrasonic sound waves forward through the air.</p></div></div>
+    <div class="step-item"><div class="step-num-circle">3</div><div class="step-item-body"><h4>Echo returns</h4><p>The receiver detects the sound after it reflects from an object.</p></div></div>
+    <div class="step-item"><div class="step-num-circle">4</div><div class="step-item-body"><h4>Distance is calculated</h4><p>Distance is found from time and speed of sound, then divided by two because the sound travels out and back.</p></div></div>
+  </div></div>
+  <div class="proj-divider"></div>
+  <div class="proj-section"><div class="proj-section-label"><div class="proj-section-icon"><i class="fa-solid fa-lightbulb"></i></div><h2>Common Uses</h2></div><div class="proj-body-text"><p>Obstacle avoiding robots, parking sensors, water-level measuring systems, smart dustbins, and distance measuring tools.</p></div></div>
+  <div class="proj-nav-footer"><a href="../howitworks.html" class="proj-nav-btn"><i class="fa-solid fa-arrow-left"></i><span><span class="proj-nav-btn-label">Back</span><span class="proj-nav-btn-title">How It Works</span></span></a><a href="servo-motor.html" class="proj-nav-btn"><span><span class="proj-nav-btn-label">Next</span><span class="proj-nav-btn-title">Servo Motor</span></span><i class="fa-solid fa-arrow-right"></i></a></div>
+</div>
+
+<a href="https://wa.me/94769011856" target="_blank" class="wa-float" aria-label="Chat on WhatsApp"><i class="fa-brands fa-whatsapp"></i><span class="wa-float-label">Chat with us</span><span class="wa-float-ping"></span></a>
+<footer><div class="footer-brand"><div><img src="../assests/img/logo.png" alt="MicroMind Lab Logo" style="width: 50px;"></div>MicroMind Lab</div><p class="footer-tagline">The way to a smart future - Galle, Sri Lanka</p><p class="footer-copy">&copy; 2026 MicroMind Lab</p></footer>
+<script>
+function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
+function closeMenu() { document.getElementById('mobileMenu').classList.remove('open'); }
+document.addEventListener('click', function(e) { const menu = document.getElementById('mobileMenu'); const hamburger = document.querySelector('.nav-hamburger'); if (menu.classList.contains('open') && !menu.contains(e.target) && !hamburger.contains(e.target)) menu.classList.remove('open'); });
+</script>
+</body>
+</html>
