@@ -63,6 +63,7 @@
   <a href="../lms.html" target="_blank" class="mobile-menu-cta">Log in to LMS</a>
 </div>
 
+<!-- PROJECT CONTENT -->
 <!-- PROJECT HERO -->
 <div class="proj-detail-hero">
   <div class="proj-detail-orb"></div>
@@ -70,25 +71,45 @@
     <a href="../projects.html" class="proj-back">
       <i class="fa-solid fa-arrow-left"></i> Back to Projects
     </a>
+
     <div class="proj-meta-row">
-      <span class="proj-meta-tag">Embedded Systems</span>
+      <span class="proj-meta-tag">Electronics</span>
       <span class="proj-meta-tag">Arduino</span>
-      <span class="proj-meta-tag">Automation</span>
-      <span class="proj-meta-level"><i class="fa-solid fa-signal" style="color:#34D399;font-size:11px;"></i> Intermediate</span>
+      <span class="proj-meta-tag">Sensors</span>
+      <span class="proj-meta-level">
+        <i class="fa-solid fa-signal" style="color:#34D399;font-size:11px;"></i>
+        Beginner
+      </span>
     </div>
-    <h1>Smart Plant Watering System</h1>
-    <p class="lead">Build an automatic plant watering system that detects soil moisture and waters the plant only when needed.</p>
+
+    <h1>Smart Color Detector</h1>
+    <p class="lead">
+      Build a smart color detection and sorting system using a color sensor and servo motor. The system identifies colors and automatically moves the servo to the matching position.
+    </p>
 
     <div class="proj-stats">
-      <div class="proj-stat"><i class="fa-solid fa-clock"></i><span>Build time</span><strong>3–4 hours</strong></div>
-      <div class="proj-stat"><i class="fa-solid fa-layer-group"></i><span>Difficulty</span><strong>Intermediate</strong></div>
-      <div class="proj-stat"><i class="fa-solid fa-microchip"></i><span>Platform</span><strong>Arduino</strong></div>
+      <div class="proj-stat">
+        <i class="fa-solid fa-clock"></i>
+        <span>Build time</span>
+        <strong>2–3 hours</strong>
+      </div>
+
+      <div class="proj-stat">
+        <i class="fa-solid fa-layer-group"></i>
+        <span>Difficulty</span>
+        <strong>Beginner</strong>
+      </div>
+
+      <div class="proj-stat">
+        <i class="fa-solid fa-microchip"></i>
+        <span>Platform</span>
+        <strong>Arduino</strong>
+      </div>
     </div>
   </div>
 
-  <!-- Cover photo -->
-  <div class="proj-cover" style="max-width:800px; margin: 2.5rem auto 0; position:relative; z-index:1;">
-    <img src="../assests/img/projects/smart-plant-watering-system.png" alt="Finished Smart Plant Watering System project">
+  <div class="proj-cover" style="max-width:800px; margin:2.5rem auto 0; position:relative; z-index:1;">
+    <img src="../assests/img/logo.png" alt="Smart Color Detector Project">
   </div>
 </div>
 
@@ -98,25 +119,30 @@
   <!-- OVERVIEW -->
   <div class="proj-section">
     <div class="proj-section-label">
-      <div class="proj-section-icon"><i class="fa-solid fa-book-open"></i></div>
+      <div class="proj-section-icon">
+        <i class="fa-solid fa-book-open"></i>
+      </div>
       <h2>Overview</h2>
     </div>
+
     <div class="proj-body-text">
-      <p>The system continuously checks the soil moisture level using a moisture sensor. When the soil becomes dry, the Arduino automatically turns on a solenoid valve to water the plant. Once enough moisture is detected, the solenoid valve close automatically.</p>
+      <p>
+        The Smart Color Detector uses a TCS3200 color sensor to identify the color of an object placed in front of it. The Arduino reads the sensor values and compares them to determine whether the object is red, green, or blue. Once detected, a servo motor rotates to a predefined position, creating a simple automated color sorting system.
+      </p>
     </div>
   </div>
 
   <div class="proj-divider"></div>
 
-  <!-- APPARATUS -->
+  <!-- PARTS -->
   <div class="proj-section">
     <div class="proj-section-label">
-      <div class="proj-section-icon"><i class="fa-solid fa-toolbox"></i></div>
+      <div class="proj-section-icon">
+        <i class="fa-solid fa-toolbox"></i>
+      </div>
       <h2>Apparatus &amp; Parts List</h2>
     </div>
-    <div class="proj-body-text" style="margin-bottom:1.25rem;">
-      <p>Everything you need can be purchased from the <a href="../store.html" target="_blank">MicroMind Lab Store</a> or ordered locally from electronics suppliers in Sri Lanka.</p>
-    </div>
+
     <table class="parts-table">
       <thead>
         <tr>
@@ -126,209 +152,226 @@
       </thead>
       <tbody>
         <tr><td>Arduino Uno</td><td><span class="qty-badge">×1</span></td></tr>
-        <tr><td>Soil Moisture Sensor Module</td><td><span class="qty-badge">×1</span></td></tr>
-        <tr><td>5V Relay Module</td><td><span class="qty-badge">×1</span></td></tr>
-        <tr><td>Solenoid Valve</td><td><span class="qty-badge">×1</span></td></tr>
-        <tr><td>Power Supply 12V/1A</td><td><span class="qty-badge">×1</span></td></tr>
-        <tr><td>Jumper Wires (male-male, male-female)</td><td><span class="qty-badge">×30</span></td></tr>
-        <tr><td>Small Breadboard (half-size)</td><td><span class="qty-badge">×1</span></td></tr>
+        <tr><td>TCS3200 Color Sensor Module</td><td><span class="qty-badge">×1</span></td></tr>
+        <tr><td>SG90 Servo Motor</td><td><span class="qty-badge">×1</span></td></tr>
+        <tr><td>Breadboard</td><td><span class="qty-badge">×1</span></td></tr>
+        <tr><td>Jumper Wires</td><td><span class="qty-badge">×20</span></td></tr>
+        <tr><td>USB Cable</td><td><span class="qty-badge">×1</span></td></tr>
+        <tr><td>Colored Paper (Red, Green, Blue)</td><td><span class="qty-badge">×3</span></td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="proj-divider"></div>
 
-  <!-- CIRCUIT DIAGRAM -->
+  <!-- WIRING -->
   <div class="proj-section">
     <div class="proj-section-label">
-      <div class="proj-section-icon"><i class="fa-solid fa-diagram-project"></i></div>
+      <div class="proj-section-icon">
+        <i class="fa-solid fa-diagram-project"></i>
+      </div>
       <h2>Wiring Diagram</h2>
     </div>
+
     <div class="proj-body-text">
-      <p>Wire the components as shown in the diagram below.</p>
+      <p>Connect the components according to the wiring diagram below.</p>
     </div>
-    <!-- Replace the placeholder below with your actual wiring diagram image -->
+
     <div class="diagram-placeholder">
       <i class="fa-solid fa-diagram-project"></i>
-      <!-- IMAGE GOES HERE -->
+      <!-- Add wiring image here -->
     </div>
+
     <div class="proj-body-text" style="margin-top:1.25rem;">
-      <p><strong>Key connections summary:</strong></p>
-      <p></p>
+      <p><strong>Key Connections Summary:</strong></p>
+
+      <ul>
+        <li>TCS3200 VCC → Arduino 5V</li>
+        <li>TCS3200 GND → Arduino GND</li>
+        <li>TCS3200 S0 → D4</li>
+        <li>TCS3200 S1 → D5</li>
+        <li>TCS3200 S2 → D6</li>
+        <li>TCS3200 S3 → D7</li>
+        <li>TCS3200 OUT → D8</li>
+        <li>Servo Signal → D9</li>
+        <li>Servo VCC → 5V</li>
+        <li>Servo GND → GND</li>
+      </ul>
     </div>
   </div>
 
   <div class="proj-divider"></div>
 
-  <!-- STEP BY STEP -->
+  <!-- BUILD GUIDE -->
   <div class="proj-section">
     <div class="proj-section-label">
-      <div class="proj-section-icon"><i class="fa-solid fa-list-check"></i></div>
+      <div class="proj-section-icon">
+        <i class="fa-solid fa-list-check"></i>
+      </div>
       <h2>Step-by-Step Build Guide</h2>
     </div>
+
     <div class="steps-list">
+
       <div class="step-item">
         <div class="step-num-circle">1</div>
         <div class="step-item-body">
-          <h4>Prepare the plant setup</h4>
-          <p>Place the soil moisture sensor into the plant pot soil. Ensure the sensing area is fully covered by soil but avoid pushing too deep.</p>
+          <h4>Connect the color sensor</h4>
+          <p>Place the TCS3200 sensor on the breadboard and connect all pins according to the wiring diagram.</p>
         </div>
       </div>
+
       <div class="step-item">
         <div class="step-num-circle">2</div>
         <div class="step-item-body">
-          <h4>Connect the soil moisture sensor</h4>
-          <p>Connect the soil moisture sensor to the Arduino as shown in the wiring diagram. The sensor should be placed in the plant pot soil, ensuring the sensing area is fully covered but not submerged.</p>
+          <h4>Connect the servo motor</h4>
+          <p>Attach the servo signal wire to Arduino pin D9. The servo will rotate to different positions based on the detected color.</p>
         </div>
       </div>
+
       <div class="step-item">
         <div class="step-num-circle">3</div>
         <div class="step-item-body">
-          <h4>Connect the relay module</h4>
-          <p>Connect the relay input pin to Arduino D7. The relay acts as a switch to safely control the  solenoid valve.</p>
+          <h4>Upload the Arduino code</h4>
+          <p>Open Arduino IDE and upload the following code:</p>
+
+<pre><code>
+#include &lt;Servo.h&gt;
+
+Servo sorter;
+
+#define S0 4
+#define S1 5
+#define S2 6
+#define S3 7
+#define sensorOut 8
+
+int redValue;
+int greenValue;
+int blueValue;
+
+void setup() {
+
+  pinMode(S0, OUTPUT);
+  pinMode(S1, OUTPUT);
+  pinMode(S2, OUTPUT);
+  pinMode(S3, OUTPUT);
+  pinMode(sensorOut, INPUT);
+
+  digitalWrite(S0, HIGH);
+  digitalWrite(S1, LOW);
+
+  sorter.attach(9);
+
+  Serial.begin(9600);
+}
+
+void loop() {
+
+  digitalWrite(S2, LOW);
+  digitalWrite(S3, LOW);
+  redValue = pulseIn(sensorOut, LOW);
+
+  digitalWrite(S2, HIGH);
+  digitalWrite(S3, HIGH);
+  greenValue = pulseIn(sensorOut, LOW);
+
+  digitalWrite(S2, LOW);
+  digitalWrite(S3, HIGH);
+  blueValue = pulseIn(sensorOut, LOW);
+
+  if (redValue &lt; greenValue && redValue &lt; blueValue) {
+    sorter.write(30);
+  }
+  else if (greenValue &lt; redValue && greenValue &lt; blueValue) {
+    sorter.write(90);
+  }
+  else {
+    sorter.write(150);
+  }
+
+  delay(500);
+}
+</code></pre>
+
         </div>
       </div>
+
       <div class="step-item">
         <div class="step-num-circle">4</div>
         <div class="step-item-body">
-          <h4>Wire the solenoid valve</h4>
-          <p>Connect the solenoid valve to the relay output. Ensure the valve is properly connected to the water source and the plant's irrigation system.</p>
+          <h4>Test the sensor</h4>
+          <p>Show different colored objects to the sensor and monitor the readings in the Serial Monitor.</p>
         </div>
       </div>
+
       <div class="step-item">
         <div class="step-num-circle">5</div>
         <div class="step-item-body">
-          <h4>Upload the Arduino code</h4>
-          <p>Open Arduino IDE and upload the following code:</p>
-            <pre><code>
-  int sensorPin = A0;
-  int relayPin = 7;
-
-  int moistureValue = 0;
-  int dryThreshold = 600;
-
-  void setup() {
-    pinMode(relayPin, OUTPUT);
-    digitalWrite(relayPin, HIGH);
-
-    Serial.begin(9600);
-  }
-
-  void loop() {
-
-    moistureValue = analogRead(sensorPin);
-
-    Serial.println(moistureValue);
-
-    if (moistureValue > dryThreshold) {
-      digitalWrite(relayPin, LOW); // Pump ON
-    }
-    else {
-      digitalWrite(relayPin, HIGH); // Pump OFF
-    }
-
-    delay(1000);
-  }
-            </code></pre>
+          <h4>Calibrate color values</h4>
+          <p>Lighting conditions can affect sensor readings. Adjust the detection thresholds for better accuracy.</p>
         </div>
       </div>
+
       <div class="step-item">
         <div class="step-num-circle">6</div>
         <div class="step-item-body">
-          <h4>Test &amp; troubleshoot</h4>
-          <p>Power the Arduino and monitor the soil condition. Adjust the dryThreshold value depending on your soil type.</p>
+          <h4>Test the sorting system</h4>
+          <p>Present red, green, and blue objects to the sensor. The servo should rotate to the matching position for each detected color.</p>
         </div>
       </div>
+
     </div>
   </div>
-
-  <div class="proj-divider"></div>
-
-  <!-- PROJECT PHOTOS -->
-  <div class="proj-section">
-    <div class="proj-section-label">
-      <div class="proj-section-icon"><i class="fa-solid fa-images"></i></div>
-      <h2>Project Photos</h2>
-    </div>
-    <!-- Replace images below with your own project photos -->
-    <div class="proj-img-grid">
-      <div class="proj-img-item">
-        <img src="../assests/img/projects/smart-plant-watering-system.png" alt="Completed Smart Watering System">
-        <div class="proj-img-caption">Finished system — ready to use</div>
-      </div>
-      <div class="proj-img-item">
-        <img src="../assests/img/projects/smart-plant-watering-system.png" alt="Smart Watering System in Action">
-        <div class="proj-img-caption">System in operation — detecting soil moisture</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="proj-divider"></div>
-
-  <!-- VIDEO TUTORIAL -->
-  <!-- <div class="proj-section">
-    <div class="proj-section-label">
-      <div class="proj-section-icon"><i class="fa-brands fa-youtube"></i></div>
-      <h2>Video Tutorial</h2>
-    </div>
-    <div class="proj-body-text">
-      <p>Watch the full build walkthrough below. The video covers the complete assembly, wiring, code upload, and final test drive.</p>
-    </div>
-    <div class="video-wrap">
-      <iframe 
-        src="https://www.youtube.com/embed/"
-        title="Smart Watering System Tutorial — MicroMind Lab"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen>
-      </iframe>
-    </div>
-  </div> -->
 
   <div class="proj-divider"></div>
 
   <!-- WHAT YOU LEARN -->
   <div class="proj-section">
     <div class="proj-section-label">
-      <div class="proj-section-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+      <div class="proj-section-icon">
+        <i class="fa-solid fa-graduation-cap"></i>
+      </div>
       <h2>What You Will Learn</h2>
     </div>
 
-    <ul class="about-bullets" style="margin-top:0;">
+    <ul class="about-bullets">
 
       <li>
         <div class="bullet-icon"><i class="fa-solid fa-check"></i></div>
-        How soil moisture sensors detect water levels in soil
+        How color sensors detect different colors using light frequencies
       </li>
 
       <li>
         <div class="bullet-icon"><i class="fa-solid fa-check"></i></div>
-        Reading analog sensor values using Arduino
+        Reading sensor data with Arduino
       </li>
 
       <li>
         <div class="bullet-icon"><i class="fa-solid fa-check"></i></div>
-        How relay modules safely control high-power devices like water pumps
+        Using the TCS3200 color sensor module
       </li>
 
       <li>
         <div class="bullet-icon"><i class="fa-solid fa-check"></i></div>
-        Writing Arduino automation logic using if/else conditions
+        Controlling servo motors with Arduino
       </li>
 
       <li>
         <div class="bullet-icon"><i class="fa-solid fa-check"></i></div>
-        Basics of smart farming and automated irrigation systems
+        Writing decision-making programs using if/else statements
       </li>
 
       <li>
         <div class="bullet-icon"><i class="fa-solid fa-check"></i></div>
-        Troubleshooting sensors, wiring, and power supply issues
+        Building simple automation and sorting systems
       </li>
 
     </ul>
   </div>
 
-</div><!-- /proj-content -->
+</div>
+<!-- /PROJECT CONTENT -->
 
 <!-- FLOATING WHATSAPP -->
 <a href="https://wa.me/94769011856" target="_blank" class="wa-float" aria-label="Chat on WhatsApp">
