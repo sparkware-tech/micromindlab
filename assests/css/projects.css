@@ -264,6 +264,7 @@ font-size: 13px; font-family: 'Sora', sans-serif;
 
 /* CONTENT AREA */
 .proj-content { max-width: 800px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+.proj-content-hero { max-width: 800px; margin: 0 auto; padding: 100px 1.5rem 5rem; }
 
 /* SECTION BLOCKS */
 .proj-section {
