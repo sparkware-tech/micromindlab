@@ -225,17 +225,31 @@ function removeFromSidebar(id){
   if(el) el.remove();
 }
 
-function placeImageOnCanvas(src,name,x,y){
-  const img=new Image();
-  img.onload=()=>{
-    const maxW=200, maxH=200;
-    let w=img.naturalWidth||150, h=img.naturalHeight||150;
-    if(w>maxW){h=h*(maxW/w);w=maxW;}
-    if(h>maxH){w=w*(maxH/h);h=maxH;}
-    w=Math.round(w); h=Math.round(h);
-    createImageNode(src,name,x-w/2,y-h/2,w,h);
+function placeImageOnCanvas(src, name, x, y) {
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    // Convert to data URL so canvas export works for cross-origin images
+    const cv = document.createElement('canvas');
+    cv.width = img.naturalWidth || 150;
+    cv.height = img.naturalHeight || 150;
+    cv.getContext('2d').drawImage(img, 0, 0);
+    let safeSrc;
+    try {
+      safeSrc = cv.toDataURL('image/png');
+    } catch(e) {
+      // CORS blocked — use original src (will render visually but may fail export)
+      safeSrc = src;
+      toast('⚠ Image may not export — CORS restricted');
+    }
+    const maxW = 200, maxH = 200;
+    let w = img.naturalWidth || 150, h = img.naturalHeight || 150;
+    if (w > maxW) { h = h * (maxW / w); w = maxW; }
+    if (h > maxH) { w = w * (maxH / h); h = maxH; }
+    createImageNode(safeSrc, name, x - Math.round(w)/2, y - Math.round(h)/2, Math.round(w), Math.round(h));
   };
-  img.src=src;
+  img.onerror = () => toast('Failed to load image: ' + name);
+  img.src = src;
 }
 
 function createImageNode(src,name,x,y,w,h,srcId){
@@ -714,6 +728,7 @@ function exportPNG(){
   // Draw images then wires via SVG
   const pending=images.map(img=>new Promise(res=>{
     const i=new Image();
+    i.crossOrigin='anonymous';
     i.onload=()=>{ctx.drawImage(i,img.x,img.y,img.w,img.h);res();}
     i.onerror=res;
     i.src=img.src;
