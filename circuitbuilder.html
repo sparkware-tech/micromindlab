@@ -35,8 +35,8 @@
 <div id="layout">
   <div id="sidebar">
     <div id="stabs">
-      <div class="stab active" onclick="showTab('upload')">Images</div>
-      <div class="stab" onclick="showTab('components')">Parts</div>
+      <div class="stab active" onclick="showTab('components')">Components</div>
+      <div class="stab" onclick="showTab('upload')">Upload</div>
     </div>
     <div id="sbody">
       <div id="tab-upload">
@@ -47,7 +47,7 @@
         </div>
         <input type="file" id="fi" accept="image/*" multiple style="display:none" onchange="handleFileInput(event)">
         <div id="img-list" class="img-list"></div>
-        <div class="help-hint">
+        <!-- <div class="help-hint">
           Drag images onto canvas.<br>
           Select to resize corners.<br><br>
           <b style="color:var(--accent)">Wire mode:</b><br>
@@ -56,7 +56,7 @@
           • Right-click = end wire<br><br>
           <b style="color:var(--red)">Erase mode:</b><br>
           • Click wire to delete
-        </div>
+        </div> -->
       </div>
       <div id="tab-components" style="display:none">
         <div id="comp-list" class="img-list" style="margin-top:6px"></div>
@@ -135,6 +135,7 @@ function init(){
   buildSwatches();
   resizeGrid();
   loadComponentsFromJS();
+  showTab('components');
   window.addEventListener('resize',resizeGrid);
   document.addEventListener('keydown',onKey);
   document.addEventListener('paste',onPaste);
@@ -642,7 +643,7 @@ function showTab(t){
   if(tab) tab.style.display='block';
   // activate the matching stab
   const stabs=document.querySelectorAll('.stab');
-  const order={upload:0,components:1};
+  const order={components:0,upload:1};
   if(order[t]!==undefined && stabs[order[t]]) stabs[order[t]].classList.add('active');
 }
 
