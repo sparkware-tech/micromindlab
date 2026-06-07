@@ -119,6 +119,17 @@ const imgLayer=document.getElementById('img-layer');
 const gridCv=document.getElementById('grid-cv');
 const gctx=gridCv.getContext('2d');
 
+// helper near the top of your script
+function normalizeDriveUrl(url) {
+  // Convert various Drive share formats to direct export
+  const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || 
+                url.match(/id=([a-zA-Z0-9_-]+)/);
+  if (match) {
+    return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+  }
+  return url;
+}
+
 // ─── INIT ─────────────────────────────────────────────────────────────────
 function init(){
   buildSwatches();
@@ -226,30 +237,44 @@ function removeFromSidebar(id){
 }
 
 function placeImageOnCanvas(src, name, x, y) {
-  const img = new Image();
-  img.crossOrigin = 'anonymous';
-  img.onload = () => {
-    // Convert to data URL so canvas export works for cross-origin images
-    const cv = document.createElement('canvas');
-    cv.width = img.naturalWidth || 150;
-    cv.height = img.naturalHeight || 150;
-    cv.getContext('2d').drawImage(img, 0, 0);
-    let safeSrc;
-    try {
-      safeSrc = cv.toDataURL('image/png');
-    } catch(e) {
-      // CORS blocked — use original src (will render visually but may fail export)
-      safeSrc = src;
-      toast('⚠ Image may not export — CORS restricted');
-    }
-    const maxW = 200, maxH = 200;
-    let w = img.naturalWidth || 150, h = img.naturalHeight || 150;
-    if (w > maxW) { h = h * (maxW / w); w = maxW; }
-    if (h > maxH) { w = w * (maxH / h); h = maxH; }
-    createImageNode(safeSrc, name, x - Math.round(w)/2, y - Math.round(h)/2, Math.round(w), Math.round(h));
+  src = normalizeDriveUrl(src);
+  
+  const tryLoad = (useCORS) => {
+    const img = new Image();
+    if (useCORS) img.crossOrigin = 'anonymous';
+    
+    img.onload = () => {
+      let safeSrc = src;
+      if (useCORS) {
+        const cv = document.createElement('canvas');
+        cv.width = img.naturalWidth || 150;
+        cv.height = img.naturalHeight || 150;
+        cv.getContext('2d').drawImage(img, 0, 0);
+        try {
+          safeSrc = cv.toDataURL('image/png');
+        } catch(e) {
+          safeSrc = src; // CORS tainted — use URL directly
+          toast('⚠ Image placed but may not export (CORS)');
+        }
+      }
+      const maxW = 200, maxH = 200;
+      let w = img.naturalWidth || 150, h = img.naturalHeight || 150;
+      if (w > maxW) { h = h * (maxW / w); w = maxW; }
+      if (h > maxH) { w = w * (maxH / h); h = maxH; }
+      createImageNode(safeSrc, name, x - Math.round(w)/2, y - Math.round(h)/2, Math.round(w), Math.round(h));
+    };
+    
+    img.onerror = () => {
+      if (useCORS) {
+        tryLoad(false); // retry without CORS
+      } else {
+        toast('Failed to load: ' + name);
+      }
+    };
+    img.src = src;
   };
-  img.onerror = () => toast('Failed to load image: ' + name);
-  img.src = src;
+  
+  tryLoad(true);
 }
 
 function createImageNode(src,name,x,y,w,h,srcId){
