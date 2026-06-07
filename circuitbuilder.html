@@ -59,12 +59,6 @@
         </div>
       </div>
       <div id="tab-components" style="display:none">
-        <div id="gsheet-cfg">
-          <div style="font-size:9px;color:var(--muted);margin-bottom:5px;letter-spacing:.5px">GOOGLE SHEET ID</div>
-          <input id="gsheet-id" type="text" placeholder="Paste Sheet ID here…" style="width:100%;background:var(--panel2);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:9px;padding:5px 7px;border-radius:4px;outline:none;box-sizing:border-box">
-          <button onclick="loadComponents()" style="margin-top:6px;width:100%;background:rgba(52,211,153,.1);border:1px solid var(--accent);color:var(--accent);font-family:inherit;font-size:10px;padding:5px;border-radius:4px;cursor:pointer;letter-spacing:.5px">⟳ Load Components</button>
-        </div>
-        <div id="comp-status" style="font-size:9px;color:var(--muted);margin-top:6px;min-height:14px"></div>
         <div id="comp-list" class="img-list" style="margin-top:6px"></div>
       </div>
     </div>
@@ -91,6 +85,8 @@
   <span id="wcount">0 wires</span>
 </div>
 <div id="toast"></div>
+
+<script src="assests/constant/components.js"></script>
 
 <script>
 // ─── COLORS ──────────────────────────────────────────────────────────────
@@ -127,6 +123,7 @@ const gctx=gridCv.getContext('2d');
 function init(){
   buildSwatches();
   resizeGrid();
+  loadComponentsFromJS();
   window.addEventListener('resize',resizeGrid);
   document.addEventListener('keydown',onKey);
   document.addEventListener('paste',onPaste);
@@ -610,46 +607,26 @@ function showTab(t){
   if(order[t]!==undefined && stabs[order[t]]) stabs[order[t]].classList.add('active');
 }
 
-// ─── COMPONENTS (Google Sheet + Drive) ───────────────────────────────────
-// Drive file ID → direct image URL
-function driveImgUrl(fileId){
-  return `https://drive.google.com/thumbnail?id=${fileId.trim()}&sz=w200`;
+// ─── COMPONENTS lOAD ───────────────────────────────────
+function loadComponentsFromJS() {
+
+  const list = document.getElementById('comp-list');
+
+  list.innerHTML = '';
+
+  COMPONENTS.forEach(comp => {
+
+    addComponentToPanel(
+      comp.name,
+      comp.image
+    );
+
+  });
+
 }
 
-async function loadComponents(){
-  const sheetId=document.getElementById('gsheet-id').value.trim();
-  if(!sheetId){ compStatus('⚠ Paste a Sheet ID first','#f85149'); return; }
 
-  compStatus('Loading…','var(--muted)');
-  document.getElementById('comp-list').innerHTML='';
-
-  // Use the public CSV export endpoint — no API key needed for public sheets
-  const url=`https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
-
-  try{
-    const res=await fetch(url);
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const csv=await res.text();
-    const rows=parseCSV(csv).filter(r=>r[0]&&r[1]);
-
-    if(!rows.length){ compStatus('No data found in sheet','#f85149'); return; }
-
-    const list=document.getElementById('comp-list');
-    rows.forEach(([name,fileId])=>{
-      const imgUrl=driveImgUrl(fileId);
-      addComponentToPanel(name.trim(), imgUrl, fileId.trim());
-    });
-    compStatus(`✓ ${rows.length} component${rows.length>1?'s':''} loaded`,'var(--accent)');
-
-    // Save sheet ID for next session
-    try{ localStorage.setItem('cb_sheet_id', sheetId); }catch(e){}
-  }catch(err){
-    compStatus('⚠ Could not load sheet — make sure it\'s public','#f85149');
-    console.error(err);
-  }
-}
-
-function addComponentToPanel(name, imgUrl, fileId){
+function addComponentToPanel(name, imgUrl){
   const list=document.getElementById('comp-list');
   const item=document.createElement('div');
   item.className='img-item'; item.draggable=true;
@@ -682,27 +659,7 @@ function addComponentToPanel(name, imgUrl, fileId){
   list.appendChild(item);
 }
 
-function parseCSV(text){
-  // Simple CSV parser handling quoted fields
-  const rows=[];
-  text.trim().split('\n').forEach(line=>{
-    const cols=[]; let cur=''; let inQ=false;
-    for(let i=0;i<line.length;i++){
-      const c=line[i];
-      if(c==='"'){ inQ=!inQ; }
-      else if(c===','&&!inQ){ cols.push(cur); cur=''; }
-      else cur+=c;
-    }
-    cols.push(cur);
-    if(cols.length>=2) rows.push(cols.map(c=>c.replace(/^"|"$/g,'').trim()));
-  });
-  return rows;
-}
 
-function compStatus(msg,color){
-  const el=document.getElementById('comp-status');
-  el.textContent=msg; el.style.color=color;
-}
 
 
 function updateStatus(){
