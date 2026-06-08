@@ -29,6 +29,11 @@
   <button class="btn" onclick="exportPNG()">↓ PNG</button>
   <!-- <button class="btn" onclick="exportSVG()">↓ SVG</button> -->
   <button class="btn danger" onclick="clearAll()">Clear</button>
+  <div class="sep"></div>
+  <button class="btn" onclick="adjustZoom(-0.1)">−</button>
+  <span id="zoom-val" style="font-size:10px;color:var(--muted);min-width:32px;text-align:center">100%</span>
+  <button class="btn" onclick="adjustZoom(0.1)">+</button>
+  <button class="btn" onclick="resetZoom()" title="Reset zoom (Ctrl+0)">⊡</button>
   <div id="mode-badge" style="margin-left:auto">SELECT</div>
 </div>
 
@@ -71,9 +76,11 @@
     onmousemove="cvMove(event)"
     onmouseup="cvUp(event)"
     oncontextmenu="cvRightClick(event)">
-    <canvas id="grid-cv"></canvas>
-    <div id="img-layer" style="position:absolute;inset:0"></div>
-    <svg id="wire-svg" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none"></svg>
+    <div id="zoom-layer" style="position:absolute;inset:0;transform-origin:top left;">
+      <canvas id="grid-cv"></canvas>
+      <div id="img-layer" style="position:absolute;inset:0"></div>
+      <svg id="wire-svg" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none"></svg>
+    </div>
   </div>
 </div>
 
@@ -396,11 +403,11 @@ function cvMove(e){
   // Resize image
   if(dragging&&dragging.type==='resize'){
     const dx=e.clientX-dragging.ox;
-    const dy=e.clientY-dragging.oy;
-    const nw=Math.max(30,dragging.iw+dx);
-    const nh=Math.max(20,dragging.ih+dy);
+    const aspect=dragging.ih/dragging.iw;  // original h/w ratio
+    const nw=Math.max(30, dragging.iw+dx);
+    const nh=Math.round(nw*aspect);
     dragging.obj.w=Math.round(nw);
-    dragging.obj.h=Math.round(nh);
+    dragging.obj.h=nh;
     dragging.obj.el.style.width=dragging.obj.w+'px';
     dragging.obj.el.style.height=dragging.obj.h+'px';
     return;
@@ -633,6 +640,9 @@ function onKey(e){
     removeImageNode(selectedImg);
   }
   if(e.key==='Enter'&&mode==='wire'&&wireDraw){ finishWire(); }
+  if (e.ctrlKey && (e.key === '0' || e.key === '=')) { e.preventDefault(); resetZoom(); }
+  if (e.ctrlKey && e.key === '+') { e.preventDefault(); adjustZoom(ZOOM_STEP); }
+  if (e.ctrlKey && e.key === '-') { e.preventDefault(); adjustZoom(-ZOOM_STEP); }
 }
 
 // ─── STATUS & TABS ────────────────────────────────────────────────────────
@@ -784,6 +794,44 @@ function toast(msg){
   if(_tt) clearTimeout(_tt);
   _tt=setTimeout(()=>el.classList.remove('show'),2800);
 }
+
+// ─── ZOOM ─────────────────────────────────────────────────────────────────
+let zoom = 1;
+const ZOOM_MIN = 0.2, ZOOM_MAX = 4, ZOOM_STEP = 0.1;
+const zoomLayer = document.getElementById('zoom-layer');
+
+function applyZoom() {
+  zoomLayer.style.transform = `scale(${zoom})`;
+  document.getElementById('zoom-val').textContent = Math.round(zoom * 100) + '%';
+}
+
+function adjustZoom(delta) {
+  zoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, zoom + delta));
+  applyZoom();
+}
+
+function resetZoom() {
+  zoom = 1;
+  applyZoom();
+}
+
+// Ctrl+Scroll to zoom
+canvasEl.addEventListener('wheel', e => {
+  if (!e.ctrlKey) return;
+  e.preventDefault();
+  adjustZoom(e.deltaY < 0 ? ZOOM_STEP : -ZOOM_STEP);
+}, { passive: false });
+
+
+function cvPt(e) {
+  const r = canvasEl.getBoundingClientRect();
+  return {
+    x: (e.clientX - r.left) / zoom,
+    y: (e.clientY - r.top) / zoom
+  };
+}
+
+
 
 document.addEventListener('mouseup',()=>{dragging=null;});
 
