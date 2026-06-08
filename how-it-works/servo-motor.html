@@ -12,10 +12,61 @@
     <link rel="stylesheet" href="../assests/css/projects.css">
   </head>
 <body>
-<nav><a href="../index.html" class="nav-logo"><div><img src="../assests/img/logo.png" alt="MicroMind Lab Logo" style="width: 50px;"></div>MicroMind Lab</a><ul class="nav-links"><li><a href="../index.html#about">About</a></li><li><a href="../index.html#instructor">Instructor</a></li><li><a href="../index.html#programs">Programs</a></li><li class="nav-dropdown"><a href="#">Learn &amp; Build <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2 4 6 8 10 4"/></svg></a><div class="dropdown-menu"><a href="../projects.html">DIY Projects</a><div class="dropdown-divider"></div><a href="../circuitbuilder.html" target="_blank">Circuit Builder</a><div class="dropdown-divider"></div><a href="../howitworks.html">How It Works</a><div class="dropdown-divider"></div><a href="../store.html" target="_blank">Store</a></div></li><li><a href="../index.html#contact">Contact</a></li></ul><a href="../lms.html" target="_blank" class="nav-cta">Log in to LMS</a><button class="nav-hamburger" onclick="toggleMenu()" aria-label="Menu"><span></span><span></span><span></span></button></nav>
-<div class="mobile-menu" id="mobileMenu"><ul><li><a href="../index.html#about" onclick="closeMenu()">About</a></li><li><a href="../index.html#instructor" onclick="closeMenu()">Instructor</a></li><li><a href="../index.html#programs" onclick="closeMenu()">Programs</a></li><li class="mobile-dropdown"><span class="mobile-dropdown-label">Learn &amp; Build</span><ul class="mobile-sub"><li><a href="../projects.html" onclick="closeMenu()">DIY Projects</a></li><li><a href="../circuitbuilder.html" target="_blank" onclick="closeMenu()">Circuit Builder</a></li><li><a href="../howitworks.html" onclick="closeMenu()">How It Works</a></li><li><a href="../store.html" target="_blank" onclick="closeMenu()">Store</a></li></ul></li><li><a href="../index.html#contact" onclick="closeMenu()">Contact</a></li></ul><a href="../lms.html" target="_blank" class="mobile-menu-cta">Log in to LMS</a></div>
+<nav>
+  <a href="#" class="nav-logo">
+    <div class=""><img src="../assests/img/logo.png" alt="MicroMind Lab Logo" style="width: 50px;"></div>
+    MicroMind Lab
+  </a>
+  <ul class="nav-links">
+    <li><a href="../index.html#about">About</a></li>
+    <li><a href="../index.html#instructor">Instructor</a></li>
+    <li><a href="../index.html#programs">Programs</a></li>
+    <li class="nav-dropdown">
+      <a href="#">
+        Learn & Build
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2 4 6 8 10 4"/></svg>
+      </a>
+      <div class="dropdown-menu">
+        <a href="../blogs.html">Lab Journal</a>
+        <div class="dropdown-divider"></div>
+        <a href="../howitworks.html">Tech Explorer</a>
+        <div class="dropdown-divider"></div>
+        <a href="../projects.html">Project Hub</a>
+        <div class="dropdown-divider"></div>
+        <a href="../circuitbuilder.html" target="_blank">Circuit Studio</a>
+        <div class="dropdown-divider"></div>
+        <a href="../store.html" target="_blank">Lab Store</a>
+      </div>
+    </li>
+    <li><a href="../index.html#contact">Contact</a></li>
+  </ul>
+  <a href="../lms.html" target="_blank" class="nav-cta">Log in to LMS</a>
+  <button class="nav-hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
 
-<div class="proj-content-hero"><div class="proj-detail-orb"></div><div class="proj-detail-hero-inner"><a href="../howitworks.html" class="proj-back"><i class="fa-solid fa-arrow-left"></i> Back to How It Works</a><div class="proj-meta-row"><span class="proj-meta-tag">Motor</span><span class="proj-meta-level"><i class="fa-solid fa-rotate" style="color:#34D399;font-size:11px;"></i> Angle control</span></div><h1>How Servo Motors Work</h1><p class="lead">A servo motor turns to a requested angle and holds that position using a small motor, gears, and internal feedback.</p><div class="proj-stats"><div class="proj-stat"><i class="fa-solid fa-sliders"></i><span>Input</span><strong>PWM signal</strong></div><div class="proj-stat"><i class="fa-solid fa-rotate"></i><span>Motion</span><strong>Angle</strong></div><div class="proj-stat"><i class="fa-solid fa-bullseye"></i><span>Feedback</span><strong>Position</strong></div></div></div><div class="proj-cover"><img src="../assests/img/howitworks/servo motor.webp" alt="Servo motor learning activity"></div></div>
+<div class="mobile-menu" id="mobileMenu">
+  <ul>
+    <li><a href="../index.html#about" onclick="closeMenu()">About</a></li>
+    <li><a href="../index.html#instructor" onclick="closeMenu()">Instructor</a></li>
+    <li><a href="../index.html#programs" onclick="closeMenu()">Programs</a></li>
+    <li class="mobile-dropdown">
+      <span class="mobile-dropdown-label">Learn & Build</span>
+      <ul class="mobile-sub">
+        <li><a href="../blogs.html" onclick="closeMenu()">Lab Journal</a></li>
+        <li><a href="../howitworks.html" onclick="closeMenu()">Tech Explorer</a></li>
+        <li><a href="../projects.html" onclick="closeMenu()">Project Hub</a></li>
+        <li><a href="../circuitbuilder.html" target="_blank" onclick="closeMenu()">Circuit Studio</a></li>
+        <li><a href="../store.html" target="_blank" onclick="closeMenu()">Lab Store</a></li>
+      </ul>
+    </li>
+    <li><a href="../index.html#contact" onclick="closeMenu()">Contact</a></li>
+  </ul>
+  <a href="../lms.html" target="_blank" class="mobile-menu-cta">Log in to LMS</a>
+</div>
+
+<div class="proj-detail-hero"><div class="proj-detail-orb"></div><div class="proj-detail-hero-inner"><a href="../howitworks.html" class="proj-back"><i class="fa-solid fa-arrow-left"></i> Back to How It Works</a><div class="proj-meta-row"><span class="proj-meta-tag">Motor</span><span class="proj-meta-tag"><i class="fa-solid fa-rotate" style="color:#34D399;font-size:11px;"></i> Angle control</span></div><h1>How Servo Motors Work</h1><p class="lead">A servo motor turns to a requested angle and holds that position using a small motor, gears, and internal feedback.</p><div class="proj-stats"><div class="proj-stat"><i class="fa-solid fa-sliders"></i><span>Input</span><strong>PWM signal</strong></div><div class="proj-stat"><i class="fa-solid fa-rotate"></i><span>Motion</span><strong>Angle</strong></div><div class="proj-stat"><i class="fa-solid fa-bullseye"></i><span>Feedback</span><strong>Position</strong></div></div></div><div class="proj-cover"><img src="../assests/img/howitworks/servo motor.webp" alt="Servo motor learning activity"></div></div>
 
 <div class="proj-content">
   <div class="proj-section"><div class="proj-section-label"><div class="proj-section-icon"><i class="fa-solid fa-book-open"></i></div><h2>Simple Idea</h2></div><div class="proj-body-text"><p>A normal DC motor spins continuously. A servo motor is different because it is designed to move to a specific angle, such as 0, 90, or 180 degrees.</p><p>Inside the servo, gears slow the motor down and increase strength. A feedback sensor tells the controller where the shaft is positioned.</p></div></div>
@@ -23,7 +74,7 @@
   <div class="proj-section"><div class="proj-section-label"><div class="proj-section-icon"><i class="fa-solid fa-list-check"></i></div><h2>How It Works</h2></div><div class="steps-list"><div class="step-item"><div class="step-num-circle">1</div><div class="step-item-body"><h4>Controller sends a signal</h4><p>A microcontroller sends a PWM signal that represents the target angle.</p></div></div><div class="step-item"><div class="step-num-circle">2</div><div class="step-item-body"><h4>Servo compares position</h4><p>The internal circuit compares the target angle with the current shaft position.</p></div></div><div class="step-item"><div class="step-num-circle">3</div><div class="step-item-body"><h4>Motor turns through gears</h4><p>The motor rotates until the shaft reaches the requested angle.</p></div></div><div class="step-item"><div class="step-num-circle">4</div><div class="step-item-body"><h4>Position is held</h4><p>The servo keeps making small corrections so the shaft stays in place.</p></div></div></div></div>
   <div class="proj-divider"></div>
   <div class="proj-section"><div class="proj-section-label"><div class="proj-section-icon"><i class="fa-solid fa-lightbulb"></i></div><h2>Common Uses</h2></div><div class="proj-body-text"><p>Robot arms, steering systems, camera mounts, automatic doors, grippers, and small moving mechanisms.</p></div></div>
-  <div class="proj-nav-footer"><a href="ultrasonic-sensor.html" class="proj-nav-btn"><i class="fa-solid fa-arrow-left"></i><span><span class="proj-nav-btn-label">Previous</span><span class="proj-nav-btn-title">Ultrasonic Sensor</span></span></a><a href="stepper-motor.html" class="proj-nav-btn"><span><span class="proj-nav-btn-label">Next</span><span class="proj-nav-btn-title">Stepper Motor</span></span><i class="fa-solid fa-arrow-right"></i></a></div>
+  <!-- <div class="proj-nav-footer"><a href="ultrasonic-sensor.html" class="proj-nav-btn"><i class="fa-solid fa-arrow-left"></i><span><span class="proj-nav-btn-label">Previous</span><span class="proj-nav-btn-title">Ultrasonic Sensor</span></span></a><a href="stepper-motor.html" class="proj-nav-btn"><span><span class="proj-nav-btn-label">Next</span><span class="proj-nav-btn-title">Stepper Motor</span></span><i class="fa-solid fa-arrow-right"></i></a></div> -->
 </div>
 
 <a href="https://wa.me/94769011856" target="_blank" class="wa-float" aria-label="Chat on WhatsApp"><i class="fa-brands fa-whatsapp"></i><span class="wa-float-label">Chat with us</span><span class="wa-float-ping"></span></a><footer><div class="footer-brand"><div><img src="../assests/img/logo.png" alt="MicroMind Lab Logo" style="width: 50px;"></div>MicroMind Lab</div><p class="footer-tagline">The way to a smart future - Galle, Sri Lanka</p><p class="footer-copy">&copy; 2026 MicroMind Lab</p></footer>

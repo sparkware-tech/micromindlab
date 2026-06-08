@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="../assests/img/favicon.png">
+    <title>MicroMind Lab</title>
+    <meta name="description" content="Many people use invention and innovation interchangeably — but they're very different forces. Understanding the gap changes how you approach every build.">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="../assests/css/index.css">
+    <link rel="stylesheet" href="../assests/css/blogs.css">
+  </head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class=""><img src="../assests/img/logo.png" alt="MicroMind Lab Logo" style="width: 50px;"></div>
+    MicroMind Lab
+  </a>
+  <ul class="nav-links">
+    <li><a href="../index.html#about">About</a></li>
+    <li><a href="../index.html#instructor">Instructor</a></li>
+    <li><a href="../index.html#programs">Programs</a></li>
+    <li class="nav-dropdown">
+      <a href="#">
+        Learn & Build
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2 4 6 8 10 4"/></svg>
+      </a>
+      <div class="dropdown-menu">
+        <a href="../blogs.html">Lab Journal</a>
+        <div class="dropdown-divider"></div>
+        <a href="../howitworks.html">Tech Explorer</a>
+        <div class="dropdown-divider"></div>
+        <a href="../projects.html">Project Hub</a>
+        <div class="dropdown-divider"></div>
+        <a href="../circuitbuilder.html" target="_blank">Circuit Studio</a>
+        <div class="dropdown-divider"></div>
+        <a href="../store.html" target="_blank">Lab Store</a>
+      </div>
+    </li>
+    <li><a href="../index.html#contact">Contact</a></li>
+  </ul>
+  <a href="../lms.html" target="_blank" class="nav-cta">Log in to LMS</a>
+  <button class="nav-hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <ul>
+    <li><a href="../index.html#about" onclick="closeMenu()">About</a></li>
+    <li><a href="../index.html#instructor" onclick="closeMenu()">Instructor</a></li>
+    <li><a href="../index.html#programs" onclick="closeMenu()">Programs</a></li>
+    <li class="mobile-dropdown">
+      <span class="mobile-dropdown-label">Learn & Build</span>
+      <ul class="mobile-sub">
+        <li><a href="../blogs.html" onclick="closeMenu()">Lab Journal</a></li>
+        <li><a href="../howitworks.html" onclick="closeMenu()">Tech Explorer</a></li>
+        <li><a href="../projects.html" onclick="closeMenu()">Project Hub</a></li>
+        <li><a href="../circuitbuilder.html" target="_blank" onclick="closeMenu()">Circuit Studio</a></li>
+        <li><a href="../store.html" target="_blank" onclick="closeMenu()">Lab Store</a></li>
+      </ul>
+    </li>
+    <li><a href="../index.html#contact" onclick="closeMenu()">Contact</a></li>
+  </ul>
+  <a href="../lms.html" target="_blank" class="mobile-menu-cta">Log in to LMS</a>
+</div>
+
+<!-- HERO -->
+<div class="blog-detail-hero">
+  <div class="blog-detail-orb"></div>
+  <div class="blog-detail-inner">
+    <a href="../blogs.html" class="blog-back"><i class="fa-solid fa-arrow-left"></i> Back to Blog</a>
+    <div class="blog-cat-row">
+      <span class="blog-cat-pill">Invention &amp; Innovation</span>
+    </div>
+    <h1>Invention vs. Innovation — What's the Real Difference?</h1>
+    <p class="lead">Many people use "invention" and "innovation" interchangeably — but they're very different forces. One creates something new from scratch; the other transforms what already exists into something the world is ready for.</p>
+    <div class="blog-meta-row">
+      <div class="blog-author">
+        <div class="blog-author-av">M</div>
+        <span class="blog-author-name">MicroMind Lab</span>
+      </div>
+      <span><i class="fa-regular fa-calendar"></i> June 2026</span>
+      <span><i class="fa-regular fa-clock"></i> 5 min read</span>
+    </div>
+  </div>
+</div>
+
+<!-- COVER -->
+<div style="max-width:760px; margin:0 auto; padding:0 1.5rem; position:relative; z-index:1; margin-top:2rem;">
+  <div class="blog-cover">
+    <i class="fa-solid fa-lightbulb"></i>
+  </div>
+</div>
+
+<!-- ARTICLE -->
+<div class="blog-article">
+
+  <p>Walk into any classroom and ask students to name a great inventor. You'll hear Edison, Tesla, Graham Bell. Ask them to name a great innovator — and you'll probably get the same list. But here's the truth: <strong>invention and innovation are not the same thing</strong>, and confusing them can lead makers and students down completely different paths.</p>
+
+  <h2><span class="h2-dot"></span>What Is an Invention?</h2>
+  <p>An invention is the creation of something that has never existed before. It's the first time a new idea, concept, or device comes into being. The telephone was an invention. The light bulb was an invention. The transistor was an invention.</p>
+  <p>Inventions often come from asking the question: <strong>"What if this existed?"</strong> They are grounded in science, curiosity, and the desire to make something completely new — whether or not the world is ready for it, or even wants it yet.</p>
+
+  <div class="blog-pullquote">
+    <p>"An inventor discovers what has not been known before. An innovator applies what has been discovered in a way that changes how people live."</p>
+  </div>
+
+  <h2><span class="h2-dot"></span>What Is Innovation?</h2>
+  <p>Innovation is the process of taking an existing idea, product, or process and improving, adapting, or reimagining it in a way that creates real-world value. Innovation asks: <strong>"How can this be better? Who needs this? Why isn't it working for people?"</strong></p>
+  <p>The smartphone didn't invent the telephone or the internet — it combined existing ideas in a way that changed how billions of people communicate, navigate, shop, and learn. That's innovation. Steve Jobs wasn't primarily an inventor — he was an extraordinary innovator.</p>
+
+  <h2><span class="h2-dot"></span>Side by Side — The Key Differences</h2>
+
+  <table class="blog-compare">
+    <thead>
+      <tr>
+        <th>Aspect</th>
+        <th>Invention</th>
+        <th>Innovation</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Starting point</td><td>Nothing — creates from scratch</td><td>Something — improves or adapts existing ideas</td></tr>
+      <tr><td>Question asked</td><td>"What if this existed?"</td><td>"How can this work better for people?"</td></tr>
+      <tr><td>Requires</td><td>Scientific discovery, creativity</td><td>Design thinking, user understanding, execution</td></tr>
+      <tr><td>Example</td><td>First transistor (1947)</td><td>First iPhone (2007)</td></tr>
+      <tr><td>Success depends on</td><td>The idea itself</td><td>Adoption and real-world impact</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="h2-dot"></span>Why This Matters for Young Makers</h2>
+  <p>Here's something important: <strong>most of the world runs on innovation, not invention.</strong> The vast majority of successful products, startups, and technologies didn't invent something brand new — they took a problem people already had and found a smarter, simpler, or more accessible solution.</p>
+  <p>That means you don't need a never-before-seen idea to make an impact. You just need to look at what's broken, what's frustrating, or what could work so much better — and build the solution.</p>
+
+  <div class="blog-keybox">
+    <div class="blog-keybox-label"><i class="fa-solid fa-circle-check"></i> Key Takeaways</div>
+    <ul>
+      <li><i class="fa-solid fa-check"></i> Invention creates something entirely new; innovation improves or reimagines something that exists.</li>
+      <li><i class="fa-solid fa-check"></i> Both are valuable — but most products you use daily are innovations, not pure inventions.</li>
+      <li><i class="fa-solid fa-check"></i> Great innovators are obsessed with users, problems, and real-world feedback.</li>
+      <li><i class="fa-solid fa-check"></i> You can start innovating right now — no lab or genius required, just a problem worth solving.</li>
+    </ul>
+  </div>
+
+  <h2><span class="h2-dot"></span>Both Are Needed — Play to Your Strengths</h2>
+  <p>Invention without innovation is a breakthrough that sits in a patent filing. Innovation without invention is incremental improvement that keeps the world moving. <strong>The world needs both.</strong></p>
+  <p>If you love discovery, research, and building things nobody has built before — lean into invention. If you love observing people, identifying pain points, and refining things until they're just right — lean into innovation. Both paths lead to meaningful work.</p>
+  <p>At MicroMind Lab, we teach students to explore both. Projects like the Smart Color Detector involve both the invention of a custom solution and the innovation of making it accessible, hands-on, and learnable. That's the maker spirit — and it's available to everyone.</p>
+
+
+  <!-- <div class="blog-tags">
+    <span style="font-size:12px; color:rgba(255,255,255,0.3); font-family:'Sora',sans-serif; padding: 5px 0; margin-right:4px;">Tags:</span>
+    <a href="#" class="blog-tag-pill">Invention</a>
+    <a href="#" class="blog-tag-pill">Innovation</a>
+    <a href="#" class="blog-tag-pill">STEM</a>
+    <a href="#" class="blog-tag-pill">Maker Mindset</a>
+    <a href="#" class="blog-tag-pill">Engineering</a>
+  </div> -->
+
+</div>
+
+
+<!-- FLOATING WHATSAPP -->
+<a href="https://wa.me/94769011856" target="_blank" class="wa-float" aria-label="Chat on WhatsApp">
+  <i class="fa-brands fa-whatsapp"></i>
+  <span class="wa-float-label">Chat with us</span>
+  <span class="wa-float-ping"></span>
+</a>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">
+    <div class=""><img src="../assests/img/logo.png" alt="MicroMind Lab Logo" style="width: 50px;"></div>
+    MicroMind Lab
+  </div>
+  <p class="footer-tagline">The way to a smart future — Galle, Sri Lanka</p>
+  <p class="footer-copy">© 2026 MicroMind Lab</p>
+</footer>
+
+<script>
+function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
+function closeMenu()  { document.getElementById('mobileMenu').classList.remove('open'); }
+document.addEventListener('click', function(e) {
+  const menu = document.getElementById('mobileMenu');
+  const hamburger = document.querySelector('.nav-hamburger');
+  if (menu.classList.contains('open') && !menu.contains(e.target) && !hamburger.contains(e.target))
+    menu.classList.remove('open');
+});
+</script>
+</body>
+</html>
