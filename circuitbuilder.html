@@ -3,10 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <link rel="icon" type="image/png" href="assests/img/favicon.png">
 <title>MicroMind Lab</title>
-
 <link rel="stylesheet" href="assests/css/circuitbuilder.css">
 </head>
 <body>
@@ -15,6 +13,7 @@
   <img src="assests/img/logo.png" alt="Logo" id="logo" style="width:32px;height:32px;margin-right:2px">
   <h1>MicroMind Lab</h1>
   <div class="sep"></div>
+  <button class="btn" id="btn-p" onclick="setMode('pan')">✋ Pan</button>
   <button class="btn active" id="btn-s" onclick="setMode('select')">✦ Select</button>
   <button class="btn" id="btn-w" onclick="setMode('wire')">∿ Wire</button>
   <button class="btn" id="btn-e" onclick="setMode('erase')">⌫ Erase</button>
@@ -25,9 +24,15 @@
   <span style="font-size:10px;color:var(--muted)">W:</span>
   <input type="range" id="wire-w" min="1" max="8" value="2.5" step="0.5">
   <span id="ww-val" style="font-size:10px;color:var(--muted);min-width:20px">2.5</span>
+
+  <div class="sep"></div>
+  <button class="btn" onclick="adjustZoom(-0.1)">−</button>
+  <span id="zoom-val" style="font-size:10px;color:var(--muted);min-width:32px;text-align:center">100%</span>
+  <button class="btn" onclick="adjustZoom(0.1)">+</button>
+  <button class="btn" onclick="resetZoom()" title="Reset zoom (Ctrl+0)">⊡</button>
+
   <div class="sep"></div>
   <button class="btn" onclick="exportPNG()">↓ PNG</button>
-  <!-- <button class="btn" onclick="exportSVG()">↓ SVG</button> -->
   <button class="btn danger" onclick="clearAll()">Clear</button>
   <div id="mode-badge" style="margin-left:auto">SELECT</div>
 </div>
@@ -39,27 +44,18 @@
       <div class="stab" onclick="showTab('upload')">Upload</div>
     </div>
     <div id="sbody">
-      <div id="tab-upload">
-        <div class="upzone" onclick="document.getElementById('fi').click()" ondragover="event.preventDefault()" ondrop="handleFileDrop(event)">
+      <div id="tab-components">
+        <div id="comp-list" class="img-list" style="margin-top:2px"></div>
+      </div>
+      <div id="tab-upload" style="display:none">
+        <div class="upzone" onclick="document.getElementById('fi').click()"
+          ondragover="event.preventDefault()" ondrop="handleFileDrop(event)">
           <div style="font-size:22px;margin-bottom:5px">📷</div>
           <div>Click or drag images</div>
           <div style="font-size:8px;margin-top:3px;opacity:.6">PNG, JPG, SVG, GIF</div>
         </div>
         <input type="file" id="fi" accept="image/*" multiple style="display:none" onchange="handleFileInput(event)">
         <div id="img-list" class="img-list"></div>
-        <!-- <div class="help-hint">
-          Drag images onto canvas.<br>
-          Select to resize corners.<br><br>
-          <b style="color:var(--accent)">Wire mode:</b><br>
-          • Click = place point<br>
-          • Drag = free draw<br>
-          • Right-click = end wire<br><br>
-          <b style="color:var(--red)">Erase mode:</b><br>
-          • Click wire to delete
-        </div> -->
-      </div>
-      <div id="tab-components" style="display:none">
-        <div id="comp-list" class="img-list" style="margin-top:6px"></div>
       </div>
     </div>
   </div>
@@ -71,9 +67,12 @@
     onmousemove="cvMove(event)"
     onmouseup="cvUp(event)"
     oncontextmenu="cvRightClick(event)">
-    <canvas id="grid-cv"></canvas>
-    <div id="img-layer" style="position:absolute;inset:0"></div>
-    <svg id="wire-svg" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none"></svg>
+    <div id="zoom-layer">
+      <canvas id="grid-cv"></canvas>
+      <div id="img-layer" style="position:absolute;inset:0"></div>
+      <svg id="wire-svg" xmlns="http://www.w3.org/2000/svg"
+        style="position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none"></svg>
+    </div>
   </div>
 </div>
 
@@ -97,153 +96,196 @@ const COLORS=[
   {n:'Pink',v:'#ff66aa'}
 ];
 
-// ─── STATE ───────────────────────────────────────────────────────────────
-let mode='select';
-let wireColor='#ff4444';
-let wireWidth=2.5;
-let images=[];   // {id,src,name,el,x,y,w,h}
-let wires=[];    // {id,pts:[{x,y}],color,width,el}
-let imgIdCtr=0, wireIdCtr=0;
-let selectedImg=null;
+// ─── ZOOM STATE ───────────────────────────────────────────────────────────
+let zoom = 1;
+const ZOOM_MIN = 0.2, ZOOM_MAX = 4, ZOOM_STEP = 0.1;
+// Pan offset (world-space pixels shifted)
+let panX = 0, panY = 0;
 
-// drag state
-let dragging=null; // {type:'img'|'resize', img, ox,oy, iw,ih}
+// ─── APP STATE ────────────────────────────────────────────────────────────
+let mode = 'select';
+let wireColor = '#ff4444';
+let wireWidth = 2.5;
+let images = [];   // {id, src, name, el, x, y, w, h, srcId}
+let wires  = [];   // {id, pts:[{x,y}], color, width, el}
+let imgIdCtr = 0, wireIdCtr = 0;
+let selectedImg = null;
 
-// wire drawing state
-let wireDraw=null; // {pts:[],isDown:bool, previewEl}
-let mousePos={x:0,y:0};
+// drag state (image move / resize)
+let dragging = null; // {type:'img'|'resize', obj, ox,oy, iw,ih}
 
-const canvasEl=document.getElementById('canvas-area');
-const svgEl=document.getElementById('wire-svg');
-const imgLayer=document.getElementById('img-layer');
-const gridCv=document.getElementById('grid-cv');
-const gctx=gridCv.getContext('2d');
+// pan state
+let panState = null; // {startX, startY, startPanX, startPanY}
 
-// helper near the top of your script
-function normalizeDriveUrl(url) {
-  // Convert various Drive share formats to direct export
-  const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || 
-                url.match(/id=([a-zA-Z0-9_-]+)/);
-  if (match) {
-    return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-  }
-  return url;
+// wire draw state
+let wireDraw = null; // {pts, isDown, color, width, previewEl}
+let mousePos = {x:0, y:0}; // world coords
+
+// ─── DOM REFS ─────────────────────────────────────────────────────────────
+const canvasEl  = document.getElementById('canvas-area');
+const svgEl     = document.getElementById('wire-svg');
+const imgLayer  = document.getElementById('img-layer');
+const gridCv    = document.getElementById('grid-cv');
+const zoomLayer = document.getElementById('zoom-layer');
+const gctx      = gridCv.getContext('2d');
+
+// ─── COORDINATE HELPERS ───────────────────────────────────────────────────
+// Screen → world coords (accounts for zoom and pan)
+function screenToWorld(clientX, clientY) {
+  const r = canvasEl.getBoundingClientRect();
+  return {
+    x: (clientX - r.left) / zoom - panX,
+    y: (clientY - r.top)  / zoom - panY
+  };
 }
 
-// ─── INIT ─────────────────────────────────────────────────────────────────
-function init(){
-  buildSwatches();
-  resizeGrid();
-  loadComponentsFromJS();
-  showTab('components');
-  window.addEventListener('resize',resizeGrid);
-  document.addEventListener('keydown',onKey);
-  document.addEventListener('paste',onPaste);
-  document.getElementById('ccolor').addEventListener('input',e=>setColor(e.target.value));
-  const ww=document.getElementById('wire-w');
-  ww.addEventListener('input',e=>{
-    wireWidth=parseFloat(e.target.value);
-    document.getElementById('ww-val').textContent=e.target.value;
-  });
-  setMode('select');
-  // Restore saved sheet ID
-  try{
-    const saved=localStorage.getItem('cb_sheet_id');
-    if(saved) document.getElementById('gsheet-id').value=saved;
-  }catch(e){}
-  toast('Upload images, then use Wire mode to connect them.');
+// World → screen coords
+function worldToScreen(wx, wy) {
+  const r = canvasEl.getBoundingClientRect();
+  return {
+    x: (wx + panX) * zoom + r.left,
+    y: (wy + panY) * zoom + r.top
+  };
 }
 
-function resizeGrid(){
-  const r=canvasEl.getBoundingClientRect();
-  gridCv.width=r.width; gridCv.height=r.height;
+// ─── ZOOM & PAN RENDERING ─────────────────────────────────────────────────
+function applyTransform() {
+  zoomLayer.style.transform = `translate(${panX * zoom}px, ${panY * zoom}px) scale(${zoom})`;
+  document.getElementById('zoom-val').textContent = Math.round(zoom * 100) + '%';
+}
+
+function adjustZoom(delta, cx, cy) {
+  // cx,cy = screen pivot point (defaults to canvas centre)
+  const r = canvasEl.getBoundingClientRect();
+  if (cx == null) cx = r.width  / 2;
+  if (cy == null) cy = r.height / 2;
+
+  const oldZoom = zoom;
+  zoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, zoom + delta));
+
+  // Keep world point under cursor fixed
+  panX -= cx / zoom - cx / oldZoom;
+  panY -= cy / zoom - cy / oldZoom;
+
+  applyTransform();
+}
+
+function resetZoom() {
+  zoom = 1; panX = 0; panY = 0;
+  applyTransform();
+}
+
+// ─── GRID ─────────────────────────────────────────────────────────────────
+function resizeGrid() {
+  const r = canvasEl.getBoundingClientRect();
+  gridCv.width  = r.width;
+  gridCv.height = r.height;
   drawGrid();
 }
 
-function drawGrid(){
-  const w=gridCv.width,h=gridCv.height;
-  gctx.clearRect(0,0,w,h);
-  const drawLines=(step,col)=>{
-    gctx.strokeStyle=col; gctx.lineWidth=0.4;
-    for(let x=0;x<w;x+=step){gctx.beginPath();gctx.moveTo(x,0);gctx.lineTo(x,h);gctx.stroke();}
-    for(let y=0;y<h;y+=step){gctx.beginPath();gctx.moveTo(0,y);gctx.lineTo(w,y);gctx.stroke();}
+function drawGrid() {
+  const w = gridCv.width, h = gridCv.height;
+  gctx.clearRect(0, 0, w, h);
+  const drawLines = (step, col) => {
+    gctx.strokeStyle = col; gctx.lineWidth = 0.4;
+    for (let x = 0; x < w; x += step) { gctx.beginPath(); gctx.moveTo(x, 0); gctx.lineTo(x, h); gctx.stroke(); }
+    for (let y = 0; y < h; y += step) { gctx.beginPath(); gctx.moveTo(0, y); gctx.lineTo(w, y); gctx.stroke(); }
   };
-  drawLines(20,'rgba(48,54,61,0.4)');
-  drawLines(100,'rgba(48,54,61,0.8)');
+  drawLines(20, 'rgba(48,54,61,0.4)');
+  drawLines(100, 'rgba(48,54,61,0.8)');
 }
 
-function buildSwatches(){
-  const el=document.getElementById('swatches');
-  COLORS.forEach(c=>{
-    const b=document.createElement('div');
-    b.className='sw'+(c.v===wireColor?' active':'');
-    b.style.background=c.v; b.title=c.n;
-    b.onclick=()=>setColor(c.v,b);
+// ─── SWATCHES / COLOR ─────────────────────────────────────────────────────
+function buildSwatches() {
+  const el = document.getElementById('swatches');
+  COLORS.forEach(c => {
+    const b = document.createElement('div');
+    b.className = 'sw' + (c.v === wireColor ? ' active' : '');
+    b.style.background = c.v; b.title = c.n;
+    b.onclick = () => setColor(c.v, b);
     el.appendChild(b);
   });
 }
 
-function setColor(v,btn){
-  wireColor=v;
-  document.querySelectorAll('.sw').forEach(b=>b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  document.getElementById('ccolor').value=v;
+function setColor(v, btn) {
+  wireColor = v;
+  document.querySelectorAll('.sw').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.getElementById('ccolor').value = v;
 }
 
-function setMode(m){
-  mode=m;
-  document.getElementById('mode-badge').textContent=m.toUpperCase();
+// ─── MODE ─────────────────────────────────────────────────────────────────
+function setMode(m) {
+  mode = m;
+  document.getElementById('mode-badge').textContent = m.toUpperCase();
   cancelWireDraw();
   deselectImg();
-  ['btn-s','btn-w','btn-e'].forEach(id=>document.getElementById(id).classList.remove('active'));
-  const map={select:'btn-s',wire:'btn-w',erase:'btn-e'};
-  if(map[m]) document.getElementById(map[m]).classList.add('active');
-  // Update wire pointer events
-  svgEl.style.pointerEvents=m==='erase'?'all':'none';
-  wires.forEach(w=>{
-    if(w.el){
-      w.el.style.pointerEvents=m==='erase'?'stroke':'none';
-      w.el.style.cursor=m==='erase'?'pointer':'default';
+
+  ['btn-s','btn-w','btn-e','btn-p'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('active');
+  });
+  const map = {select:'btn-s', wire:'btn-w', erase:'btn-e', pan:'btn-p'};
+  if (map[m]) document.getElementById(map[m]).classList.add('active');
+
+  const eraseMode = m === 'erase';
+  svgEl.style.pointerEvents = eraseMode ? 'all' : 'none';
+  wires.forEach(w => {
+    if (w.el) {
+      w.el.style.pointerEvents = eraseMode ? 'stroke' : 'none';
+      w.el.style.cursor = eraseMode ? 'pointer' : 'default';
     }
   });
-  canvasEl.style.cursor=m==='select'?'default':'crosshair';
-  imgLayer.style.pointerEvents=m==='select'?'auto':'none';
+
+  // img-layer: pointer events only in select mode
+  imgLayer.style.pointerEvents = m === 'select' ? 'auto' : 'none';
+
+  if (m === 'pan') {
+    canvasEl.style.cursor = 'grab';
+  } else if (m === 'select') {
+    canvasEl.style.cursor = 'default';
+  } else {
+    canvasEl.style.cursor = 'crosshair';
+  }
 }
 
 // ─── IMAGES ───────────────────────────────────────────────────────────────
-function addToSidebar(img){
-  const list=document.getElementById('img-list');
-  const item=document.createElement('div');
-  item.className='img-item'; item.draggable=true;
-  item.dataset.id=img.id;
-  item.ondragstart=e=>{
-    e.dataTransfer.setData('img-id',img.id);
-  };
-  const thumb=document.createElement('img');
-  thumb.className='img-thumb'; thumb.src=img.src; thumb.alt=img.name;
-  const name=document.createElement('div');
-  name.className='img-name'; name.textContent=img.name;
-  const del=document.createElement('button');
-  del.className='img-del'; del.textContent='×';
-  del.onclick=e=>{e.stopPropagation();removeFromSidebar(img.id);};
+function normalizeDriveUrl(url) {
+  const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+  if (match) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+  return url;
+}
+
+function addToSidebar(img) {
+  const list = document.getElementById('img-list');
+  const item = document.createElement('div');
+  item.className = 'img-item'; item.draggable = true;
+  item.dataset.id = img.id;
+  item.ondragstart = e => { e.dataTransfer.setData('img-id', img.id); };
+
+  const thumb = document.createElement('img');
+  thumb.className = 'img-thumb'; thumb.src = img.src; thumb.alt = img.name;
+  const name = document.createElement('div');
+  name.className = 'img-name'; name.textContent = img.name;
+  const del = document.createElement('button');
+  del.className = 'img-del'; del.textContent = '×';
+  del.onclick = e => { e.stopPropagation(); removeFromSidebar(img.id); };
+
   item.appendChild(thumb); item.appendChild(name); item.appendChild(del);
   list.appendChild(item);
 }
 
-function removeFromSidebar(id){
-  // remove all canvas instances and sidebar entry
-  images.filter(i=>i.srcId===id).forEach(i=>removeImageNode(i.id));
-  const el=document.querySelector(`.img-item[data-id="${id}"]`);
-  if(el) el.remove();
+function removeFromSidebar(id) {
+  images.filter(i => i.srcId === id).forEach(i => removeImageNode(i.id));
+  const el = document.querySelector(`.img-item[data-id="${id}"]`);
+  if (el) el.remove();
 }
 
-function placeImageOnCanvas(src, name, x, y) {
+function placeImageOnCanvas(src, name, wx, wy) {
   src = normalizeDriveUrl(src);
-  
-  const tryLoad = (useCORS) => {
+  const tryLoad = useCORS => {
     const img = new Image();
     if (useCORS) img.crossOrigin = 'anonymous';
-    
     img.onload = () => {
       let safeSrc = src;
       if (useCORS) {
@@ -251,233 +293,230 @@ function placeImageOnCanvas(src, name, x, y) {
         cv.width = img.naturalWidth || 150;
         cv.height = img.naturalHeight || 150;
         cv.getContext('2d').drawImage(img, 0, 0);
-        try {
-          safeSrc = cv.toDataURL('image/png');
-        } catch(e) {
-          safeSrc = src; // CORS tainted — use URL directly
-          toast('⚠ Image placed but may not export (CORS)');
-        }
+        try { safeSrc = cv.toDataURL('image/png'); }
+        catch(e) { safeSrc = src; toast('⚠ Image placed but may not export (CORS)'); }
       }
       const maxW = 200, maxH = 200;
       let w = img.naturalWidth || 150, h = img.naturalHeight || 150;
       if (w > maxW) { h = h * (maxW / w); w = maxW; }
       if (h > maxH) { w = w * (maxH / h); h = maxH; }
-      createImageNode(safeSrc, name, x - Math.round(w)/2, y - Math.round(h)/2, Math.round(w), Math.round(h));
+      w = Math.round(w); h = Math.round(h);
+      createImageNode(safeSrc, name, Math.round(wx - w/2), Math.round(wy - h/2), w, h);
     };
-    
-    img.onerror = () => {
-      if (useCORS) {
-        tryLoad(false); // retry without CORS
-      } else {
-        toast('Failed to load: ' + name);
-      }
-    };
+    img.onerror = () => { if (useCORS) tryLoad(false); else toast('Failed to load: ' + name); };
     img.src = src;
   };
-  
   tryLoad(true);
 }
 
-function createImageNode(src,name,x,y,w,h,srcId){
-  const id='img'+(++imgIdCtr);
-  const obj={id,src,name,x,y,w,h,srcId:srcId||id};
+function createImageNode(src, name, x, y, w, h, srcId) {
+  const id = 'img' + (++imgIdCtr);
+  const obj = {id, src, name, x, y, w, h, srcId: srcId || id};
   images.push(obj);
 
-  const node=document.createElement('div');
-  node.className='img-node';
-  node.id=id;
-  node.style.cssText=`left:${x}px;top:${y}px;width:${w}px;height:${h}px;position:absolute;`;
+  const node = document.createElement('div');
+  node.className = 'img-node'; node.id = id;
+  node.style.cssText = `left:${x}px;top:${y}px;width:${w}px;height:${h}px;`;
 
-  const imgEl=document.createElement('img');
-  imgEl.src=src; imgEl.alt=name;
-  imgEl.style.cssText=`width:100%;height:100%;object-fit:contain;display:block;border-radius:3px;`;
-  imgEl.draggable=false;
+  const imgEl = document.createElement('img');
+  imgEl.src = src; imgEl.alt = name; imgEl.draggable = false;
 
-  const rh=document.createElement('div');
-  rh.className='resize-handle';
-  rh.onmousedown=e=>startResize(e,obj,node);
+  const rh = document.createElement('div');
+  rh.className = 'resize-handle';
+  rh.addEventListener('mousedown', e => startResize(e, obj, node));
 
-  const del=document.createElement('button');
-  del.className='node-del'; del.textContent='×';
-  del.onclick=e=>{e.stopPropagation();removeImageNode(id);};
+  const del = document.createElement('button');
+  del.className = 'node-del'; del.textContent = '×';
+  del.addEventListener('click', e => { e.stopPropagation(); removeImageNode(id); });
 
-  node.appendChild(imgEl);
-  node.appendChild(rh);
-  node.appendChild(del);
-  node.addEventListener('mousedown',e=>startDragImg(e,obj,node));
+  node.appendChild(imgEl); node.appendChild(rh); node.appendChild(del);
+
+  // Only the node itself triggers drag — not child elements
+  node.addEventListener('mousedown', e => {
+    if (e.target === rh) return; // handled by resize
+    startDragImg(e, obj, node);
+  });
+
   imgLayer.appendChild(node);
-  obj.el=node;
+  obj.el = node;
   updateStatus();
   return obj;
 }
 
-function removeImageNode(id){
-  const idx=images.findIndex(i=>i.id===id);
-  if(idx<0) return;
-  if(images[idx].el) images[idx].el.remove();
-  images.splice(idx,1);
-  if(selectedImg===id) deselectImg();
+function removeImageNode(id) {
+  const idx = images.findIndex(i => i.id === id);
+  if (idx < 0) return;
+  if (images[idx].el) images[idx].el.remove();
+  images.splice(idx, 1);
+  if (selectedImg === id) deselectImg();
   updateStatus();
 }
 
-function startDragImg(e,obj,node){
-  if(mode!=='select') return;
+function selectImg(id) {
+  deselectImg();
+  selectedImg = id;
+  const obj = images.find(i => i.id === id);
+  if (obj && obj.el) obj.el.classList.add('selected');
+}
+
+function deselectImg() {
+  if (selectedImg) {
+    const obj = images.find(i => i.id === selectedImg);
+    if (obj && obj.el) obj.el.classList.remove('selected');
+  }
+  selectedImg = null;
+}
+
+// ─── DRAG IMAGE (world-space) ─────────────────────────────────────────────
+function startDragImg(e, obj, node) {
+  if (mode !== 'select') return;
   e.preventDefault(); e.stopPropagation();
   selectImg(obj.id);
-  const r=node.getBoundingClientRect();
-  dragging={type:'img',obj,ox:e.clientX-r.left,oy:e.clientY-r.top};
-  node.style.zIndex=1;
+
+  // Offset in world coords from image origin to click point
+  const w = screenToWorld(e.clientX, e.clientY);
+  const ox = w.x - obj.x;
+  const oy = w.y - obj.y;
+  dragging = {type:'img', obj, ox, oy};
+  node.style.zIndex = 10;
 }
 
-function startResize(e,obj,node){
+function startResize(e, obj, node) {
   e.preventDefault(); e.stopPropagation();
-  dragging={type:'resize',obj,ox:e.clientX,oy:e.clientY,iw:obj.w,ih:obj.h};
+  dragging = {type:'resize', obj, startClientX:e.clientX, startClientY:e.clientY, iw:obj.w, ih:obj.h};
 }
 
-function selectImg(id){
-  deselectImg();
-  selectedImg=id;
-  const obj=images.find(i=>i.id===id);
-  if(obj&&obj.el) obj.el.classList.add('selected');
-}
+// ─── CANVAS MOUSE EVENTS ──────────────────────────────────────────────────
+function cvDown(e) {
+  if (e.button === 2) return; // right click handled elsewhere
 
-function deselectImg(){
-  if(selectedImg){
-    const obj=images.find(i=>i.id===selectedImg);
-    if(obj&&obj.el) obj.el.classList.remove('selected');
-  }
-  selectedImg=null;
-}
-
-// ─── CANVAS EVENTS ────────────────────────────────────────────────────────
-function cvPt(e){
-  const r=canvasEl.getBoundingClientRect();
-  return {x:e.clientX-r.left, y:e.clientY-r.top};
-}
-
-function cvDown(e){
-  if(e.button===2) return;
-  const pt=cvPt(e);
-  if(mode==='select'){
-    if(!e.target.closest('.img-node')) deselectImg();
+  if (mode === 'pan') {
+    panState = {startX: e.clientX, startY: e.clientY, startPanX: panX, startPanY: panY};
+    canvasEl.style.cursor = 'grabbing';
     return;
   }
-  if(mode==='wire'){
-    if(!wireDraw){
-      // Start new wire
-      wireDraw={pts:[pt], isDown:true, color:wireColor, width:wireWidth};
+
+  if (mode === 'select') {
+    // Clicking on canvas background deselects
+    if (!e.target.closest('.img-node')) deselectImg();
+    return;
+  }
+
+  if (mode === 'wire') {
+    const pt = screenToWorld(e.clientX, e.clientY);
+    if (!wireDraw) {
+      wireDraw = {pts:[{...pt}], isDown:true, color:wireColor, width:wireWidth};
       createPreview();
     } else {
-      // Already drawing — left-click: add point & start dragging from there
+      // Already drawing: add anchor point, begin free-draw segment again
       wireDraw.pts.push({...pt});
-      wireDraw.isDown=true;
+      wireDraw.isDown = true;
       updatePreview();
     }
   }
 }
 
-function cvMove(e){
-  const pt=cvPt(e);
-  mousePos=pt;
-  document.getElementById('coords').textContent=`x:${Math.round(pt.x)} y:${Math.round(pt.y)}`;
-
-  // Drag image
-  if(dragging&&dragging.type==='img'){
-    const r=canvasEl.getBoundingClientRect();
-    const nx=e.clientX-r.left-dragging.ox;
-    const ny=e.clientY-r.top-dragging.oy;
-    dragging.obj.x=Math.round(nx/5)*5;
-    dragging.obj.y=Math.round(ny/5)*5;
-    dragging.obj.el.style.left=dragging.obj.x+'px';
-    dragging.obj.el.style.top=dragging.obj.y+'px';
+function cvMove(e) {
+  // Image drag
+  if (dragging && dragging.type === 'img') {
+    const w = screenToWorld(e.clientX, e.clientY);
+    dragging.obj.x = Math.round((w.x - dragging.ox) / 5) * 5;
+    dragging.obj.y = Math.round((w.y - dragging.oy) / 5) * 5;
+    dragging.obj.el.style.left = dragging.obj.x + 'px';
+    dragging.obj.el.style.top  = dragging.obj.y + 'px';
     return;
   }
 
-  // Resize image
-  if(dragging&&dragging.type==='resize'){
-    const dx=e.clientX-dragging.ox;
-    const dy=e.clientY-dragging.oy;
-    const nw=Math.max(30,dragging.iw+dx);
-    const nh=Math.max(20,dragging.ih+dy);
-    dragging.obj.w=Math.round(nw);
-    dragging.obj.h=Math.round(nh);
-    dragging.obj.el.style.width=dragging.obj.w+'px';
-    dragging.obj.el.style.height=dragging.obj.h+'px';
+  // Resize drag
+  if (dragging && dragging.type === 'resize') {
+    const dx = (e.clientX - dragging.startClientX) / zoom;
+    const aspect = dragging.ih / dragging.iw;
+    const nw = Math.max(30, dragging.iw + dx);
+    const nh = Math.round(nw * aspect);
+    dragging.obj.w = Math.round(nw);
+    dragging.obj.h = nh;
+    dragging.obj.el.style.width  = dragging.obj.w + 'px';
+    dragging.obj.el.style.height = dragging.obj.h + 'px';
     return;
   }
 
-  // Wire preview
-  if(mode==='wire'&&wireDraw){
-    if(wireDraw.isDown){
-      // Mouse held down = free-draw, add points as you drag
-      const last=wireDraw.pts[wireDraw.pts.length-1];
-      const dist=Math.hypot(pt.x-last.x,pt.y-last.y);
-      if(dist>4) wireDraw.pts.push({...pt});
+  // Pan
+  if (mode === 'pan' && panState) {
+    const dx = (e.clientX - panState.startX) / zoom;
+    const dy = (e.clientY - panState.startY) / zoom;
+    panX = panState.startPanX + dx;
+    panY = panState.startPanY + dy;
+    applyTransform();
+    return;
+  }
+
+  // Wire free-draw
+  const pt = screenToWorld(e.clientX, e.clientY);
+  mousePos = {...pt};
+  document.getElementById('coords').textContent = `x:${Math.round(pt.x)} y:${Math.round(pt.y)}`;
+
+  if (mode === 'wire' && wireDraw) {
+    if (wireDraw.isDown) {
+      const last = wireDraw.pts[wireDraw.pts.length - 1];
+      const dist = Math.hypot(pt.x - last.x, pt.y - last.y);
+      if (dist > 4) wireDraw.pts.push({...pt});
     }
     updatePreview();
   }
 }
 
-function cvUp(e){
-  if(dragging){
-    dragging=null;
+function cvUp(e) {
+  if (dragging) {
+    if (dragging.obj && dragging.obj.el) dragging.obj.el.style.zIndex = '';
+    dragging = null;
     return;
   }
-  if(mode==='wire'&&wireDraw&&wireDraw.isDown){
-    // Released mouse — stop free-draw, pin last point
-    wireDraw.isDown=false;
-    // The last dragged point is already in pts
+  if (mode === 'wire' && wireDraw && wireDraw.isDown) {
+    wireDraw.isDown = false;
     updatePreview();
+    return;
+  }
+  if (mode === 'pan' && panState) {
+    panState = null;
+    canvasEl.style.cursor = 'grab';
+    return;
   }
 }
 
-function cvRightClick(e){
+function cvRightClick(e) {
   e.preventDefault();
-  if(mode==='wire'&&wireDraw){
-    // End wire at current mouse position
-    finishWire();
-    return;
-  }
+  if (mode === 'wire' && wireDraw) finishWire();
 }
 
 // ─── WIRE DRAWING ─────────────────────────────────────────────────────────
-function createPreview(){
-  if(wireDraw.previewEl) wireDraw.previewEl.remove();
-  const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+function createPreview() {
+  if (wireDraw.previewEl) wireDraw.previewEl.remove();
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
   path.classList.add('wire-preview');
-  path.setAttribute('stroke',wireDraw.color);
-  path.setAttribute('stroke-width',wireDraw.width);
+  path.setAttribute('stroke', wireDraw.color);
+  path.setAttribute('stroke-width', wireDraw.width);
   svgEl.appendChild(path);
-  wireDraw.previewEl=path;
+  wireDraw.previewEl = path;
 }
 
-function updatePreview(){
-  if(!wireDraw||!wireDraw.previewEl) return;
-  const pts=[...wireDraw.pts, mousePos];
-  wireDraw.previewEl.setAttribute('d',ptsToPath(pts));
-  wireDraw.previewEl.setAttribute('stroke',wireDraw.color);
-  wireDraw.previewEl.setAttribute('stroke-width',wireDraw.width);
+function updatePreview() {
+  if (!wireDraw || !wireDraw.previewEl) return;
+  const pts = [...wireDraw.pts, mousePos];
+  wireDraw.previewEl.setAttribute('d', ptsToPath(pts));
+  wireDraw.previewEl.setAttribute('stroke', wireDraw.color);
+  wireDraw.previewEl.setAttribute('stroke-width', wireDraw.width);
 }
 
-function ptsToPath(pts){
-  if(!pts||pts.length<1) return '';
-  if(pts.length===1) return `M${pts[0].x},${pts[0].y}`;
-  let d=`M${pts[0].x},${pts[0].y}`;
-  for(let i=1;i<pts.length;i++) d+=` L${pts[i].x},${pts[i].y}`;
+function ptsToPath(pts) {
+  if (!pts || pts.length < 1) return '';
+  let d = `M${pts[0].x},${pts[0].y}`;
+  for (let i = 1; i < pts.length; i++) d += ` L${pts[i].x},${pts[i].y}`;
   return d;
 }
 
-function finishWire(){
-  if(!wireDraw||wireDraw.pts.length<2){
-    cancelWireDraw(); return;
-  }
-  // Commit the wire
-  const w={
-    id:'w'+(++wireIdCtr),
-    pts:[...wireDraw.pts],
-    color:wireDraw.color,
-    width:wireDraw.width
-  };
+function finishWire() {
+  if (!wireDraw || wireDraw.pts.length < 2) { cancelWireDraw(); return; }
+  const w = {id:'w'+(++wireIdCtr), pts:[...wireDraw.pts], color:wireDraw.color, width:wireDraw.width};
   wires.push(w);
   renderWire(w);
   cancelWireDraw();
@@ -485,137 +524,95 @@ function finishWire(){
   toast('Wire placed ✓');
 }
 
-function cancelWireDraw(){
-  if(wireDraw){
-    if(wireDraw.previewEl) wireDraw.previewEl.remove();
-    wireDraw=null;
+function cancelWireDraw() {
+  if (wireDraw) {
+    if (wireDraw.previewEl) wireDraw.previewEl.remove();
+    wireDraw = null;
   }
 }
 
-function renderWire(w){
-  const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+function renderWire(w) {
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
   path.classList.add('wire-path');
-  path.setAttribute('stroke',w.color);
-  path.setAttribute('stroke-width',w.width);
-  path.setAttribute('d',ptsToPath(w.pts));
-  path.style.pointerEvents=mode==='erase'?'stroke':'none';
-  path.style.cursor=mode==='erase'?'pointer':'default';
-  // erase on click
-  path.addEventListener('click',()=>{
-    if(mode==='erase') deleteWire(w.id);
-  });
-  // hover highlight in erase mode
-  path.addEventListener('mouseenter',()=>{
-    if(mode==='erase') path.setAttribute('stroke-width',parseFloat(w.width)+3);
-  });
-  path.addEventListener('mouseleave',()=>{
-    path.setAttribute('stroke-width',w.width);
-  });
+  path.setAttribute('stroke', w.color);
+  path.setAttribute('stroke-width', w.width);
+  path.setAttribute('d', ptsToPath(w.pts));
+  path.style.pointerEvents = mode === 'erase' ? 'stroke' : 'none';
+  path.style.cursor = mode === 'erase' ? 'pointer' : 'default';
+  path.addEventListener('click', () => { if (mode === 'erase') deleteWire(w.id); });
+  path.addEventListener('mouseenter', () => { if (mode === 'erase') path.setAttribute('stroke-width', parseFloat(w.width) + 3); });
+  path.addEventListener('mouseleave', () => { path.setAttribute('stroke-width', w.width); });
   svgEl.appendChild(path);
-  w.el=path;
+  w.el = path;
 }
 
-function deleteWire(id){
-  const idx=wires.findIndex(w=>w.id===id);
-  if(idx<0) return;
-  if(wires[idx].el) wires[idx].el.remove();
-  wires.splice(idx,1);
+function deleteWire(id) {
+  const idx = wires.findIndex(w => w.id === id);
+  if (idx < 0) return;
+  if (wires[idx].el) wires[idx].el.remove();
+  wires.splice(idx, 1);
   updateStatus();
   toast('Wire erased');
 }
 
-// Eraser tool — draw eraser stroke and delete intersecting wires
-let eraserDraw=null;
-
-// Override for erase drag mode
-function startEraserStroke(pt){
-  eraserDraw={pts:[pt]};
-}
-
-function continueEraserStroke(pt){
-  if(!eraserDraw) return;
-  eraserDraw.pts.push(pt);
-  // Check wires that might be under cursor vicinity
-  wires.filter(w=>{
-    const d=w.el;
-    if(!d) return false;
-    // Check if any wire point is near eraser stroke end
-    return w.pts.some(wp=>Math.hypot(wp.x-pt.x,wp.y-pt.y)<8);
-  }).forEach(w=>deleteWire(w.id));
-}
-
 // ─── FILE HANDLING ────────────────────────────────────────────────────────
-function handleCanvasDrop(e){
+function handleCanvasDrop(e) {
   e.preventDefault();
-  const r=canvasEl.getBoundingClientRect();
-  const x=e.clientX-r.left, y=e.clientY-r.top;
+  const pt = screenToWorld(e.clientX, e.clientY);
 
-  // Component dropped from Parts panel
-  const compUrl=e.dataTransfer.getData('comp-url');
-  if(compUrl){
-    const compName=e.dataTransfer.getData('comp-name')||'Component';
-    placeImageOnCanvas(compUrl, compName, x, y);
+  const compUrl  = e.dataTransfer.getData('comp-url');
+  const compName = e.dataTransfer.getData('comp-name') || 'Component';
+  if (compUrl) { placeImageOnCanvas(compUrl, compName, pt.x, pt.y); return; }
+
+  const imgId = e.dataTransfer.getData('img-id');
+  if (imgId) {
+    const sideEl = document.querySelector(`.img-item[data-id="${imgId}"] img`);
+    if (sideEl) placeImageOnCanvas(sideEl.src, sideEl.alt || 'Component', pt.x, pt.y);
     return;
   }
 
-  const imgId=e.dataTransfer.getData('img-id');
-  if(imgId){
-    const src=images.find(i=>i.id===imgId||i.srcId===imgId);
-    // Find sidebar image src
-    const sideEl=document.querySelector(`.img-item[data-id="${imgId}"] img`);
-    if(sideEl){
-      placeImageOnCanvas(sideEl.src, sideEl.alt||'Component', x, y);
-    }
-    return;
-  }
-  // Direct file drop
-  if(e.dataTransfer.files.length>0){
-    Array.from(e.dataTransfer.files).forEach(f=>{
-      if(f.type.startsWith('image/')){
-        processFile(f, x, y);
-      }
+  if (e.dataTransfer.files.length > 0) {
+    Array.from(e.dataTransfer.files).forEach(f => {
+      if (f.type.startsWith('image/')) processFile(f, pt.x, pt.y);
     });
   }
 }
 
-function handleFileDrop(e){
+function handleFileDrop(e) {
   e.preventDefault();
-  Array.from(e.dataTransfer.files).forEach(f=>{
-    if(f.type.startsWith('image/')) addToLibrary(f);
-  });
+  Array.from(e.dataTransfer.files).forEach(f => { if (f.type.startsWith('image/')) addToLibrary(f); });
 }
 
-function handleFileInput(e){
-  Array.from(e.target.files).forEach(f=>addToLibrary(f));
-  e.target.value='';
+function handleFileInput(e) {
+  Array.from(e.target.files).forEach(f => addToLibrary(f));
+  e.target.value = '';
 }
 
-function addToLibrary(file){
-  const reader=new FileReader();
-  reader.onload=ev=>{
-    const id='src'+(++imgIdCtr);
-    const name=file.name.replace(/\.[^.]+$/,'');
-    const obj={id,src:ev.target.result,name};
-    // Add to sidebar
-    addToSidebar(obj);
-    toast('"'+name+'" added — drag to canvas');
+function addToLibrary(file) {
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const id = 'src' + (++imgIdCtr);
+    const name = file.name.replace(/\.[^.]+$/, '');
+    addToSidebar({id, src:ev.target.result, name});
+    toast('"' + name + '" added — drag to canvas');
   };
   reader.readAsDataURL(file);
 }
 
-function processFile(file, x, y){
-  const reader=new FileReader();
-  reader.onload=ev=>placeImageOnCanvas(ev.target.result, file.name.replace(/\.[^.]+$/,''), x, y);
+function processFile(file, wx, wy) {
+  const reader = new FileReader();
+  reader.onload = ev => placeImageOnCanvas(ev.target.result, file.name.replace(/\.[^.]+$/, ''), wx, wy);
   reader.readAsDataURL(file);
 }
 
-function onPaste(e){
-  for(const item of e.clipboardData.items){
-    if(item.type.startsWith('image/')){
-      const blob=item.getAsFile();
-      const url=URL.createObjectURL(blob);
-      const r=canvasEl.getBoundingClientRect();
-      placeImageOnCanvas(url,'Pasted Image',r.width/2,r.height/2);
+function onPaste(e) {
+  for (const item of e.clipboardData.items) {
+    if (item.type.startsWith('image/')) {
+      const blob = item.getAsFile();
+      const url  = URL.createObjectURL(blob);
+      const r    = canvasEl.getBoundingClientRect();
+      const pt   = screenToWorld(r.left + r.width/2, r.top + r.height/2);
+      placeImageOnCanvas(url, 'Pasted Image', pt.x, pt.y);
       toast('Image pasted onto canvas');
       return;
     }
@@ -623,171 +620,177 @@ function onPaste(e){
 }
 
 // ─── KEYS ─────────────────────────────────────────────────────────────────
-function onKey(e){
-  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA') return;
-  if(e.key==='Escape'){ cancelWireDraw(); setMode('select'); }
-  if(e.key==='w'||e.key==='W') setMode('wire');
-  if(e.key==='s'||e.key==='S') setMode('select');
-  if(e.key==='e'||e.key==='E') setMode('erase');
-  if((e.key==='Delete'||e.key==='Backspace')&&selectedImg){
-    removeImageNode(selectedImg);
-  }
-  if(e.key==='Enter'&&mode==='wire'&&wireDraw){ finishWire(); }
+function onKey(e) {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.key === 'Escape') { cancelWireDraw(); setMode('select'); }
+  if (e.key === 'w' || e.key === 'W') setMode('wire');
+  if (e.key === 's' || e.key === 'S') setMode('select');
+  if (e.key === 'e' || e.key === 'E') setMode('erase');
+  if (e.key === 'p' || e.key === 'P') setMode('pan');
+  if ((e.key === 'Delete' || e.key === 'Backspace') && selectedImg) removeImageNode(selectedImg);
+  if (e.key === 'Enter' && mode === 'wire' && wireDraw) finishWire();
+  if (e.ctrlKey && (e.key === '0')) { e.preventDefault(); resetZoom(); }
+  if (e.ctrlKey && e.key === '+')   { e.preventDefault(); adjustZoom(ZOOM_STEP); }
+  if (e.ctrlKey && e.key === '-')   { e.preventDefault(); adjustZoom(-ZOOM_STEP); }
 }
 
-// ─── STATUS & TABS ────────────────────────────────────────────────────────
-function showTab(t){
-  document.querySelectorAll('[id^="tab-"]').forEach(el=>el.style.display='none');
-  document.querySelectorAll('.stab').forEach(el=>el.classList.remove('active'));
-  const tab=document.getElementById('tab-'+t);
-  if(tab) tab.style.display='block';
-  // activate the matching stab
-  const stabs=document.querySelectorAll('.stab');
-  const order={components:0,upload:1};
-  if(order[t]!==undefined && stabs[order[t]]) stabs[order[t]].classList.add('active');
-}
-
-// ─── COMPONENTS lOAD ───────────────────────────────────
-function loadComponentsFromJS() {
-
-  const list = document.getElementById('comp-list');
-
-  list.innerHTML = '';
-
-  COMPONENTS.forEach(comp => {
-
-    addComponentToPanel(
-      comp.name,
-      comp.image
-    );
-
+// ─── TABS ─────────────────────────────────────────────────────────────────
+function showTab(t) {
+  ['components','upload'].forEach(name => {
+    const tab = document.getElementById('tab-' + name);
+    if (tab) tab.style.display = name === t ? 'block' : 'none';
   });
-
+  const stabs = document.querySelectorAll('.stab');
+  const order = {components:0, upload:1};
+  stabs.forEach((el, i) => el.classList.toggle('active', i === order[t]));
 }
 
+// ─── COMPONENTS ───────────────────────────────────────────────────────────
+function loadComponentsFromJS() {
+  if (typeof COMPONENTS === 'undefined') return;
+  const list = document.getElementById('comp-list');
+  list.innerHTML = '';
+  COMPONENTS.forEach(comp => addComponentToPanel(comp.name, comp.image));
+}
 
-function addComponentToPanel(name, imgUrl){
-  const list=document.getElementById('comp-list');
-  const item=document.createElement('div');
-  item.className='img-item'; item.draggable=true;
-  item.dataset.imgurl=imgUrl;
-  item.dataset.name=name;
-
-  item.ondragstart=e=>{
-    e.dataTransfer.setData('comp-url', imgUrl);
+function addComponentToPanel(name, imgUrl) {
+  const list = document.getElementById('comp-list');
+  const item = document.createElement('div');
+  item.className = 'img-item'; item.draggable = true;
+  item.ondragstart = e => {
+    e.dataTransfer.setData('comp-url',  imgUrl);
     e.dataTransfer.setData('comp-name', name);
   };
 
-  const thumb=document.createElement('img');
-  thumb.className='img-thumb'; thumb.alt=name;
-  thumb.style.background='var(--panel)';
-  thumb.src=imgUrl;
-  thumb.onerror=()=>{ thumb.style.display='none'; };
-
-  const nameEl=document.createElement('div');
-  nameEl.className='img-name'; nameEl.textContent=name;
+  const thumb = document.createElement('img');
+  thumb.className = 'img-thumb'; thumb.alt = name; thumb.src = imgUrl;
+  thumb.onerror = () => { thumb.style.display = 'none'; };
+  const nameEl = document.createElement('div');
+  nameEl.className = 'img-name'; nameEl.textContent = name;
 
   item.appendChild(thumb); item.appendChild(nameEl);
-
-  // Click to place in center of canvas
-  item.addEventListener('click',()=>{
-    const r=canvasEl.getBoundingClientRect();
-    placeImageOnCanvas(imgUrl, name, r.width/2, r.height/2);
+  item.addEventListener('click', () => {
+    const r  = canvasEl.getBoundingClientRect();
+    const pt = screenToWorld(r.left + r.width/2, r.top + r.height/2);
+    placeImageOnCanvas(imgUrl, name, pt.x, pt.y);
     toast(`"${name}" placed on canvas`);
   });
-
   list.appendChild(item);
 }
 
-
-
-
-function updateStatus(){
-  document.getElementById('icount').textContent=images.length+' images';
-  document.getElementById('wcount').textContent=wires.length+' wires';
+// ─── STATUS ───────────────────────────────────────────────────────────────
+function updateStatus() {
+  document.getElementById('icount').textContent = images.length + ' images';
+  document.getElementById('wcount').textContent = wires.length + ' wires';
 }
 
-// ─── CLEAR & EXPORT ───────────────────────────────────────────────────────
-function clearAll(){
-  if(!confirm('Clear everything?')) return;
-  images.forEach(i=>{if(i.el)i.el.remove();});
-  images=[];
-  wires=[]; svgEl.innerHTML='';
+// ─── CLEAR ────────────────────────────────────────────────────────────────
+function clearAll() {
+  if (!confirm('Clear everything?')) return;
+  images.forEach(i => { if (i.el) i.el.remove(); });
+  images = [];
+  wires  = []; svgEl.innerHTML = '';
   cancelWireDraw(); deselectImg();
-  document.getElementById('img-list').innerHTML='';
+  document.getElementById('img-list').innerHTML = '';
   updateStatus();
   toast('Canvas cleared');
 }
 
-function exportSVG(){
-  const r=canvasEl.getBoundingClientRect();
-  // Build full SVG with embedded images + wires
-  let svg=`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${r.width}" height="${r.height}">`;
-  svg+=`<rect width="${r.width}" height="${r.height}" fill="#0d1117"/>`;
-  images.forEach(img=>{
-    svg+=`<image href="${img.src}" x="${img.x}" y="${img.y}" width="${img.w}" height="${img.h}"/>`;
-  });
-  wires.forEach(w=>{
-    svg+=`<path d="${ptsToPath(w.pts)}" stroke="${w.color}" stroke-width="${w.width}" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`;
-  });
-  svg+='</svg>';
-  const a=document.createElement('a');
-  a.href='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(svg)));
-  a.download='circuit.svg'; a.click();
-  toast('SVG exported');
-}
+// ─── EXPORT PNG ───────────────────────────────────────────────────────────
+function exportPNG() {
+  const r   = canvasEl.getBoundingClientRect();
+  const cv  = document.createElement('canvas');
+  const scale = 2;
+  cv.width  = r.width  * scale;
+  cv.height = r.height * scale;
+  const ctx = cv.getContext('2d');
+  ctx.scale(scale, scale);
+  ctx.fillStyle = '#0d1117';
+  ctx.fillRect(0, 0, r.width, r.height);
 
-function exportPNG(){
-  const r=canvasEl.getBoundingClientRect();
-  const cv=document.createElement('canvas');
-  const scale=2;
-  cv.width=r.width*scale; cv.height=r.height*scale;
-  const ctx=cv.getContext('2d');
-  ctx.scale(scale,scale);
-  ctx.fillStyle='#0d1117';
-  ctx.fillRect(0,0,r.width,r.height);
   // Draw grid
-  ctx.strokeStyle='rgba(48,54,61,0.4)'; ctx.lineWidth=0.4;
-  for(let x=0;x<r.width;x+=20){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,r.height);ctx.stroke();}
-  for(let y=0;y<r.height;y+=20){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(r.width,y);ctx.stroke();}
+  ctx.strokeStyle = 'rgba(48,54,61,0.4)'; ctx.lineWidth = 0.4;
+  for (let x = 0; x < r.width; x += 20) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,r.height); ctx.stroke(); }
+  for (let y = 0; y < r.height; y += 20) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(r.width,y); ctx.stroke(); }
 
-  // Draw images then wires via SVG
-  const pending=images.map(img=>new Promise(res=>{
-    const i=new Image();
-    i.crossOrigin='anonymous';
-    i.onload=()=>{ctx.drawImage(i,img.x,img.y,img.w,img.h);res();}
-    i.onerror=res;
-    i.src=img.src;
+  // World → screen transform for export
+  const tx = panX * zoom, ty = panY * zoom;
+  const pending = images.map(img => new Promise(res => {
+    const i = new Image();
+    i.crossOrigin = 'anonymous';
+    i.onload = () => {
+      const sx = img.x * zoom + tx;
+      const sy = img.y * zoom + ty;
+      ctx.drawImage(i, sx, sy, img.w * zoom, img.h * zoom);
+      res();
+    };
+    i.onerror = res;
+    i.src = img.src;
   }));
 
-  Promise.all(pending).then(()=>{
-    // Draw wires
-    wires.forEach(w=>{
-      if(w.pts.length<2) return;
-      ctx.strokeStyle=w.color; ctx.lineWidth=w.width;
-      ctx.lineCap='round'; ctx.lineJoin='round';
-      ctx.beginPath(); ctx.moveTo(w.pts[0].x,w.pts[0].y);
-      for(let i=1;i<w.pts.length;i++) ctx.lineTo(w.pts[i].x,w.pts[i].y);
+  Promise.all(pending).then(() => {
+    wires.forEach(w => {
+      if (w.pts.length < 2) return;
+      ctx.strokeStyle = w.color;
+      ctx.lineWidth   = w.width * zoom;
+      ctx.lineCap     = 'round'; ctx.lineJoin = 'round';
+      ctx.beginPath();
+      const tx2 = panX * zoom, ty2 = panY * zoom;
+      ctx.moveTo(w.pts[0].x * zoom + tx2, w.pts[0].y * zoom + ty2);
+      for (let i = 1; i < w.pts.length; i++)
+        ctx.lineTo(w.pts[i].x * zoom + tx2, w.pts[i].y * zoom + ty2);
       ctx.stroke();
     });
-    const a=document.createElement('a');
-    a.href=cv.toDataURL('image/png'); a.download='circuit.png'; a.click();
+    const a = document.createElement('a');
+    a.href = cv.toDataURL('image/png'); a.download = 'circuit.png'; a.click();
     toast('PNG exported');
   });
 }
 
 // ─── TOAST ────────────────────────────────────────────────────────────────
-let _tt=null;
-function toast(msg){
-  const el=document.getElementById('toast');
-  el.textContent=msg; el.classList.add('show');
-  if(_tt) clearTimeout(_tt);
-  _tt=setTimeout(()=>el.classList.remove('show'),2800);
+let _tt = null;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  if (_tt) clearTimeout(_tt);
+  _tt = setTimeout(() => el.classList.remove('show'), 2800);
 }
 
-document.addEventListener('mouseup',()=>{dragging=null;});
+// ─── WHEEL ZOOM ───────────────────────────────────────────────────────────
+canvasEl.addEventListener('wheel', e => {
+  if (!e.ctrlKey) return;
+  e.preventDefault();
+  const r = canvasEl.getBoundingClientRect();
+  adjustZoom(e.deltaY < 0 ? ZOOM_STEP : -ZOOM_STEP, e.clientX - r.left, e.clientY - r.top);
+}, {passive: false});
 
-window.addEventListener('load',init);
+// Global mouseup safety net
+document.addEventListener('mouseup', () => {
+  if (dragging) { if (dragging.obj && dragging.obj.el) dragging.obj.el.style.zIndex = ''; dragging = null; }
+  if (panState) { panState = null; if (mode === 'pan') canvasEl.style.cursor = 'grab'; }
+  if (mode === 'wire' && wireDraw) wireDraw.isDown = false;
+});
+
+// ─── INIT ─────────────────────────────────────────────────────────────────
+function init() {
+  buildSwatches();
+  resizeGrid();
+  loadComponentsFromJS();
+  showTab('components');
+  window.addEventListener('resize', resizeGrid);
+  document.addEventListener('keydown', onKey);
+  document.addEventListener('paste', onPaste);
+  document.getElementById('ccolor').addEventListener('input', e => setColor(e.target.value));
+  document.getElementById('wire-w').addEventListener('input', e => {
+    wireWidth = parseFloat(e.target.value);
+    document.getElementById('ww-val').textContent = e.target.value;
+  });
+  setMode('select');
+  applyTransform();
+  toast('Upload images, then use Wire mode to connect them.');
+}
+
+window.addEventListener('load', init);
 </script>
 </body>
 </html>
