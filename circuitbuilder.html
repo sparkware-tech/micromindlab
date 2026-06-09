@@ -85,8 +85,6 @@
 </div>
 <div id="toast"></div>
 
-<script src="assests/constant/components.js"></script>
-
 <script>
 // ─── COLORS ──────────────────────────────────────────────────────────────
 const COLORS=[
@@ -240,7 +238,7 @@ function setMode(m) {
   // img-layer: pointer events only in select mode
   imgLayer.style.pointerEvents = m === 'select' ? 'auto' : 'none';
 
-  if (m === 'pan') {
+  if (m === 'pan') {addComponentToPanel
     canvasEl.style.cursor = 'grab';
   } else if (m === 'select') {
     canvasEl.style.cursor = 'default';
@@ -251,8 +249,22 @@ function setMode(m) {
 
 // ─── IMAGES ───────────────────────────────────────────────────────────────
 function normalizeDriveUrl(url) {
-  const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
-  if (match) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+
+  if (!url) return "";
+
+  // Already a thumbnail URL
+  if (url.includes("drive.google.com/thumbnail")) {
+      return url;
+  }
+
+  const match =
+      url.match(/\/d\/([a-zA-Z0-9_-]+)/) ||
+      url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+
+  if (match) {
+      return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1000`;
+  }
+
   return url;
 }
 
@@ -646,35 +658,65 @@ function showTab(t) {
 }
 
 // ─── COMPONENTS ───────────────────────────────────────────────────────────
-function loadComponentsFromJS() {
-  if (typeof COMPONENTS === 'undefined') return;
-  const list = document.getElementById('comp-list');
-  list.innerHTML = '';
-  COMPONENTS.forEach(comp => addComponentToPanel(comp.name, comp.image));
+async function loadComponentsFromSheet() {
+
+    const SHEET_URL =
+        "https://opensheet.elk.sh/1XRu51SvXYIrX5vkgQs2UPRTEXey01715tvvC9d74efA/Sheet1";
+
+    try {
+
+        const response = await fetch(SHEET_URL);
+        const data = await response.json();
+
+        const list = document.getElementById("comp-list");
+        list.innerHTML = "";
+
+        data.forEach(row => {
+
+            addComponentToPanel(
+                row.Name,
+                row.Image
+            );
+
+        });
+
+        toast(`${data.length} components loaded`);
+
+    } catch (err) {
+
+        console.error(err);
+        toast("Failed to load components");
+
+    }
 }
 
 function addComponentToPanel(name, imgUrl) {
+
+  imgUrl = normalizeDriveUrl(imgUrl);
+
   const list = document.getElementById('comp-list');
+
   const item = document.createElement('div');
-  item.className = 'img-item'; item.draggable = true;
+  item.className = 'img-item';
+  item.draggable = true;
+
   item.ondragstart = e => {
-    e.dataTransfer.setData('comp-url',  imgUrl);
+    e.dataTransfer.setData('comp-url', imgUrl);
     e.dataTransfer.setData('comp-name', name);
   };
 
   const thumb = document.createElement('img');
-  thumb.className = 'img-thumb'; thumb.alt = name; thumb.src = imgUrl;
-  thumb.onerror = () => { thumb.style.display = 'none'; };
-  const nameEl = document.createElement('div');
-  nameEl.className = 'img-name'; nameEl.textContent = name;
+  thumb.className = 'img-thumb';
+  thumb.src = imgUrl;
+  thumb.alt = name;
 
-  item.appendChild(thumb); item.appendChild(nameEl);
-  item.addEventListener('click', () => {
-    const r  = canvasEl.getBoundingClientRect();
-    const pt = screenToWorld(r.left + r.width/2, r.top + r.height/2);
-    placeImageOnCanvas(imgUrl, name, pt.x, pt.y);
-    toast(`"${name}" placed on canvas`);
-  });
+  const nameEl = document.createElement('div');
+  nameEl.className = 'img-name';
+  nameEl.textContent = name;
+
+  item.appendChild(thumb);
+  item.appendChild(nameEl);
+
   list.appendChild(item);
 }
 
@@ -775,7 +817,7 @@ document.addEventListener('mouseup', () => {
 function init() {
   buildSwatches();
   resizeGrid();
-  loadComponentsFromJS();
+  loadComponentsFromSheet();
   showTab('components');
   window.addEventListener('resize', resizeGrid);
   document.addEventListener('keydown', onKey);
