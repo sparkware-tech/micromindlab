@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="../assests/img/favicon.png">
+    <title>MicroMind Lab - Journal</title>
+    <meta name="description" content="Many people use invention and innovation interchangeably — but they're very different forces. Understanding the gap changes how you approach every build.">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="../assests/css/index.css">
+    <link rel="stylesheet" href="../assests/css/blogs.css">
+  </head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class=""><img src="../assests/img/logo.png" alt="MicroMind Lab Logo" style="width: 50px;"></div>
+    MicroMind Lab
+  </a>
+  <ul class="nav-links">
+    <li><a href="../index.html#about">About</a></li>
+    <li><a href="../index.html#instructor">Instructor</a></li>
+    <li><a href="../index.html#programs">Programs</a></li>
+    <li class="nav-dropdown">
+      <a href="#">
+        Learn
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2 4 6 8 10 4"/></svg>
+      </a>
+      <div class="dropdown-menu">
+        <a href="../blogs.html">Lab Journal</a>
+        <div class="dropdown-divider"></div>
+        <a href="../howitworks.html">Tech Explorer</a>
+        <div class="dropdown-divider"></div>
+        <a href="../projects.html">Project Hub</a>
+      </div>
+    </li>
+    <li class="nav-dropdown">
+      <a href="#">
+       Build
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2 4 6 8 10 4"/></svg>
+      </a>
+      <div class="dropdown-menu">
+        <a href="../circuitbuilder.html" target="_blank">Design Studio</a>
+        <div class="dropdown-divider"></div>
+        <a href="../block-coder.html" target="_blank">Block Coder</a>
+        <div class="dropdown-divider"></div>
+        <a href="../store.html" target="_blank">Lab Store</a>
+      </div>
+    </li>
+    <li><a href="../index.html#contact">Contact</a></li>
+  </ul>
+  <a href="../lms.html" target="_blank" class="nav-cta">Log in to LMS</a>
+  <button class="nav-hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <ul>
+    <li><a href="../index.html#about" onclick="closeMenu()">About</a></li>
+    <li><a href="../index.html#instructor" onclick="closeMenu()">Instructor</a></li>
+    <li><a href="../index.html#programs" onclick="closeMenu()">Programs</a></li>
+    <li class="mobile-dropdown">
+      <span class="mobile-dropdown-label">Learn</span>
+      <ul class="mobile-sub">
+        <li><a href="../blogs.html" onclick="closeMenu()">Lab Journal</a></li>
+        <li><a href="../howitworks.html" onclick="closeMenu()">Tech Explorer</a></li>
+        <li><a href="../projects.html" onclick="closeMenu()">Project Hub</a></li>
+      </ul>
+    </li>
+    <li class="mobile-dropdown">
+      <span class="mobile-dropdown-label">Build</span>
+      <ul class="mobile-sub">
+        <li><a href="../circuitbuilder.html" target="_blank" onclick="closeMenu()">Design Studio</a></li>
+        <li><a href="../block-coder.html" target="_blank" onclick="closeMenu()">Block Coder</a></li>
+        <li><a href="../store.html" target="_blank" onclick="closeMenu()">Lab Store</a></li>
+      </ul>
+    </li>
+    <li><a href="../index.html#contact" onclick="closeMenu()">Contact</a></li>
+  </ul>
+  <a href="../lms.html" target="_blank" class="mobile-menu-cta">Log in to LMS</a>
+</div>
+
+<!-- HERO -->
+<!-- HERO -->
+<div class="blog-detail-hero">
+  <div class="blog-detail-orb"></div>
+  <div class="blog-detail-inner">
+    <a href="../blogs.html" class="blog-back"><i class="fa-solid fa-arrow-left"></i> Back tp Journal</a>
+
+    <div class="blog-cat-row">
+      <span class="blog-cat-pill">Product Development</span>
+    </div>
+
+    <h1>From Idea to Product: The 5 Stages Every Maker Needs to Know</h1>
+
+    <p class="lead">
+      Building a prototype is only the beginning. Every successful product travels through a series of stages before it reaches real users. Understanding this journey helps makers avoid common mistakes and build things people actually want.
+    </p>
+
+    <div class="blog-meta-row">
+      <div class="blog-author">
+        <div class="blog-author-av">M</div>
+        <span class="blog-author-name">MicroMind Lab</span>
+      </div>
+      <span><i class="fa-regular fa-calendar"></i> June 2026</span>
+      <span><i class="fa-regular fa-clock"></i> 6 min read</span>
+    </div>
+  </div>
+</div>
+
+<!-- COVER -->
+<div style="max-width:760px; margin:0 auto; padding:0 1.5rem; position:relative; z-index:1; margin-top:2rem;">
+  <div class="blog-cover">
+    <i class="fa-solid fa-diagram-project"></i>
+  </div>
+</div>
+
+<!-- ARTICLE -->
+<div class="blog-article">
+
+  <p>
+    Every great product begins as a simple idea. Maybe it's a problem you've noticed at school, a frustration you've experienced at home, or an exciting concept that sparks your curiosity. But having an idea is only the first step. The real challenge is turning that idea into something people can actually use.
+  </p>
+
+  <p>
+    Many young makers believe success happens when a prototype finally works. In reality, a working prototype is often just the beginning. The journey from idea to product involves learning, testing, improving, and understanding the people you're building for.
+  </p>
+
+  <h2><span class="h2-dot"></span>Stage 1: Identify a Real Problem</h2>
+
+  <p>
+    Great products don't start with technology — they start with problems. Before designing anything, ask yourself:
+  </p>
+
+  <ul>
+    <li>Who experiences this problem?</li>
+    <li>How often does it happen?</li>
+    <li>Why hasn't it been solved well already?</li>
+    <li>Would people care if this problem disappeared?</li>
+  </ul>
+
+  <p>
+    The strongest product ideas solve problems that are real, meaningful, and frequent. The better you understand the problem, the easier every later stage becomes.
+  </p>
+
+  <div class="blog-pullquote">
+    <p>
+      "Fall in love with the problem, not the solution."
+    </p>
+  </div>
+
+  <h2><span class="h2-dot"></span>Stage 2: Design and Prototype</h2>
+
+  <p>
+    Once you've identified a problem worth solving, it's time to explore solutions. This is where sketches, diagrams, circuits, code, and prototypes come into play.
+  </p>
+
+  <p>
+    Your first version doesn't need to be perfect. In fact, it probably won't be. The goal is simply to make the idea real enough that you can test it.
+  </p>
+
+  <p>
+    At this stage, speed matters more than perfection. Build quickly, learn quickly, and expect mistakes.
+  </p>
+
+  <h2><span class="h2-dot"></span>Stage 3: Test with Real Users</h2>
+
+  <p>
+    This is the stage many makers skip — and it's often the most important.
+  </p>
+
+  <p>
+    A product isn't successful because you think it's useful. It's successful when other people find it useful.
+  </p>
+
+  <p>
+    Show your prototype to classmates, parents, teachers, or potential users. Watch how they interact with it. Ask questions. Listen carefully to complaints and confusion.
+  </p>
+
+  <p>
+    Feedback can feel uncomfortable, but it's one of the fastest ways to improve a product.
+  </p>
+
+  <h2><span class="h2-dot"></span>Stage 4: Improve and Refine</h2>
+
+  <p>
+    Almost every successful product goes through multiple iterations. Rarely does Version 1 become the final version.
+  </p>
+
+  <p>
+    Use what you've learned from testing to improve:
+  </p>
+
+  <ul>
+    <li>Fix usability issues</li>
+    <li>Simplify complicated features</li>
+    <li>Increase reliability</li>
+    <li>Reduce costs</li>
+    <li>Improve appearance and user experience</li>
+  </ul>
+
+  <p>
+    This cycle of testing and improving may repeat many times. Each iteration moves your product closer to something people genuinely enjoy using.
+  </p>
+
+  <h2><span class="h2-dot"></span>Stage 5: Launch and Learn</h2>
+
+  <p>
+    When your product is stable and useful, it's time to share it with a larger audience.
+  </p>
+
+  <p>
+    Launching doesn't mean the work is finished. In many ways, it's another beginning. Real users will continue providing feedback, revealing new opportunities and challenges.
+  </p>
+
+  <p>
+    The best creators view launch day as the start of continuous improvement rather than the finish line.
+  </p>
+
+  <table class="blog-compare">
+    <thead>
+      <tr>
+        <th>Stage</th>
+        <th>Main Goal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1. Identify Problem</td>
+        <td>Understand a real need worth solving</td>
+      </tr>
+      <tr>
+        <td>2. Prototype</td>
+        <td>Create a working version of the idea</td>
+      </tr>
+      <tr>
+        <td>3. Test</td>
+        <td>Gather feedback from real users</td>
+      </tr>
+      <tr>
+        <td>4. Refine</td>
+        <td>Improve based on what you learned</td>
+      </tr>
+      <tr>
+        <td>5. Launch</td>
+        <td>Deliver value and continue learning</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2><span class="h2-dot"></span>Why Schools Rarely Teach the Whole Process</h2>
+
+  <p>
+    Traditional education often rewards correct answers and finished projects. Product development is different. It rewards experimentation, feedback, iteration, and resilience.
+  </p>
+
+  <p>
+    Real-world makers spend much of their time discovering what doesn't work before finding what does. That's why failed prototypes are not failures — they're valuable learning tools.
+  </p>
+
+  <div class="blog-keybox">
+    <div class="blog-keybox-label">
+      <i class="fa-solid fa-circle-check"></i> Key Takeaways
+    </div>
+    <ul>
+      <li><i class="fa-solid fa-check"></i> Great products begin with real problems, not random ideas.</li>
+      <li><i class="fa-solid fa-check"></i> A prototype is only one stage of the journey.</li>
+      <li><i class="fa-solid fa-check"></i> User feedback is one of the most powerful tools for improvement.</li>
+      <li><i class="fa-solid fa-check"></i> Iteration is normal — successful products evolve through many versions.</li>
+      <li><i class="fa-solid fa-check"></i> Launching is not the end; it's the beginning of continuous learning.</li>
+    </ul>
+  </div>
+
+  <h2><span class="h2-dot"></span>The Maker Mindset</h2>
+
+  <p>
+    Whether you're building a robot, an app, a science project, or a new gadget, understanding these five stages will make you a stronger creator. The goal isn't just to build something impressive — it's to build something useful.
+  </p>
+
+  <p>
+    At MicroMind Lab, students learn to move beyond simply making things work. They learn how to identify problems, prototype solutions, test ideas, gather feedback, and continuously improve. That's the process that transforms an idea into a product — and a maker into an innovator.
+  </p>
+
+</div>
+
+
+<!-- FLOATING WHATSAPP -->
+<a href="https://wa.me/94769011856" target="_blank" class="wa-float" aria-label="Chat on WhatsApp">
+  <i class="fa-brands fa-whatsapp"></i>
+  <span class="wa-float-label">Chat with us</span>
+  <span class="wa-float-ping"></span>
+</a>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">
+    <div class=""><img src="../assests/img/logo.png" alt="MicroMind Lab Logo" style="width: 50px;"></div>
+    MicroMind Lab
+  </div>
+  <p class="footer-tagline">The way to a smart future — Galle, Sri Lanka</p>
+  <p class="footer-copy">© 2026 MicroMind Lab</p>
+</footer>
+
+<script>
+function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
+function closeMenu()  { document.getElementById('mobileMenu').classList.remove('open'); }
+document.addEventListener('click', function(e) {
+  const menu = document.getElementById('mobileMenu');
+  const hamburger = document.querySelector('.nav-hamburger');
+  if (menu.classList.contains('open') && !menu.contains(e.target) && !hamburger.contains(e.target))
+    menu.classList.remove('open');
+});
+</script>
+</body>
+</html>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="assests/img/favicon.png">
-    <title>MicroMind Lab</title>
+    <title>MicroMind Lab - Project Hub</title>
 
     <meta name="description" content="Explore real student projects built at MicroMind Lab — robotics, electronics, IoT, and STEM builds with full step-by-step guides.">
     
@@ -17,7 +17,7 @@
 
 <!-- NAV -->
 <nav>
-  <a href="index.html" class="nav-logo">
+  <a href="#" class="nav-logo">
     <div class=""><img src="assests/img/logo.png" alt="MicroMind Lab Logo" style="width: 50px;"></div>
     MicroMind Lab
   </a>
@@ -27,17 +27,28 @@
     <li><a href="index.html#programs">Programs</a></li>
     <li class="nav-dropdown">
       <a href="#">
-        Learn & Build
+        Learn
         <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2 4 6 8 10 4"/></svg>
       </a>
       <div class="dropdown-menu">
-        <a href="projects.html">DIY Projects</a>
+        <a href="blogs.html">Lab Journal</a>
         <div class="dropdown-divider"></div>
-        <a href="circuitbuilder.html" target="_blank">Circuit Builder</a>
+        <a href="howitworks.html">Tech Explorer</a>
         <div class="dropdown-divider"></div>
-        <a href="howitworks.html">How It Works</a>
+        <a href="projects.html">Project Hub</a>
+      </div>
+    </li>
+    <li class="nav-dropdown">
+      <a href="#">
+        Build
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2 4 6 8 10 4"/></svg>
+      </a>
+      <div class="dropdown-menu">
+        <a href="circuitbuilder.html" target="_blank">Design Studio</a>
         <div class="dropdown-divider"></div>
-        <a href="store.html" target="_blank">Store</a>
+        <a href="block-coder.html" target="_blank">Block Coder</a>
+        <div class="dropdown-divider"></div>
+        <a href="store.html" target="_blank">Lab Store</a>
       </div>
     </li>
     <li><a href="index.html#contact">Contact</a></li>
@@ -55,12 +66,19 @@
     <li><a href="index.html#instructor" onclick="closeMenu()">Instructor</a></li>
     <li><a href="index.html#programs" onclick="closeMenu()">Programs</a></li>
     <li class="mobile-dropdown">
-      <span class="mobile-dropdown-label">Learn & Build</span>
+      <span class="mobile-dropdown-label">Learn</span>
       <ul class="mobile-sub">
-        <li><a href="projects.html" onclick="closeMenu()">DIY Projects</a></li>
-        <li><a href="circuitbuilder.html" target="_blank" onclick="closeMenu()">Circuit Builder</a></li>
-        <li><a href="howitworks.html" onclick="closeMenu()">How It Works</a></li>
-        <li><a href="store.html" target="_blank" onclick="closeMenu()">Store</a></li>
+        <li><a href="blogs.html" onclick="closeMenu()">Lab Journal</a></li>
+        <li><a href="howitworks.html" onclick="closeMenu()">Tech Explorer</a></li>
+        <li><a href="projects.html" onclick="closeMenu()">Project Hub</a></li>
+      </ul>
+    </li>
+    <li class="mobile-dropdown">
+      <span class="mobile-dropdown-label">Build</span>
+      <ul class="mobile-sub">
+        <li><a href="circuitbuilder.html" target="_blank" onclick="closeMenu()">Design Studio</a></li>
+        <li><a href="block-coder.html" target="_blank" onclick="closeMenu()">Block Coder</a></li>
+        <li><a href="store.html" target="_blank" onclick="closeMenu()">Lab Store</a></li>
       </ul>
     </li>
     <li><a href="index.html#contact" onclick="closeMenu()">Contact</a></li>
@@ -72,7 +90,7 @@
 <div class="projects-hero">
   <div class="projects-hero-orb-1"></div>
   <div class="sec-label" style="margin-bottom:0.75rem;">Real Builds · Hands-On Guides</div>
-  <h1>DIY Projects</span></h1>
+  <h1>The MicroMind Lab <span>Project Hub</span></h1>
   <p>Step-by-step guides for every project built at MicroMind Lab — from beginner circuits to advanced. Follow along, build it yourself.</p>
 </div>
 
@@ -92,7 +110,7 @@
     <!-- PROJECTS GRID -->
     <div class="projects-grid" id="projectsGrid">
       <!-- Smart Color Detector -->
-      <a href="projects/smart-color-detector.html" target="_blank" class="proj-card" data-tags="embedded">
+      <a href="projects/smart-color-detector.html" class="proj-card" data-tags="embedded">
         <div class="new-badge">New</div>
         <div class="proj-thumb">
           <i class="proj-thumb-icon fa-solid fa-palette"></i>
@@ -117,7 +135,7 @@
       </a>
 
       <!-- Smart Plant Watering System -->
-      <a href="" target="_blank" class="proj-card" data-tags="embedded" data-locked="true" data-href="projects/smart-plant-watering-system.html">
+      <a href="" class="proj-card" data-tags="embedded" data-locked="true" data-href="projects/smart-plant-watering-system.html">
         <div class="lock-badge"><i class="fa-solid fa-lock"></i> Subscribers Only</div>
         <div class="proj-thumb">
           <img src="assests/img/projects/smart-plant-watering-system.png" alt="Smart Plant Watering System">

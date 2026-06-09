@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MicroMind Lab</title>
+    <title>MicroMind Lab - Tech Explorer</title>
     <meta name="description" content="Learn how ultrasonic sensors measure distance using sound pulses and echo timing.">
     <link rel="icon" type="image/png" href="../assests/img/favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
@@ -12,34 +12,81 @@
     <link rel="stylesheet" href="../assests/css/projects.css">
   </head>
 <body>
+<!-- NAV -->
 <nav>
-  <a href="../index.html" class="nav-logo"><div><img src="../assests/img/logo.png" alt="MicroMind Lab Logo" style="width: 50px;"></div>MicroMind Lab</a>
+  <a href="#" class="nav-logo">
+    <div class=""><img src="../assests/img/logo.png" alt="MicroMind Lab Logo" style="width: 50px;"></div>
+    MicroMind Lab
+  </a>
   <ul class="nav-links">
     <li><a href="../index.html#about">About</a></li>
     <li><a href="../index.html#instructor">Instructor</a></li>
     <li><a href="../index.html#programs">Programs</a></li>
-    <li class="nav-dropdown"><a href="#">Learn &amp; Build <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2 4 6 8 10 4"/></svg></a><div class="dropdown-menu"><a href="../projects.html">DIY Projects</a><div class="dropdown-divider"></div><a href="../circuitbuilder.html" target="_blank">Circuit Builder</a><div class="dropdown-divider"></div><a href="../howitworks.html">How It Works</a><div class="dropdown-divider"></div><a href="../store.html" target="_blank">Store</a></div></li>
+    <li class="nav-dropdown">
+      <a href="#">
+        Learn
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2 4 6 8 10 4"/></svg>
+      </a>
+      <div class="dropdown-menu">
+        <a href="../blogs.html">Lab Journal</a>
+        <div class="dropdown-divider"></div>
+        <a href="../howitworks.html">Tech Explorer</a>
+        <div class="dropdown-divider"></div>
+        <a href="../projects.html">Project Hub</a>
+      </div>
+    </li>
+    <li class="nav-dropdown">
+      <a href="#">
+       Build
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2 4 6 8 10 4"/></svg>
+      </a>
+      <div class="dropdown-menu">
+        <a href="../circuitbuilder.html" target="_blank">Design Studio</a>
+        <div class="dropdown-divider"></div>
+        <a href="../block-coder.html" target="_blank">Block Coder</a>
+        <div class="dropdown-divider"></div>
+        <a href="../store.html" target="_blank">Lab Store</a>
+      </div>
+    </li>
     <li><a href="../index.html#contact">Contact</a></li>
   </ul>
   <a href="../lms.html" target="_blank" class="nav-cta">Log in to LMS</a>
-  <button class="nav-hamburger" onclick="toggleMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
+  <button class="nav-hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
 <div class="mobile-menu" id="mobileMenu">
   <ul>
     <li><a href="../index.html#about" onclick="closeMenu()">About</a></li>
     <li><a href="../index.html#instructor" onclick="closeMenu()">Instructor</a></li>
     <li><a href="../index.html#programs" onclick="closeMenu()">Programs</a></li>
-    <li class="mobile-dropdown"><span class="mobile-dropdown-label">Learn &amp; Build</span><ul class="mobile-sub"><li><a href="../projects.html" onclick="closeMenu()">DIY Projects</a></li><li><a href="../circuitbuilder.html" target="_blank" onclick="closeMenu()">Circuit Builder</a></li><li><a href="../howitworks.html" onclick="closeMenu()">How It Works</a></li><li><a href="../store.html" target="_blank" onclick="closeMenu()">Store</a></li></ul></li>
+    <li class="mobile-dropdown">
+      <span class="mobile-dropdown-label">Learn</span>
+      <ul class="mobile-sub">
+        <li><a href="../blogs.html" onclick="closeMenu()">Lab Journal</a></li>
+        <li><a href="../howitworks.html" onclick="closeMenu()">Tech Explorer</a></li>
+        <li><a href="../projects.html" onclick="closeMenu()">Project Hub</a></li>
+      </ul>
+    </li>
+    <li class="mobile-dropdown">
+      <span class="mobile-dropdown-label">Build</span>
+      <ul class="mobile-sub">
+        <li><a href="../circuitbuilder.html" target="_blank" onclick="closeMenu()">Design Studio</a></li>
+        <li><a href="../block-coder.html" target="_blank" onclick="closeMenu()">Block Coder</a></li>
+        <li><a href="../store.html" target="_blank" onclick="closeMenu()">Lab Store</a></li>
+      </ul>
+    </li>
     <li><a href="../index.html#contact" onclick="closeMenu()">Contact</a></li>
   </ul>
   <a href="../lms.html" target="_blank" class="mobile-menu-cta">Log in to LMS</a>
 </div>
 
-<div class="proj-content-hero">
+<div class="proj-detail-hero">
   <div class="proj-detail-orb"></div>
   <div class="proj-detail-hero-inner">
     <a href="../howitworks.html" class="proj-back"><i class="fa-solid fa-arrow-left"></i> Back to How It Works</a>
-    <div class="proj-meta-row"><span class="proj-meta-tag">Sensor</span><span class="proj-meta-level"><i class="fa-solid fa-wave-square" style="color:#34D399;font-size:11px;"></i> Echo distance</span></div>
+    <div class="proj-meta-row"><span class="proj-meta-tag">Sensor</span><span class="proj-meta-tag"><i class="fa-solid fa-wave-square" style="color:#34D399;font-size:11px;"></i> Echo distance</span></div>
     <h1>How Ultrasonic Sensors Work</h1>
     <p class="lead">An ultrasonic sensor measures distance by sending a high-frequency sound pulse and measuring how long the echo takes to return.</p>
     <div class="proj-stats">
@@ -62,7 +109,7 @@
   </div></div>
   <div class="proj-divider"></div>
   <div class="proj-section"><div class="proj-section-label"><div class="proj-section-icon"><i class="fa-solid fa-lightbulb"></i></div><h2>Common Uses</h2></div><div class="proj-body-text"><p>Obstacle avoiding robots, parking sensors, water-level measuring systems, smart dustbins, and distance measuring tools.</p></div></div>
-  <div class="proj-nav-footer"><a href="../howitworks.html" class="proj-nav-btn"><i class="fa-solid fa-arrow-left"></i><span><span class="proj-nav-btn-label">Back</span><span class="proj-nav-btn-title">How It Works</span></span></a><a href="servo-motor.html" class="proj-nav-btn"><span><span class="proj-nav-btn-label">Next</span><span class="proj-nav-btn-title">Servo Motor</span></span><i class="fa-solid fa-arrow-right"></i></a></div>
+  <!-- <div class="proj-nav-footer"><a href="../howitworks.html" class="proj-nav-btn"><i class="fa-solid fa-arrow-left"></i><span><span class="proj-nav-btn-label">Back</span><span class="proj-nav-btn-title">How It Works</span></span></a><a href="servo-motor.html" class="proj-nav-btn"><span><span class="proj-nav-btn-label">Next</span><span class="proj-nav-btn-title">Servo Motor</span></span><i class="fa-solid fa-arrow-right"></i></a></div> -->
 </div>
 
 <a href="https://wa.me/94769011856" target="_blank" class="wa-float" aria-label="Chat on WhatsApp"><i class="fa-brands fa-whatsapp"></i><span class="wa-float-label">Chat with us</span><span class="wa-float-ping"></span></a>

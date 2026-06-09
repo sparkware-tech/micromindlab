@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="assests/img/favicon.png">
+  <title>MicroMind Lab - Block Coder</title>
+  <link rel="stylesheet" href="assests/css/block-coder.css">
+</head>
+<body>
+<div id="app">
+  <div id="left">
+    <h2>MicroMind Lab</h2>
+    <div id="blocks-list"></div>
+  </div>
+
+  <div id="right">
+    <div id="right-top">
+      <h1>Block Coder</h1>
+      <button id="btn-clear">🗑 Clear All</button>
+      <button id="btn-download">⬇ Download .ino</button>
+    </div>
+
+    <div id="sections">
+      <div class="section">
+        <div class="section-head setup">⚙ void setup( )</div>
+        <div class="drop-zone" id="zone-setup"></div>
+      </div>
+      <div class="section">
+        <div class="section-head loop" style="padding-bottom: 11px;">↻ void loop( )</div>
+        <div class="drop-zone" id="zone-loop"></div>
+      </div>
+    </div>
+
+    <div id="preview">
+      <div id="preview-head">⎘ code preview</div>
+      <div id="code-out"></div>
+    </div>
+  </div>
+</div>
+
+<script src="assests/constant/block.config.js"></script>
+<script>
+// ── Build BLOCKS lookup from definitions ──────────────────────
+const BLOCKS = {};
+
+function resolveTemplate(template, data) {
+  return template.replace(/\{\{(\w+)\}\}/g, (_, k) => data[k] !== undefined ? data[k] : '');
+}
+
+function buildRenderFn(def) {
+  return function(data) {
+    return def.fields.map(f => {
+      if (f.kind === 'text') {
+        // Dim the trailing arrow labels slightly
+        const style = f.label.startsWith('→') ? ' style="opacity:.6"' : '';
+        return `<span${style}>${f.label}</span>`;
+      }
+      if (f.kind === 'input') {
+        return `<input class="inline-input" value="${data[f.key] ?? ''}" data-k="${f.key}" style="width:${f.width}px">`;
+      }
+      if (f.kind === 'select') {
+        const opts = f.options.map(o => `<option${data[f.key] === o ? ' selected' : ''}>${o}</option>`).join('');
+        return `<select class="inline-select" data-k="${f.key}">${opts}</select>`;
+      }
+      return '';
+    }).join(' ');
+  };
+}
+
+function buildCodeFn(def) {
+  return function(data) {
+    const merged = Object.assign({}, def.defaults, data);
+    return resolveTemplate(def.code, merged);
+  };
+}
+
+BLOCK_DEFINITIONS.forEach(def => {
+  BLOCKS[def.type] = {
+    cls:    def.cls,
+    label:  def.label,
+    render: buildRenderFn(def),
+    code:   buildCodeFn(def)
+  };
+});
+
+// ── Build sidebar from definitions ────────────────────────────
+(function buildSidebar() {
+  const list = document.getElementById('blocks-list');
+  const seen = {};
+
+  BLOCK_DEFINITIONS.forEach(def => {
+    if (!seen[def.category]) {
+      seen[def.category] = true;
+      const label = document.createElement('div');
+      label.className = 'cat-label';
+      label.textContent = def.category;
+      list.appendChild(label);
+    }
+
+    const el = document.createElement('div');
+    el.className = `block ${def.cls}`;
+    el.draggable = true;
+    el.dataset.type = def.type;
+    el.innerHTML = `${def.label} <br> <span class="sub">${def.hint}</span>`;
+    el.addEventListener('dragstart', e => {
+      dragType = def.type;
+      e.dataTransfer.setData('text/plain', def.type);
+    });
+    list.appendChild(el);
+  });
+})();
+
+// ── Core state & rendering ────────────────────────────────────
+let zones   = { setup: [], loop: [] };
+let dragType = null;
+let uid     = 0;
+
+function mkUid() { return 'b' + (++uid); }
+
+function renderZone(zoneId) {
+  const el  = document.getElementById('zone-' + zoneId);
+  const arr = zones[zoneId];
+
+  if (arr.length === 0) {
+    el.innerHTML = `<div class="drop-hint"><i>↓</i>Drop blocks here<br><small style="color:#333">${zoneId === 'setup' ? 'runs once at start' : 'runs forever'}</small></div>`;
+    return;
+  }
+
+  el.innerHTML = '';
+  arr.forEach((item, i) => {
+    const def = BLOCKS[item.type];
+    // Fill in defaults for any missing keys
+    const data = Object.assign({}, BLOCK_DEFINITIONS.find(d => d.type === item.type).defaults, item.data);
+    item.data = data;
+
+    const div = document.createElement('div');
+    div.className  = 'placed ' + def.cls;
+    div.dataset.id   = item.id;
+    div.dataset.zone = zoneId;
+    div.dataset.idx  = i;
+    div.innerHTML = def.render(data) + `<button class="del-btn" title="remove">✕</button>`;
+
+    div.querySelector('.del-btn').onclick = () => {
+      zones[zoneId].splice(i, 1);
+      renderZone(zoneId);
+      updateCode();
+    };
+
+    div.querySelectorAll('.inline-input, .inline-select').forEach(inp => {
+      inp.addEventListener('input',  () => { item.data[inp.dataset.k] = inp.value; updateCode(); });
+      inp.addEventListener('change', () => { item.data[inp.dataset.k] = inp.value; updateCode(); });
+    });
+
+    el.appendChild(div);
+  });
+}
+
+function updateCode() {
+  const setupLines = zones.setup.map(it => BLOCKS[it.type].code(it.data));
+  const loopLines  = zones.loop.map(it  => BLOCKS[it.type].code(it.data));
+
+  const raw = `void setup() {\n${setupLines.join('\n') || '  // nothing yet'}\n}\n\nvoid loop() {\n${loopLines.join('\n') || '  // nothing yet'}\n}`;
+
+  document.getElementById('code-out').innerHTML = raw
+    .replace(/void (setup|loop)/g,   '<span class="ck">void</span> <span class="cv">$1</span>')
+    .replace(/(pinMode|digitalWrite|digitalRead|analogWrite|analogRead|delay|delayMicroseconds|Serial\.begin|Serial\.print|Serial\.println)/g, '<span class="cn">$1</span>')
+    .replace(/(HIGH|LOW|OUTPUT|INPUT|INPUT_PULLUP)/g, '<span class="cs">$1</span>')
+    .replace(/(\/\/ .*)/g, '<span class="cc">$1</span>');
+
+  window._lastCode = raw;
+}
+
+// ── Drop zones ────────────────────────────────────────────────
+document.querySelectorAll('.drop-zone').forEach(zone => {
+  zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('drag-over');
+    const type = dragType || e.dataTransfer.getData('text/plain');
+    if (!type || !BLOCKS[type]) return;
+    const zoneId = zone.id.replace('zone-', '');
+    zones[zoneId].push({ id: mkUid(), type, data: {} });
+    renderZone(zoneId);
+    updateCode();
+  });
+});
+
+// ── Toolbar buttons ───────────────────────────────────────────
+document.getElementById('btn-clear').onclick = () => {
+  zones = { setup: [], loop: [] };
+  renderZone('setup');
+  renderZone('loop');
+  updateCode();
+};
+
+document.getElementById('btn-download').onclick = () => {
+  const blob = new Blob([window._lastCode || ''], { type: 'text/plain' });
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
+  a.download = 'my_arduino.ino';
+  a.click();
+};
+
+// ── Init ──────────────────────────────────────────────────────
+renderZone('setup');
+renderZone('loop');
+updateCode();
+</script>
+</body>
+</html>
