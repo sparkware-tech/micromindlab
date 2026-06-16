@@ -1,0 +1,557 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MicroMind Lab - Tech Explorer</title>
+    <meta name="description" content="Learn how servo motors control angle using gears, feedback, and PWM signals.">
+    <link rel="icon" type="image/png" href="../assests/img/favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="../assests/css/index.css">
+    <link rel="stylesheet" href="../assests/css/techexplorer.css">
+  </head>
+
+<body>
+
+<!-- NAV -->
+<nav>
+    <a href="../index.html" class="nav-logo">
+        <div>
+            <img src="../assests/img/logo.png" alt="MicroMind Lab Logo" style="width:50px;">
+        </div>
+        MicroMind Lab
+    </a>
+
+    <ul class="nav-links">
+        <li><a href="../index.html#about">About</a></li>
+        <li><a href="../index.html#instructor">Instructors</a></li>
+        <li><a href="../index.html#programs">Programs</a></li>
+
+        <li class="nav-dropdown">
+            <a href="#">
+                Learn
+                <svg width="11" height="11" viewBox="0 0 12 12" fill="none"
+                    stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round">
+                    <polyline points="2 4 6 8 10 4"/>
+                </svg>
+            </a>
+
+            <div class="dropdown-menu">
+                <a href="../labjournal.html">Lab Journal</a>
+                <div class="dropdown-divider"></div>
+                <a href="../techexplorer.html">Tech Explorer</a>
+                <div class="dropdown-divider"></div>
+                <a href="../projecthub.html">Project Hub</a>
+            </div>
+        </li>
+
+        <li class="nav-dropdown">
+            <a href="#">
+                Build
+                <svg width="11" height="11" viewBox="0 0 12 12" fill="none"
+                    stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round">
+                    <polyline points="2 4 6 8 10 4"/>
+                </svg>
+            </a>
+
+            <div class="dropdown-menu">
+                <a href="../designstudio.html" target="_blank">Design Studio</a>
+                <div class="dropdown-divider"></div>
+                <a href="../blockcoder.html" target="_blank">Block Coder</a>
+                <div class="dropdown-divider"></div>
+                <a href="../labstore.html" target="_blank">Lab Store</a>
+            </div>
+        </li>
+
+        <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+
+    <div>
+        <button id="lang-toggle" class="lang-toggle" data-lang="en"
+            onclick="toggleLanguage()">
+            <span class="lang-active">EN</span>
+            <span class="lang-divider">/</span>
+            <span class="lang-inactive">SI</span>
+        </button>
+
+        <a href="../lms.html" target="_blank" class="nav-cta">
+            Log in to LMS
+        </a>
+    </div>
+
+    <button class="nav-hamburger" onclick="toggleMenu()" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+    <ul>
+        <li><a href="../index.html#about" onclick="closeMenu()">About</a></li>
+        <li><a href="../index.html#instructor" onclick="closeMenu()">Instructors</a></li>
+        <li><a href="../index.html#programs" onclick="closeMenu()">Programs</a></li>
+
+        <li class="mobile-dropdown">
+            <span class="mobile-dropdown-label">Learn</span>
+            <ul class="mobile-sub">
+                <li><a href="../labjournal.html" onclick="closeMenu()">Lab Journal</a></li>
+                <li><a href="../techexplorer.html" onclick="closeMenu()">Tech Explorer</a></li>
+                <li><a href="../projecthub.html" onclick="closeMenu()">Project Hub</a></li>
+            </ul>
+        </li>
+
+        <li class="mobile-dropdown">
+            <span class="mobile-dropdown-label">Build</span>
+            <ul class="mobile-sub">
+                <li><a href="../designstudio.html" target="_blank" onclick="closeMenu()">Design Studio</a></li>
+                <li><a href="../blockcoder.html" target="_blank" onclick="closeMenu()">Block Coder</a></li>
+                <li><a href="../labstore.html" target="_blank" onclick="closeMenu()">Lab Store</a></li>
+            </ul>
+        </li>
+
+        <li><a href="../index.html#contact" onclick="closeMenu()">Contact</a></li>
+    </ul>
+
+    <a href="../lms.html" target="_blank" class="mobile-menu-cta">
+        Log in to LMS
+    </a>
+</div>
+
+<!-- HERO -->
+<div class="proj-detail-hero">
+
+    <div class="proj-detail-orb"></div>
+
+    <div class="proj-detail-hero-inner">
+
+        <a href="../techexplorer.html" class="proj-back">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Tech Explorer
+        </a>
+
+        <div class="proj-meta-row">
+            <span class="proj-meta-tag">Sensor</span>
+
+            <span class="proj-meta-tag">
+                <i class="fa-solid fa-palette"
+                    style="color:#34D399;font-size:11px;"></i>
+                Color Detection
+            </span>
+        </div>
+
+        <h1>How TCS230 TCS3200 Color Sensors Work</h1>
+
+        <p class="lead">
+            The TCS230 TCS3200 Color Recognition Sensor Module detect the
+            color of an object by measuring the intensity of red, green, and
+            blue (RGB) light reflected from its surface.
+        </p>
+
+        <div class="proj-stats">
+
+            <div class="proj-stat">
+                <i class="fa-solid fa-lightbulb"></i>
+                <span>Detects</span>
+                <strong>RGB Colors</strong>
+            </div>
+
+            <div class="proj-stat">
+                <i class="fa-solid fa-microchip"></i>
+                <span>Output</span>
+                <strong>Frequency</strong>
+            </div>
+
+            <div class="proj-stat">
+                <i class="fa-solid fa-eye"></i>
+                <span>Uses</span>
+                <strong>Color Recognition</strong>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="proj-cover">
+        <img src="../assests/img/howitworks/color sensor.png"
+            alt="TCS3200 Color Recognition Sensor Module">
+    </div>
+
+</div>
+
+<!-- CONTENT -->
+<div class="proj-content">
+
+    <!-- SIMPLE IDEA -->
+    <div class="proj-section">
+        <div class="proj-section-label">
+            <div class="proj-section-icon">
+                <i class="fa-solid fa-book-open"></i>
+            </div>
+            <h2>Simple Idea</h2>
+        </div>
+
+        <div class="proj-body-text">
+            <p>
+                The TCS230 TCS3200 is color recognition sensor that
+                identify colors by measuring reflected light. The sensor
+                contains arrays of red, green, blue, and clear photodiodes.
+            </p>
+
+            <p>
+                When light reflects from an object, the sensor measures how
+                much red, green, and blue light is received. A microcontroller
+                then compares these values to determine the object's color.
+            </p>
+        </div>
+    </div>
+
+    <div class="proj-divider"></div>
+
+    <!-- HOW IT WORKS -->
+    <div class="proj-section">
+        <div class="proj-section-label">
+            <div class="proj-section-icon">
+                <i class="fa-solid fa-list-check"></i>
+            </div>
+            <h2>How It Works</h2>
+        </div>
+
+        <div class="steps-list">
+
+            <div class="step-item">
+                <div class="step-num-circle">1</div>
+                <div class="step-item-body">
+                    <h4>Illuminate the Object</h4>
+                    <p>
+                        White LEDs on the module shine light onto the object's
+                        surface.
+                    </p>
+                </div>
+            </div>
+
+            <div class="step-item">
+                <div class="step-num-circle">2</div>
+                <div class="step-item-body">
+                    <h4>Light is Reflected</h4>
+                    <p>
+                        Different colors reflect different amounts of red,
+                        green, and blue light.
+                    </p>
+                </div>
+            </div>
+
+            <div class="step-item">
+                <div class="step-num-circle">3</div>
+                <div class="step-item-body">
+                    <h4>Photodiodes Measure Color</h4>
+                    <p>
+                        The sensor selects red, green, or blue filters and
+                        measures the intensity of the reflected light.
+                    </p>
+                </div>
+            </div>
+
+            <div class="step-item">
+                <div class="step-num-circle">4</div>
+                <div class="step-item-body">
+                    <h4>Frequency Output is Generated</h4>
+                    <p>
+                        The measured light intensity is converted into a
+                        square-wave frequency signal.
+                    </p>
+                </div>
+            </div>
+
+            <div class="step-item">
+                <div class="step-num-circle">5</div>
+                <div class="step-item-body">
+                    <h4>Color is Identified</h4>
+                    <p>
+                        The microcontroller compares red, green, and blue
+                        values and determines the object's color.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="proj-divider"></div>
+
+    <!-- FEATURES -->
+    <div class="proj-section">
+        <div class="proj-section-label">
+            <div class="proj-section-icon">
+                <i class="fa-solid fa-star"></i>
+            </div>
+            <h2>Key Features</h2>
+        </div>
+
+        <div class="proj-body-text">
+            <ul>
+                <li>Detects red, green, blue, and clear light components.</li>
+                <li>Frequency output is easy to read using microcontrollers.</li>
+                <li>Built-in white LEDs improve sensing accuracy.</li>
+                <li>Compatible with Arduino, ESP32, Raspberry Pi, and STM32.</li>
+                <li>Fast and reliable color recognition.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="proj-divider"></div>
+
+    <!-- PINS -->
+    <div class="proj-section">
+        <div class="proj-section-label">
+            <div class="proj-section-icon">
+                <i class="fa-solid fa-plug"></i>
+            </div>
+            <h2>Main Pins</h2>
+        </div>
+
+        <div class="proj-body-text">
+            <p><strong>VCC</strong> – Power supply (5V)</p>
+            <p><strong>GND</strong> – Ground connection</p>
+            <p><strong>OUT</strong> – Frequency output signal</p>
+            <p><strong>S0, S1</strong> – Output frequency scaling selection</p>
+            <p><strong>S2, S3</strong> – Color filter selection</p>
+            <p><strong>OE</strong> – Output enable pin</p>
+        </div>
+    </div>
+
+    <div class="proj-divider"></div>
+
+    <!-- ARDUINO CONNECTION -->
+    <div class="proj-section">
+        <div class="proj-section-label">
+            <div class="proj-section-icon">
+                <i class="fa-solid fa-microchip"></i>
+            </div>
+            <h2>Using the Sensor with Arduino</h2>
+        </div>
+
+        <div class="proj-body-text">
+
+            <h3>Wiring Connections</h3><br>
+
+            <img src="../assests/img/howitworks/color sensor circuit.png" alt="TCS3200 Color Recognition Sensor Module" style="width:100%;">
+
+            <table class="proj-table">
+                <thead>
+                    <tr>
+                        <th>TCS3200 Pin</th>
+                        <th>Arduino Uno Pin</th>
+                    </tr>
+                </thead>
+                <tr>
+                    <td>VCC</td>
+                    <td>5V</td>
+                </tr>
+                <tr>
+                    <td>GND</td>
+                    <td>GND</td>
+                </tr>
+                <tr>
+                    <td>S0</td>
+                    <td>D4</td>
+                </tr>
+                <tr>
+                    <td>S1</td>
+                    <td>D5</td>
+                </tr>
+                <tr>
+                    <td>S2</td>
+                    <td>D6</td>
+                </tr>
+                <tr>
+                    <td>S3</td>
+                    <td>D7</td>
+                </tr>
+                <tr>
+                    <td>OUT</td>
+                    <td>D8</td>
+                </tr>
+            </table>
+
+
+           <br>
+
+            <p>
+                The Arduino reads the frequency output from the sensor for the
+                red, green, and blue filters. These values are then used to
+                determine the detected color.
+            </p>
+
+        </div>
+    </div>
+
+    <div class="proj-divider"></div>
+
+    <!-- ARDUINO CODE -->
+    <div class="proj-section">
+        <div class="proj-section-label">
+            <div class="proj-section-icon">
+                <i class="fa-solid fa-code"></i>
+            </div>
+            <h2>Example Arduino Code</h2>
+        </div>
+
+        <div class="proj-body-text">
+
+    <pre><code>
+    #define S0 4
+    #define S1 5
+    #define S2 6
+    #define S3 7
+    #define sensorOut 8
+
+    int redFrequency = 0;
+    int greenFrequency = 0;
+    int blueFrequency = 0;
+
+    void setup() {
+        pinMode(S0, OUTPUT);
+        pinMode(S1, OUTPUT);
+        pinMode(S2, OUTPUT);
+        pinMode(S3, OUTPUT);
+        pinMode(sensorOut, INPUT);
+
+        digitalWrite(S0, HIGH);
+        digitalWrite(S1, LOW);
+
+        Serial.begin(9600);
+    }
+
+    void loop() {
+        // Read RED
+        digitalWrite(S2, LOW);
+        digitalWrite(S3, LOW);
+        redFrequency = pulseIn(sensorOut, LOW);
+
+        // Read GREEN
+        digitalWrite(S2, HIGH);
+        digitalWrite(S3, HIGH);
+        greenFrequency = pulseIn(sensorOut, LOW);
+
+        // Read BLUE
+        digitalWrite(S2, LOW);
+        digitalWrite(S3, HIGH);
+        blueFrequency = pulseIn(sensorOut, LOW);
+
+        Serial.print("R = ");
+        Serial.print(redFrequency);
+
+        Serial.print(" G = ");
+        Serial.print(greenFrequency);
+
+        Serial.print(" B = ");
+        Serial.println(blueFrequency);
+
+        delay(500);
+    }
+    </code></pre>
+            <br>
+            <p>
+                Open the Serial Monitor to view the Red, Green, and Blue values.
+                By comparing these values, the Arduino can identify different
+                colors such as red, green, blue, yellow, black, and white.
+            </p>
+
+        </div>
+    </div>
+
+    <div class="proj-divider"></div>
+
+    <!-- COMMON USES -->
+    <div class="proj-section">
+        <div class="proj-section-label">
+            <div class="proj-section-icon">
+                <i class="fa-solid fa-lightbulb"></i>
+            </div>
+            <h2>Common Uses</h2>
+        </div>
+
+        <div class="proj-body-text">
+            <p>
+                Color sorting machines, smart recycling systems, robotic vision,
+                industrial automation, line-following robots, object
+                classification, quality control systems, and educational
+                electronics projects.
+            </p>
+        </div>
+    </div>
+
+</div>
+
+<!-- WHATSAPP -->
+<a href="https://wa.me/94769011856" target="_blank"
+    class="wa-float" aria-label="Chat on WhatsApp">
+
+    <i class="fa-brands fa-whatsapp"></i>
+
+    <span class="wa-float-label">Chat with us</span>
+
+    <span class="wa-float-ping"></span>
+</a>
+
+<!-- FOOTER -->
+<footer>
+
+    <div class="footer-brand">
+        <div>
+            <img src="../assests/img/logo.png"
+                alt="MicroMind Lab Logo"
+                style="width:50px;">
+        </div>
+        MicroMind Lab
+    </div>
+
+    <p class="footer-tagline">
+        The way to a smart future - Galle, Sri Lanka
+    </p>
+
+    <p class="footer-copy">
+        &copy; 2026 MicroMind Lab
+    </p>
+
+</footer>
+
+<!-- GOOGLE TRANSLATE -->
+<div id="google_translate_element" style="display:none"></div>
+
+<script src="../assests/constant/lang-toggle.js"></script>
+
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<script>
+function toggleMenu() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+}
+
+function closeMenu() {
+    document.getElementById('mobileMenu').classList.remove('open');
+}
+
+document.addEventListener('click', function(e) {
+
+    const menu = document.getElementById('mobileMenu');
+    const hamburger = document.querySelector('.nav-hamburger');
+
+    if (
+        menu.classList.contains('open') &&
+        !menu.contains(e.target) &&
+        !hamburger.contains(e.target)
+    ) {
+        menu.classList.remove('open');
+    }
+});
+</script>
+
+</body>
+</html>
+```
