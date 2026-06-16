@@ -1,6 +1,18 @@
 const BLOCK_DEFINITIONS = [
   /* Pin Setup */
   {
+    category:'Pin Setup', type:'definePin', cls:'b-pin',
+    label:'definePin', hint:'define a pin with a name',
+    defaults:{ name:'LED_PIN', pin:'13' },
+    fields:[
+      { kind:'text', label:'definePin' },
+      { kind:'input', key:'pin', width:30 },
+      { kind:'text', label:'as' },
+      { kind:'input', key:'name', width:100 },
+    ],
+    code:'  {{_indent}}int {{name}} = {{pin}};'
+  },
+  {
     category:'Pin Setup', type:'setPin', cls:'b-pin',
     label:'setPin', hint:'set pin as INPUT or OUTPUT',
     defaults:{ pin:'13', mode:'OUTPUT' },
@@ -34,7 +46,7 @@ const BLOCK_DEFINITIONS = [
     code:'  {{_indent}}digitalWrite({{pin}}, LOW);'
   },
   {
-    category:'Digital', type:'readPin', cls:'b-read',
+    category:'Digital', type:'readPin', cls:'b-write',
     label:'readPin', hint:'read digital pin value',
     defaults:{ pin:'2' },
     fields:[
@@ -46,11 +58,11 @@ const BLOCK_DEFINITIONS = [
   },
   /* Analog */
   {
-    category:'Analog', type:'analogWrite', cls:'b-write',
-    label:'analogWrite', hint:'write analog value 0–255',
+    category:'Analog', type:'analogWrite', cls:'b-read',
+    label:'writePin', hint:'write analog value 0–255',
     defaults:{ pin:'9', val:'128' },
     fields:[
-      { kind:'text', label:'analogWrite' },
+      { kind:'text', label:'writePin' },
       { kind:'input', key:'pin', width:30 },
       { kind:'text', label:'value' },
       { kind:'input', key:'val', width:36 }
@@ -59,10 +71,10 @@ const BLOCK_DEFINITIONS = [
   },
   {
     category:'Analog', type:'analogRead', cls:'b-read',
-    label:'analogRead', hint:'read analog pin A0–A5',
+    label:'readPin', hint:'read analog pin A0–A5',
     defaults:{ pin:'A0' },
     fields:[
-      { kind:'text', label:'analogRead' },
+      { kind:'text', label:'readPin' },
       { kind:'select', key:'pin', options:['A0','A1','A2','A3','A4','A5'] },
       { kind:'text', label:'→ val' }
     ],
