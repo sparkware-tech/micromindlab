@@ -972,3 +972,50 @@ footer { background: #050710; color: rgba(255,255,255,0.4); padding: 2.5rem 1.5r
     width: 100%;
   }
 }
+
+/* ─── Language Toggle ─────────────────────────────────────────── */
+/* Add this block to your index.css (or shared stylesheet)         */
+
+/* Hide Google's top banner completely */
+.goog-te-banner-frame,
+.goog-te-balloon-frame,
+#goog-gt-tt,
+.skiptranslate iframe {
+  display: none !important;
+}
+body {
+  top: 0 !important;
+  position: static !important;
+}
+
+/* The EN / සිං toggle button */
+.lang-toggle {
+  background: transparent;
+  border: 1px solid rgba(52, 211, 153, 0.25);
+  border-radius: 8px;
+  padding: 10px 13px;
+  cursor: pointer;
+  font-family: 'Sora', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: border-color 0.2s, background 0.2s;
+  white-space: nowrap;
+}
+.lang-toggle:hover {
+  border-color: #34D399;
+  background: rgba(52, 211, 153, 0.06);
+}
+.lang-active {
+  color: #34D399;
+}
+.lang-divider {
+  color: rgba(255, 255, 255, 0.2);
+  font-weight: 400;
+}
+.lang-inactive {
+  color: rgba(255, 255, 255, 0.3);
+}

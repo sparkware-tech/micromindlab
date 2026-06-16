@@ -80,7 +80,14 @@
     </li>
     <li><a href="#contact">Contact</a></li>
   </ul>
-  <a href="lms.html" target="_blank" class="nav-cta">Log in to LMS</a>
+  <div>
+    <button id="lang-toggle" class="lang-toggle" data-lang="en" onclick="toggleLanguage()">
+      <span class="lang-active">EN</span>
+      <span class="lang-divider">/</span>
+      <span class="lang-inactive">SI</span>
+    </button>
+    <a href="lms.html" target="_blank" class="nav-cta">Log in to LMS</a>
+  </div>
   <button class="nav-hamburger" onclick="toggleMenu()" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
@@ -234,12 +241,19 @@
 <!-- ═══ INSTRUCTOR ═══ -->
 <div class="section alt" id="instructor">
   <div class="inner">
-    <div class="about-grid">
+
+    <div style="text-align:center; margin-bottom:3rem;">
+      <div class="sec-label">Your Instructors</div>
+      <h2 class="sec-title">Meet the Team</h2>
+    </div>
+
+    <!-- Instructor 1 — existing -->
+    <div class="about-grid" style="margin-bottom: 4rem;">
       <div class="about-photo">
         <img src="assests/img/profile.jpeg" alt="Instructor profile">
       </div>
       <div class="about-text">
-        <div class="sec-label">Your Instructor</div>
+        <div class="sec-label">Lead Instructor</div>
         <h2 class="sec-title">Inspiring Innovation<br>Through Real Experience</h2>
         <p>With professional experience in software engineering and smart product development, I bring practical industry knowledge into every learning experience at MicroMind Lab.</p>
         <p>My passion for innovation began in childhood through curiosity, creativity, and exploring how technology works. Today, my goal is to inspire students to think creatively, build confidently, and explore the future through hands-on learning.</p>
@@ -263,6 +277,40 @@
         </ul>
       </div>
     </div>
+
+    <!-- Divider between instructors -->
+    <!-- <div style="border-top: 1px solid rgba(255,255,255,0.07); margin-bottom: 4rem;"></div>
+
+    <div class="about-grid">
+      <div class="about-text">
+        <div class="sec-label">STEM Instructor</div>
+        <h2 class="sec-title">Nurturing Curiosity<br>One Experiment at a Time</h2>
+        <p>With a background in science education and hands-on teaching, she brings energy and structure to every session — making complex concepts approachable and fun for young learners.</p>
+        <p>She specialises in guiding younger students through foundational STEM concepts, turning abstract ideas into tangible experiments they can see, touch, and understand.</p>
+        <ul class="cred-list">
+          <li>
+            <div class="cred-icon"><i class="fa-solid fa-briefcase"></i></div>
+            Science Teacher at Galle National School
+          </li>
+          <li>
+            <div class="cred-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
+            STEM Workshop Facilitator — Southern Province Schools
+          </li>
+          <li>
+            <div class="cred-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+            BSc (Science Education) — University of Ruhuna
+          </li>
+          <li>
+            <div class="cred-icon"><i class="fa-solid fa-award"></i></div>
+            Certified Primary STEM Educator — National Institute of Education
+          </li>
+        </ul>
+      </div>
+      <div class="about-photo">
+        <img src="assests/img/instructor2.jpeg" alt="Instructor 2 profile">
+      </div>
+    </div> -->
+
   </div>
 </div>
 
@@ -650,6 +698,11 @@
   </div> -->
   <p class="footer-copy">© 2026 MicroMind Lab</p>
 </footer>
+
+<!-- Hidden Google Translate widget -->
+<div id="google_translate_element" style="display:none"></div>
+<script src="assests/constant/lang-toggle.js"></script>
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 <script>
 // Hero animation particles
