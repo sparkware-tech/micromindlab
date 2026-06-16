@@ -255,16 +255,16 @@
       <div class="about-text">
         <div class="sec-label">Founder & Lead Instructor</div>
         <h2 class="sec-title">Inspiring Innovation<br>Through Real Experience</h2>
-        <p>With professional experience in software engineering and smart product development, I bring practical industry knowledge into every learning experience at MicroMind Lab.</p>
-        <p>My passion for innovation began in childhood through curiosity, creativity, and exploring how technology works. Today, my goal is to inspire students to think creatively, build confidently, and explore the future through hands-on learning.</p>
+        <p>With professional experience in software engineering and smart product development, He bring practical industry knowledge into every learning experience at MicroMind Lab.</p>
+        <p>His passion for innovation began in childhood through curiosity, creativity, and exploring how technology works. Today, his goal is to inspire students to think creatively, build confidently, and explore the future through hands-on learning.</p>
         <ul class="cred-list">
+          <li>
+            <div class="cred-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
+            Founder of MicroMind Lab
+          </li>
           <li>
             <div class="cred-icon"><i class="fa-solid fa-briefcase"></i></div>
             Software Engineer at <a href="https://agro.elzian.com/" target="_blank" style="text-decoration: none; color: #34D399;">Elzian Agro (Pvt) Ltd</a>
-          </li>
-          <li>
-            <div class="cred-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
-            Former instructor at the Inventors' Society — Dutugamunu Maha Vidyalaya
           </li>
           <li>
             <div class="cred-icon"><i class="fa-solid fa-graduation-cap"></i></div>
@@ -314,7 +314,7 @@
       </div>
 
       <div class="about-photo">
-        <img src="assests/img/shammi.png" alt="Instructor profile">
+        <img src="assests/img/shammi.jpeg" alt="Instructor profile">
       </div>
     </div>
 
@@ -532,27 +532,27 @@
           <img src="assests/img/g3.jpg" alt="Workshop at Inventors' Society">
         </div>
         <div class="gallery-overlay"></div>
-        <div class="gallery-label">
+        <!-- <div class="gallery-label">
           <div class="gallery-label-title">Best Employer Brand Award – Elzian Agro Representative</div>
-        </div>
+        </div> -->
       </div>
       <div class="gallery-item">
         <div class="gallery-thumb">
           <img src="assests/img/senula-vithula.jpeg" alt="Exhibition">
         </div>
         <div class="gallery-overlay"></div>
-        <div class="gallery-label">
+        <!-- <div class="gallery-label">
           <div class="gallery-label-title">Students' Projects</div>
-        </div>
+        </div> -->
       </div>
       <div class="gallery-item">
         <div class="gallery-thumb">
           <img src="assests/img/g2.jpeg" alt="Award">
         </div>
         <div class="gallery-overlay"></div>
-        <div class="gallery-label">
+        <!-- <div class="gallery-label">
           <div class="gallery-label-title">Workshop at Inventors' Society — Dutugamunu Maha Vidyalaya</div> 
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -655,13 +655,13 @@
             <div class="cval">micromindlablk@gmail.com</div>
           </div>
         </div>
-        <div class="cdetail">
+        <!-- <div class="cdetail">
           <div class="cicon"><i class="fa-brands fa-linkedin"></i></div>
           <div>
             <div class="clabel">LinkedIn</div>
             <div class="cval">linkedin.com/in/kavinda-deshan-thennakoon</div>
           </div>
-        </div>
+        </div> -->
         <!-- <div class="wa-note">
           <i class="fa-brands fa-whatsapp"></i>
           Send a WhatsApp message with your child's name and age for the fastest response. I typically reply within 2 hours.
@@ -671,8 +671,8 @@
         <h3>Request a free discussion</h3>
         <div class="fg"><label>Parent's name</label><input type="text" placeholder="e.g. Chaminda Perera"></div>
         <div class="fg"><label>Child's name &amp; age</label><input type="text" placeholder="e.g. Pasindu, 13 years old"></div>
-        <div class="fg"><label>WhatsApp number</label><input type="tel" placeholder="+94 7X XXX XXXX"></div>
-        <div class="fg"><label>Area / City</label><input type="text" placeholder="e.g. Galle, Matara, Unawatuna"></div>
+        <!-- <div class="fg"><label>WhatsApp number</label><input type="tel" placeholder="+94 7X XXX XXXX"></div> -->
+        <!-- <div class="fg"><label>Area / City</label><input type="text" placeholder="e.g. Galle, Matara, Unawatuna"></div> -->
         <div class="fg"><label>Any questions? (optional)</label><textarea placeholder="e.g. What equipment does my child need? Do you teach girls too?"></textarea></div>
         <button class="submit" onclick="sendWhatsApp()">
           <i class="fa-brands fa-whatsapp" style="margin-right:8px;"></i>Send Request via WhatsApp
@@ -763,8 +763,8 @@ function sendWhatsApp() {
   const textarea = document.querySelector('.fg textarea');
   const name = inputs[0].value;
   const child = inputs[1].value;
-  const phone = inputs[2].value;
-  const area = inputs[3].value;
+  // const phone = inputs[2].value;
+  // const area = inputs[3].value;
   const question = textarea.value;
 
   const message =
@@ -772,8 +772,6 @@ function sendWhatsApp() {
 
 Parent Name: ${name}
 Child: ${child}
-Phone: ${phone}
-Area: ${area}
 Questions: ${question}`;
 
   const url = `https://wa.me/94769011856?text=${encodeURIComponent(message)}`;
