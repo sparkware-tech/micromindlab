@@ -8,7 +8,7 @@ const BLOCK_DEFINITIONS = [
       { kind:'text', label:'setPin' },
       { kind:'input', key:'pin', width:30 },
       { kind:'text', label:'as' },
-      { kind:'select', key:'mode', options:['OUTPUT','INPUT','INPUT_PULLUP'] }
+      { kind:'select', key:'mode', options:['OUTPUT','INPUT'] }
     ],
     code:'  {{_indent}}pinMode({{pin}}, {{mode}});'
   },
@@ -18,7 +18,7 @@ const BLOCK_DEFINITIONS = [
     label:'pinOn', hint:'turn a pin HIGH',
     defaults:{ pin:'13' },
     fields:[
-      { kind:'text', label:'pinOn pin' },
+      { kind:'text', label:'pinOn' },
       { kind:'input', key:'pin', width:30 }
     ],
     code:'  {{_indent}}digitalWrite({{pin}}, HIGH);'
@@ -28,7 +28,7 @@ const BLOCK_DEFINITIONS = [
     label:'pinOff', hint:'turn a pin LOW',
     defaults:{ pin:'13' },
     fields:[
-      { kind:'text', label:'pinOff pin' },
+      { kind:'text', label:'pinOff' },
       { kind:'input', key:'pin', width:30 }
     ],
     code:'  {{_indent}}digitalWrite({{pin}}, LOW);'
@@ -38,7 +38,7 @@ const BLOCK_DEFINITIONS = [
     label:'readPin', hint:'read digital pin value',
     defaults:{ pin:'2' },
     fields:[
-      { kind:'text', label:'readPin pin' },
+      { kind:'text', label:'readPin' },
       { kind:'input', key:'pin', width:30 },
       { kind:'text', label:'→ val' }
     ],
@@ -50,9 +50,9 @@ const BLOCK_DEFINITIONS = [
     label:'analogWrite', hint:'write analog value 0–255',
     defaults:{ pin:'9', val:'128' },
     fields:[
-      { kind:'text', label:'analogWrite pin' },
+      { kind:'text', label:'analogWrite' },
       { kind:'input', key:'pin', width:30 },
-      { kind:'text', label:'val' },
+      { kind:'text', label:'value' },
       { kind:'input', key:'val', width:36 }
     ],
     code:'  {{_indent}}analogWrite({{pin}}, {{val}});'
@@ -62,7 +62,7 @@ const BLOCK_DEFINITIONS = [
     label:'analogRead', hint:'read analog pin A0–A5',
     defaults:{ pin:'A0' },
     fields:[
-      { kind:'text', label:'analogRead pin' },
+      { kind:'text', label:'analogRead' },
       { kind:'select', key:'pin', options:['A0','A1','A2','A3','A4','A5'] },
       { kind:'text', label:'→ val' }
     ],
@@ -162,11 +162,22 @@ const BLOCK_DEFINITIONS = [
     code:'  {{_indent}}if ({{cond}}) {'
   },
   {
+    category:'Control Flow', type:'elseBlock', cls:'b-control',
+    label:'else', hint:'else condition with nested blocks (requires preceding if block)',
+    defaults:{ cond:'val == LOW' },
+    fields:[
+      { kind:'text', label:'else' },
+      { kind:'text', label:' {' }
+    ],
+    hasChildren: true,
+    code:'  {{_indent}}else {'
+  },
+  {
     category:'Control Flow', type:'whileBlock', cls:'b-control',
-    label:'while', hint:'while loop with nested blocks',
+    label:'till', hint:'repeat till condition is false with nested blocks',
     defaults:{ cond:'true' },
     fields:[
-      { kind:'text', label:'while (' },
+      { kind:'text', label:'till (' },
       { kind:'input', key:'cond', width:110 },
       { kind:'text', label:') {' }
     ],
@@ -175,18 +186,40 @@ const BLOCK_DEFINITIONS = [
   },
   {
     category:'Control Flow', type:'forBlock', cls:'b-control',
-    label:'for', hint:'for loop with nested blocks',
-    defaults:{ init:'int i=0', cond:'i<10', inc:'i++' },
+    label:'repeat', hint:'repeat block for a number of iterations with nested blocks',
+    defaults:{ init:'int i=0', cond:'10', inc:'i++' },
     fields:[
-      { kind:'text', label:'for (' },
-      { kind:'input', key:'init', width:60 },
-      { kind:'text', label:';' },
+      { kind:'text', label:'repeat (' },
       { kind:'input', key:'cond', width:50 },
-      { kind:'text', label:';' },
-      { kind:'input', key:'inc', width:40 },
       { kind:'text', label:') {' }
     ],
     hasChildren: true,
     code:'  {{_indent}}for ({{init}}; {{cond}}; {{inc}}) {'
+  },
+  {
+    category:'Math', type:'sumBlock', cls:'b-math',
+    label:'sum', hint:'sum of two numbers',
+    defaults:{ result: 'result', num1:'num1', num2:'num2' },
+    fields:[
+      { kind:'input', key:'result', width:50 },
+      { kind:'text', label:'=' },
+      { kind:'input', key:'num1', width:50 },
+      { kind:'text', label:'+' },
+      { kind:'input', key:'num2', width:50 },
+    ],
+    code:'  {{_indent}}{{result}} = {{num1}} + {{num2}};'
+  },
+  {
+    category:'Math', type:'sumBlock', cls:'b-math',
+    label:'sub', hint:'subtraction of two numbers',
+    defaults:{ result: 'result', num1:'num1', num2:'num2' },
+    fields:[
+      { kind:'input', key:'result', width:50 },
+      { kind:'text', label:'=' },
+      { kind:'input', key:'num1', width:50 },
+      { kind:'text', label:'-' },
+      { kind:'input', key:'num2', width:50 },
+    ],
+    code:'  {{_indent}}{{result}} = {{num1}} - {{num2}};'
   }
 ];
