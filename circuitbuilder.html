@@ -45,6 +45,11 @@
     <div id="sbody">
       <div id="tab-components">
         <div id="comp-list" class="img-list" style="margin-top:2px"></div>
+        <div class="flow-shape-section">Tips</div>
+        <div style="font-size:10px;color:#6e7681;line-height:1.6;padding:2px">
+          &#8227; Drag parts onto canvas<br>
+          &#8227; Use Wire mode to connect parts<br>
+        </div>
       </div>
       <div id="tab-upload" style="display:none">
         <div class="upzone" onclick="document.getElementById('fi').click()"
@@ -55,6 +60,12 @@
         </div>
         <input type="file" id="fi" accept="image/*" multiple style="display:none" onchange="handleFileInput(event)">
         <div id="img-list" class="img-list"></div>
+        <div class="flow-shape-section">Tips</div>
+        <div style="font-size:10px;color:#6e7681;line-height:1.6;padding:2px">
+          &#8227; Upload parts<br>
+          &#8227; Drag parts onto canvas<br>
+          &#8227; Use Wire mode to connect parts<br>
+        </div>
       </div>
       <div id="tab-flow" style="display:none; padding:6px 4px;">
         <div class="flow-shape-btn" draggable="true" data-shape="start"
@@ -80,7 +91,6 @@
         <div class="flow-shape-section">Tips</div>
         <div style="font-size:10px;color:#6e7681;line-height:1.6;padding:2px">
           &#8227; Drag shapes onto canvas<br>
-          &#8227; Click shape in sidebar to place<br>
           &#8227; Double-click shape to rename<br>
           &#8227; Use Wire mode to connect shapes<br>
           &#8227; Del key removes selected<br>
@@ -107,8 +117,8 @@
 </div>
 
 <div id="statusbar">
-  <div class="sdot"></div>
-  <span id="status-txt">Ready — upload images, drag to canvas, use Wire mode to connect</span>
+  <!-- <div class="sdot"></div> -->
+  <span id="status-txt">© 2026 MicroMind Lab</span>
   <span style="margin-left:auto" id="coords">x:0 y:0</span>
   <span id="icount">0 images</span>
   <span id="wcount">0 wires</span>
@@ -217,7 +227,7 @@ function setMode(m){
 function activateFlowPlace(type){
   flowPlaceType=type; setMode('select');
   canvasEl.style.cursor='crosshair';
-  toast('Click on canvas to place shape, or drag from panel');
+  toast('drag from panel');
 }
 
 // ─── FLOW SHAPES ──────────────────────────────────────────────────────────
@@ -537,7 +547,7 @@ function init(){
   document.getElementById('ccolor').addEventListener('input',e=>setColor(e.target.value));
   document.getElementById('wire-w').addEventListener('input',e=>{wireWidth=parseFloat(e.target.value);document.getElementById('ww-val').textContent=e.target.value;});
   setMode('select');applyTransform();
-  toast('Ready — drag shapes from Flow tab, use Wire mode to connect.');
+  toast('Ready to create! Drag parts/shapes from the panel onto the canva.');
 }
 window.addEventListener('load',init);
 </script>
