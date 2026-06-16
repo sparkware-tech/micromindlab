@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="assests/img/favicon.png">
-<title>MicroMind Lab - Circuit Studio</title>
+<title>MicroMind Lab - Design Studio</title>
 <link rel="stylesheet" href="assests/css/circuitbuilder.css">
 </head>
 <body>
 
 <div id="topbar">
   <img src="assests/img/logo.png" alt="Logo" id="logo" style="width:32px;height:32px;margin-right:2px">
-  <h1>MicroMind Lab</h1>
+  <h1>Design Studio</h1>
   <div class="sep"></div>
   <button class="btn" id="btn-p" onclick="setMode('pan')">&#9995; Pan</button>
   <button class="btn active" id="btn-s" onclick="setMode('select')">&#10022; Select</button>
@@ -206,7 +206,9 @@ function setMode(m){
   svgEl.style.pointerEvents=eraseMode?'all':'none';
   wires.forEach(w=>{if(w.el){w.el.style.pointerEvents=eraseMode?'stroke':'none';w.el.style.cursor=eraseMode?'pointer':'default';}});
   imgLayer.style.pointerEvents=m==='select'?'auto':'none';
-  flowLayer.style.pointerEvents=m==='select'?'auto':'none';
+  // ✅ Never let flowLayer intercept — let individual nodes handle it
+  flowLayer.style.pointerEvents='none';
+  flowNodes.forEach(n=>{if(n.el)n.el.style.pointerEvents=m==='select'?'auto':'none';});
   if(m==='pan')canvasEl.style.cursor='grab';
   else if(m==='select')canvasEl.style.cursor='default';
   else canvasEl.style.cursor='crosshair';
@@ -261,8 +263,9 @@ function createFlowNode(type,wx,wy){
   const obj={id,type,x,y,w,h,label:cfg.label};
   flowNodes.push(obj);
   const node=document.createElement('div');
-  node.className='flow-node';node.id=id;
-  node.style.cssText=`left:${x}px;top:${y}px;width:${w}px;height:${h}px;`;
+  node.className='flow-node';
+  node.id=id;
+  node.style.cssText=`left:${x}px;top:${y}px;width:${w}px;height:${h}px;pointer-events:${mode==='select'?'auto':'none'};`;
   const{svg,txt}=buildShapeSVG(type,w,h,cfg);
   obj._txt=txt;txt.textContent=obj.label;
   const del=document.createElement('button');
