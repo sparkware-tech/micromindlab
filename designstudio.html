@@ -4,49 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="assests/img/favicon.png">
-<title>MicroMind Lab - Circuit Studio</title>
-<link rel="stylesheet" href="assests/css/circuitbuilder.css">
-<style>
-#tab-flow { display:none; }
-.flow-shape-btn {
-  display:flex; align-items:center; gap:8px;
-  width:100%; padding:6px 10px; margin-bottom:4px;
-  background:#161b22; border:1px solid #30363d;
-  border-radius:6px; color:#cdd9e5; font-size:11px;
-  cursor:grab; user-select:none; text-align:left; box-sizing:border-box;
-}
-.flow-shape-btn:hover { background:#21262d; border-color:#58a6ff; }
-.flow-shape-btn svg { flex-shrink:0; }
-.flow-shape-section { font-size:10px; color:#6e7681; padding:6px 4px 2px; text-transform:uppercase; letter-spacing:.5px; }
-.flow-node {
-  position:absolute; user-select:none; cursor:move;
-  display:flex; align-items:center; justify-content:center;
-}
-.flow-node.selected .flow-shape-svg rect,
-.flow-node.selected .flow-shape-svg polygon,
-.flow-node.selected .flow-shape-svg ellipse { stroke:#58a6ff !important; stroke-width:2.5px !important; }
-.flow-node-edit {
-  position:absolute; bottom:-22px; left:50%; transform:translateX(-50%);
-  font-size:11px; background:#161b22; color:#cdd9e5;
-  border:1px solid #58a6ff; border-radius:3px; padding:1px 5px;
-  min-width:60px; text-align:center; outline:none; z-index:20;
-}
-.flow-node-del {
-  position:absolute; top:-8px; right:-8px; width:16px; height:16px;
-  background:#e53e3e; color:#fff; border:none; border-radius:50%;
-  font-size:10px; cursor:pointer; display:none; align-items:center; justify-content:center;
-  z-index:15; line-height:1;
-}
-.flow-node:hover .flow-node-del, .flow-node.selected .flow-node-del { display:flex; }
-</style>
+<title>MicroMind Lab - Design Studio</title>
+<link rel="stylesheet" href="assests/css/designstudio.css">
 </head>
 <body>
 
 <div id="topbar">
   <img src="assests/img/logo.png" alt="Logo" id="logo" style="width:32px;height:32px;margin-right:2px">
-  <h1>MicroMind Lab</h1>
+  <h1>Design Studio</h1>
   <div class="sep"></div>
-  <button class="btn" id="btn-p" onclick="setMode('pan')">&#9995; Pan</button>
+  <button class="btn" id="btn-p" onclick="setMode('pan')">&#9974; Pan</button>
   <button class="btn active" id="btn-s" onclick="setMode('select')">&#10022; Select</button>
   <button class="btn" id="btn-w" onclick="setMode('wire')">&#8767; Wire</button>
   <button class="btn" id="btn-e" onclick="setMode('erase')">&#9003; Erase</button>
@@ -78,6 +45,11 @@
     <div id="sbody">
       <div id="tab-components">
         <div id="comp-list" class="img-list" style="margin-top:2px"></div>
+        <div class="flow-shape-section">Tips</div>
+        <div style="font-size:10px;color:#6e7681;line-height:1.6;padding:2px">
+          &#8227; Drag parts onto canvas<br>
+          &#8227; Use Wire mode to connect parts<br>
+        </div>
       </div>
       <div id="tab-upload" style="display:none">
         <div class="upzone" onclick="document.getElementById('fi').click()"
@@ -88,15 +60,19 @@
         </div>
         <input type="file" id="fi" accept="image/*" multiple style="display:none" onchange="handleFileInput(event)">
         <div id="img-list" class="img-list"></div>
+        <div class="flow-shape-section">Tips</div>
+        <div style="font-size:10px;color:#6e7681;line-height:1.6;padding:2px">
+          &#8227; Upload parts<br>
+          &#8227; Drag parts onto canvas<br>
+          &#8227; Use Wire mode to connect parts<br>
+        </div>
       </div>
       <div id="tab-flow" style="display:none; padding:6px 4px;">
-        <div class="flow-shape-section">Terminals</div>
         <div class="flow-shape-btn" draggable="true" data-shape="start"
           ondragstart="flowShapeDragStart(event,'start')" onclick="activateFlowPlace('start')">
           <svg width="28" height="18"><ellipse cx="14" cy="9" rx="12" ry="7" fill="#1a4a2e" stroke="#44cc44" stroke-width="1.5"/></svg>
           Start / End
         </div>
-        <div class="flow-shape-section">Shapes</div>
         <div class="flow-shape-btn" draggable="true" data-shape="process"
           ondragstart="flowShapeDragStart(event,'process')" onclick="activateFlowPlace('process')">
           <svg width="28" height="18"><rect x="2" y="3" width="24" height="12" rx="2" fill="#1a2a4a" stroke="#4488ff" stroke-width="1.5"/></svg>
@@ -115,7 +91,6 @@
         <div class="flow-shape-section">Tips</div>
         <div style="font-size:10px;color:#6e7681;line-height:1.6;padding:2px">
           &#8227; Drag shapes onto canvas<br>
-          &#8227; Click shape in sidebar to place<br>
           &#8227; Double-click shape to rename<br>
           &#8227; Use Wire mode to connect shapes<br>
           &#8227; Del key removes selected<br>
@@ -142,8 +117,8 @@
 </div>
 
 <div id="statusbar">
-  <div class="sdot"></div>
-  <span id="status-txt">Ready — upload images, drag to canvas, use Wire mode to connect</span>
+  <!-- <div class="sdot"></div> -->
+  <span id="status-txt">© 2026 MicroMind Lab</span>
   <span style="margin-left:auto" id="coords">x:0 y:0</span>
   <span id="icount">0 images</span>
   <span id="wcount">0 wires</span>
@@ -241,7 +216,9 @@ function setMode(m){
   svgEl.style.pointerEvents=eraseMode?'all':'none';
   wires.forEach(w=>{if(w.el){w.el.style.pointerEvents=eraseMode?'stroke':'none';w.el.style.cursor=eraseMode?'pointer':'default';}});
   imgLayer.style.pointerEvents=m==='select'?'auto':'none';
-  flowLayer.style.pointerEvents=m==='select'?'auto':'none';
+  // ✅ Never let flowLayer intercept — let individual nodes handle it
+  flowLayer.style.pointerEvents='none';
+  flowNodes.forEach(n=>{if(n.el)n.el.style.pointerEvents=m==='select'?'auto':'none';});
   if(m==='pan')canvasEl.style.cursor='grab';
   else if(m==='select')canvasEl.style.cursor='default';
   else canvasEl.style.cursor='crosshair';
@@ -250,7 +227,7 @@ function setMode(m){
 function activateFlowPlace(type){
   flowPlaceType=type; setMode('select');
   canvasEl.style.cursor='crosshair';
-  toast('Click on canvas to place shape, or drag from panel');
+  toast('drag from panel');
 }
 
 // ─── FLOW SHAPES ──────────────────────────────────────────────────────────
@@ -296,8 +273,9 @@ function createFlowNode(type,wx,wy){
   const obj={id,type,x,y,w,h,label:cfg.label};
   flowNodes.push(obj);
   const node=document.createElement('div');
-  node.className='flow-node';node.id=id;
-  node.style.cssText=`left:${x}px;top:${y}px;width:${w}px;height:${h}px;`;
+  node.className='flow-node';
+  node.id=id;
+  node.style.cssText=`left:${x}px;top:${y}px;width:${w}px;height:${h}px;pointer-events:${mode==='select'?'auto':'none'};`;
   const{svg,txt}=buildShapeSVG(type,w,h,cfg);
   obj._txt=txt;txt.textContent=obj.label;
   const del=document.createElement('button');
@@ -569,7 +547,7 @@ function init(){
   document.getElementById('ccolor').addEventListener('input',e=>setColor(e.target.value));
   document.getElementById('wire-w').addEventListener('input',e=>{wireWidth=parseFloat(e.target.value);document.getElementById('ww-val').textContent=e.target.value;});
   setMode('select');applyTransform();
-  toast('Ready — drag shapes from Flow tab, use Wire mode to connect.');
+  toast('Ready to create! Drag parts/shapes from the panel onto the canva.');
 }
 window.addEventListener('load',init);
 </script>
