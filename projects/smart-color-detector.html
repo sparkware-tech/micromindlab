@@ -183,7 +183,6 @@
         <tr><td>SG90 Servo Motor</td><td><span class="qty-badge">×1</span></td></tr>
         <tr><td>Breadboard</td><td><span class="qty-badge">×1</span></td></tr>
         <tr><td>Jumper Wires</td><td><span class="qty-badge">×20</span></td></tr>
-        <tr><td>USB Cable</td><td><span class="qty-badge">×1</span></td></tr>
         <tr><td>Colored Paper (Red, Green, Blue)</td><td><span class="qty-badge">×3</span></td></tr>
       </tbody>
     </table>
@@ -263,58 +262,104 @@
           <p>Open Arduino IDE and upload the following code:</p>
 
 <pre><code>
-#include &lt;Servo.h&gt;
+#include <Servo.h>
 
-Servo sorter;
-
+// ---------------- SENSOR PINS ----------------
 #define S0 4
 #define S1 5
 #define S2 6
 #define S3 7
 #define sensorOut 8
 
-int redValue;
-int greenValue;
-int blueValue;
+// ---------------- SERVO ----------------
+Servo myServo;
+#define servoPin 9
 
+// ---------------- VARIABLES ----------------
+int redFreq, greenFreq, blueFreq;
+
+int r, g, b;
+
+// ---------------- SETUP ----------------
 void setup() {
 
+  // Sensor pins
   pinMode(S0, OUTPUT);
   pinMode(S1, OUTPUT);
   pinMode(S2, OUTPUT);
   pinMode(S3, OUTPUT);
   pinMode(sensorOut, INPUT);
 
+  // Frequency scaling (20%)
   digitalWrite(S0, HIGH);
   digitalWrite(S1, LOW);
 
-  sorter.attach(9);
+  // Servo setup
+  myServo.attach(servoPin);
+  myServo.write(90); // middle position
 
+  // Serial monitor
   Serial.begin(9600);
 }
 
+// ---------------- LOOP ----------------
 void loop() {
 
+  // -------- RED --------
   digitalWrite(S2, LOW);
   digitalWrite(S3, LOW);
-  redValue = pulseIn(sensorOut, LOW);
+  redFreq = pulseIn(sensorOut, LOW);
 
+  // -------- GREEN --------
   digitalWrite(S2, HIGH);
   digitalWrite(S3, HIGH);
-  greenValue = pulseIn(sensorOut, LOW);
+  greenFreq = pulseIn(sensorOut, LOW);
 
+  // -------- BLUE --------
   digitalWrite(S2, LOW);
   digitalWrite(S3, HIGH);
-  blueValue = pulseIn(sensorOut, LOW);
+  blueFreq = pulseIn(sensorOut, LOW);
 
-  if (redValue &lt; greenValue && redValue &lt; blueValue) {
-    sorter.write(30);
+  // -------- SIMPLE MAP --------
+  r = map(redFreq, 1000, 200, 0, 255);
+  g = map(greenFreq, 1000, 200, 0, 255);
+  b = map(blueFreq, 1000, 200, 0, 255);
+
+  // Print values
+  Serial.print("R: "); Serial.print(r);
+  Serial.print(" G: "); Serial.print(g);
+  Serial.print(" B: "); Serial.println(b);
+
+  // -------- COLOR CHECK --------
+
+  // BLACK (no light)
+  if (r < 40 && g < 40 && b < 40) {
+    myServo.write(160); // black position
   }
-  else if (greenValue &lt; redValue && greenValue &lt; blueValue) {
-    sorter.write(90);
+
+  // WHITE (all high)
+  else if (r > 200 && g > 200 && b > 200) {
+    myServo.write(140); // white position
   }
+
+  // RED
+  else if (r > g && r > b) {
+    myServo.write(20); // red position
+  }
+
+  // GREEN
+  else if (g > r && g > b) {
+    myServo.write(60); // green position
+  }
+
+  // BLUE
+  else if (b > r && b > g) {
+    myServo.write(100); // blue position
+  }
+
+  // default
   else {
-    sorter.write(150);
+    myServo.write(90);
   }
 
   delay(500);
