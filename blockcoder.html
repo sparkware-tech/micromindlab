@@ -28,6 +28,10 @@
 
     <div id="sections">
       <div class="section">
+        <div class="section-head globals">⬛ globals</div>
+        <div class="drop-zone" id="zone-globals"></div>
+      </div>
+      <div class="section">
         <div class="section-head setup">⚙ void setup( )</div>
         <div class="drop-zone" id="zone-setup"></div>
       </div>
@@ -118,7 +122,7 @@ BLOCK_DEFINITIONS.forEach(def => {
 // ════════════════════════════════════════════════════
 //  State
 // ════════════════════════════════════════════════════
-let zones = { setup: [], loop: [] };
+let zones = { globals: [], setup: [], loop: [] };
 let dragSource = null;
 let uid = 0;
 function mkUid() { return 'b' + (++uid); }
@@ -146,15 +150,19 @@ function generateLines(arr, depth) {
 }
 
 function updateCode() {
-  const setupLines = generateLines(zones.setup, 0);
-  const loopLines  = generateLines(zones.loop, 0);
+  const globalLines = generateLines(zones.globals, 0);
+  const setupLines  = generateLines(zones.setup,   0);
+  const loopLines   = generateLines(zones.loop,    0);
 
-  const raw = `void setup() {\n${setupLines.join('\n') || '  // nothing yet'}\n}\n\nvoid loop() {\n${loopLines.join('\n') || '  // nothing yet'}\n}`;
+  const globalBlock = globalLines.length ? globalLines.join('\n') + '\n\n' : '';
+
+  const raw = `${globalBlock}void setup() {\n${setupLines.join('\n') || '  // nothing yet'}\n}\n\nvoid loop() {\n${loopLines.join('\n') || '  // nothing yet'}\n}`;
 
   document.getElementById('code-out').innerHTML = raw
     .replace(/void (setup|loop)/g,   '<span class="ck">void</span> <span class="cv">$1</span>')
+    .replace(/(#define|#include|int|bool|float|String)/g, '<span class="ck">$1</span>')
     .replace(/(pinMode|digitalWrite|digitalRead|analogWrite|analogRead|delay|delayMicroseconds|Serial\.begin|Serial\.print|Serial\.println)/g, '<span class="cn">$1</span>')
-    .replace(/(HIGH|LOW|OUTPUT|INPUT|INPUT_PULLUP)/g, '<span class="cs">$1</span>')
+    .replace(/(HIGH|LOW|OUTPUT|INPUT|INPUT_PULLUP|true|false)/g, '<span class="cs">$1</span>')
     .replace(/(\/\/ .*)/g, '<span class="cc">$1</span>');
 
   window._lastCode = raw;
@@ -265,7 +273,11 @@ function renderZone(zoneId) {
   el.innerHTML = '';
 
   if (arr.length === 0) {
-    el.innerHTML = `<div class="drop-hint"><i>↓</i> Drop blocks here<br><small style="color:#333">${zoneId === 'setup' ? 'runs once at start' : 'runs forever'}</small></div>`;
+    const hint =
+      zoneId === 'setup'   ? 'runs once at start' :
+      zoneId === 'loop'    ? 'runs forever' :
+                             '#define, variables, #include';
+    el.innerHTML = `<div class="drop-hint"><i>↓</i> Drop blocks here<br><small style="color:#333">${hint}</small></div>`;
     return;
   }
 
@@ -305,7 +317,8 @@ document.querySelectorAll('.drop-zone').forEach(zone => {
 //  Toolbar
 // ════════════════════════════════════════════════════
 document.getElementById('btn-clear').onclick = () => {
-  zones = { setup: [], loop: [] };
+  zones = { globals: [], setup: [], loop: [] };
+  renderZone('globals');
   renderZone('setup');
   renderZone('loop');
   updateCode();
@@ -322,6 +335,7 @@ document.getElementById('btn-download').onclick = () => {
 // ════════════════════════════════════════════════════
 //  Init
 // ════════════════════════════════════════════════════
+renderZone('globals');
 renderZone('setup');
 renderZone('loop');
 updateCode();

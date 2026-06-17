@@ -10,7 +10,7 @@ const BLOCK_DEFINITIONS = [
       { kind:'text', label:'as' },
       { kind:'input', key:'name', width:100 },
     ],
-    code:'  {{_indent}}int {{name}} = {{pin}};'
+    code:'  {{_indent}}#define {{name}} {{pin}}'
   },
   {
     category:'Pin Setup', type:'setPin', cls:'b-pin',
@@ -26,7 +26,7 @@ const BLOCK_DEFINITIONS = [
   },
   /* Digital */
   {
-    category:'Digital', type:'pinOn', cls:'b-write',
+    category:'Digital', type:'pinOn', cls:'b-digital',
     label:'pinOn', hint:'turn a pin HIGH',
     defaults:{ pin:'13' },
     fields:[
@@ -36,7 +36,7 @@ const BLOCK_DEFINITIONS = [
     code:'  {{_indent}}digitalWrite({{pin}}, HIGH);'
   },
   {
-    category:'Digital', type:'pinOff', cls:'b-write',
+    category:'Digital', type:'pinOff', cls:'b-digital',
     label:'pinOff', hint:'turn a pin LOW',
     defaults:{ pin:'13' },
     fields:[
@@ -46,7 +46,7 @@ const BLOCK_DEFINITIONS = [
     code:'  {{_indent}}digitalWrite({{pin}}, LOW);'
   },
   {
-    category:'Digital', type:'readPin', cls:'b-write',
+    category:'Digital', type:'readPin', cls:'b-digital',
     label:'readPin', hint:'read digital pin value',
     defaults:{ pin:'2' },
     fields:[
@@ -58,7 +58,7 @@ const BLOCK_DEFINITIONS = [
   },
   /* Analog */
   {
-    category:'Analog', type:'analogWrite', cls:'b-read',
+    category:'Analog', type:'analogWrite', cls:'b-analog',
     label:'writePin', hint:'write analog value 0–255',
     defaults:{ pin:'9', val:'128' },
     fields:[
@@ -70,7 +70,7 @@ const BLOCK_DEFINITIONS = [
     code:'  {{_indent}}analogWrite({{pin}}, {{val}});'
   },
   {
-    category:'Analog', type:'analogRead', cls:'b-read',
+    category:'Analog', type:'analogRead', cls:'b-analog',
     label:'readPin', hint:'read analog pin A0–A5',
     defaults:{ pin:'A0' },
     fields:[
@@ -138,7 +138,7 @@ const BLOCK_DEFINITIONS = [
   },
   /* Variable */
   {
-    category:'Variable', type:'declareInt', cls:'b-math',
+    category:'Variable', type:'declareInt', cls:'b-var',
     label:'int var', hint:'declare an integer variable',
     defaults:{ name:'x', val:'0' },
     fields:[
@@ -150,7 +150,7 @@ const BLOCK_DEFINITIONS = [
     code:'  {{_indent}}int {{name}} = {{val}};'
   },
   {
-    category:'Variable', type:'assignVar', cls:'b-math',
+    category:'Variable', type:'assignVar', cls:'b-var',
     label:'set var', hint:'assign value to a variable',
     defaults:{ name:'x', val:'0' },
     fields:[
@@ -208,6 +208,7 @@ const BLOCK_DEFINITIONS = [
     hasChildren: true,
     code:'  {{_indent}}for ({{init}}; {{cond}}; {{inc}}) {'
   },
+   /* Maths */
   {
     category:'Math', type:'sumBlock', cls:'b-math',
     label:'sum', hint:'sum of two numbers',
@@ -233,5 +234,64 @@ const BLOCK_DEFINITIONS = [
       { kind:'input', key:'num2', width:50 },
     ],
     code:'  {{_indent}}{{result}} = {{num1}} - {{num2}};'
+  },
+  /* Library */
+  {
+    category:'Library', type:'includeLibrary', cls:'b-global',
+    label:'insert', hint:'insert a library',
+    defaults:{ lib: 'Servo.h' },
+    fields:[
+      { kind:'text', label:'insert' },
+      { kind:'select', key:'lib', options:['Servo.h','DHT.h','Wire.h'] },
+    ],
+    code:'  {{_indent}}#include ({{lib}})'
+  },
+  {
+    category:'Library', type:'objectDefine', cls:'b-global',
+    label:'create object', hint:'create a object from a library',
+    defaults:{ ob: 'Servo', name: 'myServo' },
+    fields:[
+      { kind:'text', label:'create' },
+      { kind:'input', key:'name', width:70 },
+      { kind:'text', label:'from' },
+      { kind:'select', key:'ob', options:['Servo','DHT'] },
+    ],
+    code:'  {{_indent}}{{ob}} {{name}};'
+  },
+  /* Servo motor */
+  {
+    category:'Servo Motor', type:'servoDefine', cls:'b-sensor',
+    label:'create servo', hint:'define a servo motor',
+    defaults:{  name: 'myServo' },
+    fields:[
+      { kind:'text', label:'create' },
+      { kind:'input', key:'name', width:70 },
+      { kind:'text', label:'from Servo' },
+    ],
+    code:'  {{_indent}}Servo {{name}};'
+  },
+  {
+    category:'Servo Motor', type:'servoAttach', cls:'b-sensor',
+    label:'attach servo', hint:'attach servo motor to pin',
+    defaults:{ name: 'myServo', pin: '9' },
+    fields:[
+      { kind:'text', label:'attach' },
+      { kind:'input', key:'name', width:70 },
+      { kind:'text', label:'to pin' },
+      { kind:'input', key:'pin', width:40 },
+    ],
+    code:'  {{_indent}}{{name}}.attach({{pin}});'
+  },
+  {
+    category:'Servo Motor', type:'turnServo', cls:'b-sensor',
+    label:'turn servo', hint:'turn the motor',
+    defaults:{ name: 'myServo', angle: '90' },
+    fields:[
+      { kind:'text', label:'turn' },
+      { kind:'input', key:'name', width:70 },
+      { kind:'text', label:'angle' },
+      { kind:'input', key:'angle', width:70 },
+    ],
+    code:'  {{_indent}}{{name}}.Write({{angle}});'
   }
 ];
