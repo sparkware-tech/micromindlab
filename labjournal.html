@@ -9,19 +9,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="assests/css/index.css">
-    <link rel="stylesheet" href="assests/css/blogs.css">
+    <link rel="stylesheet" href="assests/css/labjournal.css">
   </head>
 <body>
 
 <!-- NAV -->
 <nav>
-  <a href="#" class="nav-logo">
+  <a href="index.html" class="nav-logo">
     <div class=""><img src="assests/img/logo.png" alt="MicroMind Lab Logo" style="width: 50px;"></div>
     MicroMind Lab
   </a>
   <ul class="nav-links">
     <li><a href="index.html#about">About</a></li>
-    <li><a href="index.html#instructor">Instructor</a></li>
+    <li><a href="index.html#instructor">Instructors</a></li>
     <li><a href="index.html#programs">Programs</a></li>
     <li class="nav-dropdown">
       <a href="#">
@@ -51,7 +51,14 @@
     </li>
     <li><a href="index.html#contact">Contact</a></li>
   </ul>
-  <a href="lms.html" target="_blank" class="nav-cta">Log in to LMS</a>
+    <div>
+    <button id="lang-toggle" class="lang-toggle" data-lang="en" onclick="toggleLanguage()">
+      <span class="lang-active">EN</span>
+      <span class="lang-divider">/</span>
+      <span class="lang-inactive">SI</span>
+    </button>
+    <a href="lms.html" target="_blank" class="nav-cta">Log in to LMS</a>
+  </div>
   <button class="nav-hamburger" onclick="toggleMenu()" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
@@ -61,7 +68,7 @@
 <div class="mobile-menu" id="mobileMenu">
   <ul>
     <li><a href="index.html#about" onclick="closeMenu()">About</a></li>
-    <li><a href="index.html#instructor" onclick="closeMenu()">Instructor</a></li>
+    <li><a href="index.html#instructor" onclick="closeMenu()">Instructors</a></li>
     <li><a href="index.html#programs" onclick="closeMenu()">Programs</a></li>
     <li class="mobile-dropdown">
       <span class="mobile-dropdown-label">Learn</span>
@@ -98,16 +105,16 @@
 
     <!-- FILTER -->
     <div class="blog-filter" id="blogFilter">
-      <button class="blog-filter-btn active" onclick="filterBlogs('all', this)">All</button>
-      <button class="blog-filter-btn" onclick="filterBlogs('innovation', this)">Invention & Innovation</button>
-      <button class="blog-filter-btn" onclick="filterBlogs('product', this)">Product Development</button>
-      <button class="blog-filter-btn" onclick="filterBlogs('engineering', this)">Engineering Mindset</button>
-      <button class="blog-filter-btn" onclick="filterBlogs('stem', this)">STEM Education</button>
-      <button class="blog-filter-btn" onclick="filterBlogs('mindset', this)">Innovation Mindset</button>
+      <button class="blog-filter-btn active" onclick="filterlabjournal('all', this)">All</button>
+      <button class="blog-filter-btn" onclick="filterlabjournal('innovation', this)">Invention & Innovation</button>
+      <button class="blog-filter-btn" onclick="filterlabjournal('product', this)">Product Development</button>
+      <button class="blog-filter-btn" onclick="filterlabjournal('engineering', this)">Engineering Mindset</button>
+      <button class="blog-filter-btn" onclick="filterlabjournal('stem', this)">STEM Education</button>
+      <button class="blog-filter-btn" onclick="filterlabjournal('mindset', this)">Innovation Mindset</button>
     </div>
 
     <!-- FEATURED POST -->
-    <a href="blogs/invention-vs-innovation.html" class="blog-featured" data-cat="innovation" id="featuredPost">
+    <a href="labjournal/invention-vs-innovation.html" class="blog-featured" data-cat="innovation" id="featuredPost">
       <div class="blog-featured-thumb">
         <div class="blog-featured-thumb-bg thumb-green" style="width:100%;height:100%;"></div>
         <div class="blog-featured-thumb-overlay"></div>
@@ -130,7 +137,7 @@
     <div class="blog-grid" id="blogGrid">
 
       <!-- Card 2 -->
-      <a href="blogs/from-idea-to-product.html" class="blog-card" data-cat="product">
+      <a href="labjournal/from-idea-to-product.html" class="blog-card" data-cat="product">
         <div class="blog-thumb">
           <div class="blog-thumb-bg thumb-green" style="width:100%;height:100%;"></div>
           <div class="blog-thumb-overlay"></div>
@@ -152,7 +159,7 @@
       </a>
 
       <!-- Card 3 -->
-      <a href="blogs/engineering-mindset.html" class="blog-card" data-cat="engineering">
+      <a href="labjournal/engineering-mindset.html" class="blog-card" data-cat="engineering">
         <div class="blog-thumb">
           <div class="blog-thumb-bg thumb-green" style="width:100%;height:100%;"></div>
           <div class="blog-thumb-overlay"></div>
@@ -174,7 +181,7 @@
       </a>
 
       <!-- Card 4 -->
-      <a href="blogs/why-stem-matters.html" class="blog-card" data-cat="stem">
+      <a href="labjournal/why-stem-matters.html" class="blog-card" data-cat="stem">
         <div class="blog-thumb">
           <div class="blog-thumb-bg thumb-green" style="width:100%;height:100%;"></div>
           <div class="blog-thumb-overlay"></div>
@@ -196,7 +203,7 @@
       </a>
 
       <!-- Card 5 -->
-      <a href="blogs/innovation-mindset.html" class="blog-card" data-cat="mindset">
+      <a href="labjournal/innovation-mindset.html" class="blog-card" data-cat="mindset">
         <div class="blog-thumb">
           <div class="blog-thumb-bg thumb-green" style="width:100%;height:100%;"></div>
           <div class="blog-thumb-overlay"></div>
@@ -218,7 +225,7 @@
       </a>
 
       <!-- Card 6 -->
-      <a href="blogs/prototype-to-product.html" class="blog-card" data-cat="product">
+      <a href="labjournal/prototype-to-product.html" class="blog-card" data-cat="product">
         <div class="blog-thumb">
           <div class="blog-thumb-bg thumb-green" style="width:100%;height:100%;"></div>
           <div class="blog-thumb-overlay"></div>
@@ -227,7 +234,7 @@
           <div class="blog-view-hint">Read Article →</div>
         </div>
         <div class="blog-card-body">
-          <h3>Why Your Prototype Is Not Your Product (And That's Okay)</h3>
+          <h3>Why Your Prototype Is Not Your Product</h3>
           <p>Too many young makers stop at the prototype stage. This post explains the gap between a working demo and a real product — and the mindset shift needed to cross it.</p>
           <div class="blog-card-footer">
             <div class="blog-card-meta">
@@ -260,6 +267,11 @@
   <p class="footer-copy">© 2026 MicroMind Lab</p>
 </footer>
 
+<!-- Hidden Google Translate widget -->
+<div id="google_translate_element" style="display:none"></div>
+<script src="assests/constant/lang-toggle.js"></script>
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 <script>
 function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
 function closeMenu()  { document.getElementById('mobileMenu').classList.remove('open'); }
@@ -270,7 +282,7 @@ document.addEventListener('click', function(e) {
     menu.classList.remove('open');
 });
 
-function filterBlogs(cat, btn) {
+function filterlabjournal(cat, btn) {
   document.querySelectorAll('.blog-filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
 

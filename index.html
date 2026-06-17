@@ -50,7 +50,7 @@
   </a>
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
-    <li><a href="#instructor">Instructor</a></li>
+    <li><a href="#instructor">Instructors</a></li>
     <li><a href="#programs">Programs</a></li>
     <li class="nav-dropdown">
       <a href="#">
@@ -80,7 +80,14 @@
     </li>
     <li><a href="#contact">Contact</a></li>
   </ul>
-  <a href="lms.html" target="_blank" class="nav-cta">Log in to LMS</a>
+  <div>
+    <button id="lang-toggle" class="lang-toggle" data-lang="en" onclick="toggleLanguage()">
+      <span class="lang-active">EN</span>
+      <span class="lang-divider">/</span>
+      <span class="lang-inactive">SI</span>
+    </button>
+    <a href="lms.html" target="_blank" class="nav-cta">Log in to LMS</a>
+  </div>
   <button class="nav-hamburger" onclick="toggleMenu()" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
@@ -90,7 +97,7 @@
 <div class="mobile-menu" id="mobileMenu">
   <ul>
     <li><a href="#about" onclick="closeMenu()">About</a></li>
-    <li><a href="#instructor" onclick="closeMenu()">Instructor</a></li>
+    <li><a href="#instructor" onclick="closeMenu()">Instructors</a></li>
     <li><a href="#programs" onclick="closeMenu()">Programs</a></li>
     <li class="mobile-dropdown">
       <span class="mobile-dropdown-label">Learn</span>
@@ -234,23 +241,30 @@
 <!-- ═══ INSTRUCTOR ═══ -->
 <div class="section alt" id="instructor">
   <div class="inner">
-    <div class="about-grid">
+
+    <div style="text-align:center; margin-bottom:3rem;">
+      <div class="sec-label">Your Instructors</div>
+      <h2 class="sec-title">Meet the Team</h2>
+    </div>
+
+    <!-- Instructor 1 — existing -->
+    <div class="about-grid" style="margin-bottom: 4rem;">
       <div class="about-photo">
-        <img src="assests/img/profile.jpeg" alt="Instructor profile">
+        <img src="assests/img/kavinda.jpeg" alt="Instructor profile">
       </div>
       <div class="about-text">
-        <div class="sec-label">Your Instructor</div>
+        <div class="sec-label">Founder & Lead Instructor</div>
         <h2 class="sec-title">Inspiring Innovation<br>Through Real Experience</h2>
-        <p>With professional experience in software engineering and smart product development, I bring practical industry knowledge into every learning experience at MicroMind Lab.</p>
-        <p>My passion for innovation began in childhood through curiosity, creativity, and exploring how technology works. Today, my goal is to inspire students to think creatively, build confidently, and explore the future through hands-on learning.</p>
+        <p>With professional experience in software engineering and smart product development, He bring practical industry knowledge into every learning experience at MicroMind Lab.</p>
+        <p>His passion for innovation began in childhood through curiosity, creativity, and exploring how technology works. Today, his goal is to inspire students to think creatively, build confidently, and explore the future through hands-on learning.</p>
         <ul class="cred-list">
+          <li>
+            <div class="cred-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
+            Founder of MicroMind Lab
+          </li>
           <li>
             <div class="cred-icon"><i class="fa-solid fa-briefcase"></i></div>
             Software Engineer at <a href="https://agro.elzian.com/" target="_blank" style="text-decoration: none; color: #34D399;">Elzian Agro (Pvt) Ltd</a>
-          </li>
-          <li>
-            <div class="cred-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
-            Former instructor at the Inventors' Society — Dutugamunu Maha Vidyalaya
           </li>
           <li>
             <div class="cred-icon"><i class="fa-solid fa-graduation-cap"></i></div>
@@ -263,6 +277,47 @@
         </ul>
       </div>
     </div>
+
+    <!-- Divider between instructors -->
+    <div style="border-top: 1px solid rgba(255,255,255,0.07); margin-bottom: 4rem;"></div>
+
+    <div class="about-grid">
+      <div class="about-text">
+        <div class="sec-label">Instructor</div>
+        <h2 class="sec-title">Empowering Young Minds <br>Through Technology</h2>
+
+        <p>As an educator and technology enthusiast, she is passionate about inspiring students to explore, create, and innovate through hands-on STEM learning experiences.</p>
+
+        <p>With experience in teaching and mentoring young learners, she focuses on building confidence, creativity, and problem-solving skills while making technology education engaging and accessible.</p>
+
+        <ul class="cred-list">
+          <li>
+            <div class="cred-icon"><i class="fa-solid fa-briefcase"></i></div>
+            Founder of MISS IT
+          </li>
+
+          <li>
+            <div class="cred-icon"><i class="fa-solid fa-lightbulb"></i></div>
+            Passionate ICT Teacher
+          </li>
+
+          <li>
+            <div class="cred-icon"><i class="fa-solid fa-briefcase"></i></div>
+            Former Junior Software Engineer at <a href="https://www.maybray.com/" target="_blank" style="text-decoration: none; color: #34D399;">Maybray Pty. Ltd.</a>
+          </li>
+
+          <li>
+            <div class="cred-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+            BSc (Hons) in IT — University of Sri Jayewardenepura
+          </li>
+        </ul>
+      </div>
+
+      <div class="about-photo">
+        <img src="assests/img/shammi.jpeg" alt="Instructor profile">
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -477,27 +532,27 @@
           <img src="assests/img/g3.jpg" alt="Workshop at Inventors' Society">
         </div>
         <div class="gallery-overlay"></div>
-        <div class="gallery-label">
+        <!-- <div class="gallery-label">
           <div class="gallery-label-title">Best Employer Brand Award – Elzian Agro Representative</div>
-        </div>
+        </div> -->
       </div>
       <div class="gallery-item">
         <div class="gallery-thumb">
           <img src="assests/img/senula-vithula.jpeg" alt="Exhibition">
         </div>
         <div class="gallery-overlay"></div>
-        <div class="gallery-label">
+        <!-- <div class="gallery-label">
           <div class="gallery-label-title">Students' Projects</div>
-        </div>
+        </div> -->
       </div>
       <div class="gallery-item">
         <div class="gallery-thumb">
           <img src="assests/img/g2.jpeg" alt="Award">
         </div>
         <div class="gallery-overlay"></div>
-        <div class="gallery-label">
+        <!-- <div class="gallery-label">
           <div class="gallery-label-title">Workshop at Inventors' Society — Dutugamunu Maha Vidyalaya</div> 
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -600,13 +655,13 @@
             <div class="cval">micromindlablk@gmail.com</div>
           </div>
         </div>
-        <div class="cdetail">
+        <!-- <div class="cdetail">
           <div class="cicon"><i class="fa-brands fa-linkedin"></i></div>
           <div>
             <div class="clabel">LinkedIn</div>
             <div class="cval">linkedin.com/in/kavinda-deshan-thennakoon</div>
           </div>
-        </div>
+        </div> -->
         <!-- <div class="wa-note">
           <i class="fa-brands fa-whatsapp"></i>
           Send a WhatsApp message with your child's name and age for the fastest response. I typically reply within 2 hours.
@@ -616,8 +671,8 @@
         <h3>Request a free discussion</h3>
         <div class="fg"><label>Parent's name</label><input type="text" placeholder="e.g. Chaminda Perera"></div>
         <div class="fg"><label>Child's name &amp; age</label><input type="text" placeholder="e.g. Pasindu, 13 years old"></div>
-        <div class="fg"><label>WhatsApp number</label><input type="tel" placeholder="+94 7X XXX XXXX"></div>
-        <div class="fg"><label>Area / City</label><input type="text" placeholder="e.g. Galle, Matara, Unawatuna"></div>
+        <!-- <div class="fg"><label>WhatsApp number</label><input type="tel" placeholder="+94 7X XXX XXXX"></div> -->
+        <!-- <div class="fg"><label>Area / City</label><input type="text" placeholder="e.g. Galle, Matara, Unawatuna"></div> -->
         <div class="fg"><label>Any questions? (optional)</label><textarea placeholder="e.g. What equipment does my child need? Do you teach girls too?"></textarea></div>
         <button class="submit" onclick="sendWhatsApp()">
           <i class="fa-brands fa-whatsapp" style="margin-right:8px;"></i>Send Request via WhatsApp
@@ -650,6 +705,11 @@
   </div> -->
   <p class="footer-copy">© 2026 MicroMind Lab</p>
 </footer>
+
+<!-- Hidden Google Translate widget -->
+<div id="google_translate_element" style="display:none"></div>
+<script src="assests/constant/lang-toggle.js"></script>
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 <script>
 // Hero animation particles
@@ -703,8 +763,8 @@ function sendWhatsApp() {
   const textarea = document.querySelector('.fg textarea');
   const name = inputs[0].value;
   const child = inputs[1].value;
-  const phone = inputs[2].value;
-  const area = inputs[3].value;
+  // const phone = inputs[2].value;
+  // const area = inputs[3].value;
   const question = textarea.value;
 
   const message =
@@ -712,8 +772,6 @@ function sendWhatsApp() {
 
 Parent Name: ${name}
 Child: ${child}
-Phone: ${phone}
-Area: ${area}
 Questions: ${question}`;
 
   const url = `https://wa.me/94769011856?text=${encodeURIComponent(message)}`;

@@ -10,11 +10,14 @@
 <body>
 <div id="app">
   <div id="left">
-    <div style="display: flex; flex-direction: row; align-items: center; padding-bottom: 4px; border-bottom: 1px solid #1d447c; margin-bottom: 8px;">
-      <img src="assests/img/logo.png" alt="Logo" id="logo" style="width:32px;height:32px;margin-left: 8px; margin-top:4px">
-      <h2 style="font-size: 18px;">Block Coder</h2>
+    <div style="display: flex; flex-direction: row; align-items: center; padding-bottom: 4px; border-bottom: 1px solid #1d447c; margin-bottom: 8px; padding: 8px 0;">
+      <img src="assests/img/logo.png" alt="Logo" id="logo" style="width:32px;height:32px;margin-left: 8px; margin-right:10px;">
+      <h2 style="font-size: 18px; font-weight: 900; color: #34D399;">Block Coder</h2>
     </div>
     <div id="blocks-list"></div>
+    <div style="margin-left: 10px">
+      <p style="font-size: 12px; padding: 10px 0;">© 2026 MicroMind Lab</p>
+    </div>
   </div>
 
   <div id="right">
@@ -25,11 +28,15 @@
 
     <div id="sections">
       <div class="section">
+        <div class="section-head globals">⬛ globals</div>
+        <div class="drop-zone" id="zone-globals"></div>
+      </div>
+      <div class="section">
         <div class="section-head setup">⚙ void setup( )</div>
         <div class="drop-zone" id="zone-setup"></div>
       </div>
       <div class="section">
-        <div class="section-head loop" style="padding-bottom: 11px;">↻ void loop( )</div>
+        <div class="section-head loop">↻ void loop( )</div>
         <div class="drop-zone" id="zone-loop"></div>
       </div>
     </div>
@@ -42,8 +49,11 @@
 </div>
 
 <script src="assests/constant/block.config.js"></script>
+
 <script>
-// ── Build BLOCKS lookup from definitions ──────────────────────
+// ════════════════════════════════════════════════════
+//  Build BLOCKS lookup
+// ════════════════════════════════════════════════════
 const BLOCKS = {};
 
 function resolveTemplate(template, data) {
@@ -54,7 +64,6 @@ function buildRenderFn(def) {
   return function(data) {
     return def.fields.map(f => {
       if (f.kind === 'text') {
-        // Dim the trailing arrow labels slightly
         const style = f.label.startsWith('→') ? ' style="opacity:.6"' : '';
         return `<span${style}>${f.label}</span>`;
       }
@@ -70,27 +79,25 @@ function buildRenderFn(def) {
   };
 }
 
-function buildCodeFn(def) {
-  return function(data) {
-    const merged = Object.assign({}, def.defaults, data);
-    return resolveTemplate(def.code, merged);
-  };
-}
-
 BLOCK_DEFINITIONS.forEach(def => {
   BLOCKS[def.type] = {
-    cls:    def.cls,
-    label:  def.label,
-    render: buildRenderFn(def),
-    code:   buildCodeFn(def)
+    cls:         def.cls,
+    label:       def.label,
+    hasChildren: !!def.hasChildren,
+    render:      buildRenderFn(def),
+    codeLine:    (data, indent) => {
+      const merged = Object.assign({}, def.defaults, data, { _indent: indent });
+      return resolveTemplate(def.code, merged);
+    }
   };
 });
 
-// ── Build sidebar from definitions ────────────────────────────
+// ════════════════════════════════════════════════════
+//  Sidebar
+// ════════════════════════════════════════════════════
 (function buildSidebar() {
   const list = document.getElementById('blocks-list');
   const seen = {};
-
   BLOCK_DEFINITIONS.forEach(def => {
     if (!seen[def.category]) {
       seen[def.category] = true;
@@ -99,99 +106,219 @@ BLOCK_DEFINITIONS.forEach(def => {
       label.textContent = def.category;
       list.appendChild(label);
     }
-
     const el = document.createElement('div');
     el.className = `block ${def.cls}`;
     el.draggable = true;
     el.dataset.type = def.type;
-    el.innerHTML = `${def.label} <br> <span class="sub">${def.hint}</span>`;
+    el.innerHTML = `${def.label}<br><span class="sub">${def.hint}</span>`;
     el.addEventListener('dragstart', e => {
-      dragType = def.type;
+      dragSource = { type: def.type, fromZone: null, fromArr: null, fromIdx: -1 };
       e.dataTransfer.setData('text/plain', def.type);
     });
     list.appendChild(el);
   });
 })();
 
-// ── Core state & rendering ────────────────────────────────────
-let zones   = { setup: [], loop: [] };
-let dragType = null;
-let uid     = 0;
-
+// ════════════════════════════════════════════════════
+//  State
+// ════════════════════════════════════════════════════
+let zones = { globals: [], setup: [], loop: [] };
+let dragSource = null;
+let uid = 0;
 function mkUid() { return 'b' + (++uid); }
 
-function renderZone(zoneId) {
-  const el  = document.getElementById('zone-' + zoneId);
-  const arr = zones[zoneId];
-
-  if (arr.length === 0) {
-    el.innerHTML = `<div class="drop-hint"><i>↓</i>Drop blocks here<br><small style="color:#333">${zoneId === 'setup' ? 'runs once at start' : 'runs forever'}</small></div>`;
-    return;
-  }
-
-  el.innerHTML = '';
-  arr.forEach((item, i) => {
-    const def = BLOCKS[item.type];
-    // Fill in defaults for any missing keys
-    const data = Object.assign({}, BLOCK_DEFINITIONS.find(d => d.type === item.type).defaults, item.data);
-    item.data = data;
-
-    const div = document.createElement('div');
-    div.className  = 'placed ' + def.cls;
-    div.dataset.id   = item.id;
-    div.dataset.zone = zoneId;
-    div.dataset.idx  = i;
-    div.innerHTML = def.render(data) + `<button class="del-btn" title="remove">✕</button>`;
-
-    div.querySelector('.del-btn').onclick = () => {
-      zones[zoneId].splice(i, 1);
-      renderZone(zoneId);
-      updateCode();
-    };
-
-    div.querySelectorAll('.inline-input, .inline-select').forEach(inp => {
-      inp.addEventListener('input',  () => { item.data[inp.dataset.k] = inp.value; updateCode(); });
-      inp.addEventListener('change', () => { item.data[inp.dataset.k] = inp.value; updateCode(); });
-    });
-
-    el.appendChild(div);
+// ════════════════════════════════════════════════════
+//  Code generation (recursive)
+// ════════════════════════════════════════════════════
+function generateLines(arr, depth) {
+  const indent = '  '.repeat(depth);
+  const lines = [];
+  arr.forEach(item => {
+    const block = BLOCKS[item.type];
+    const data  = item.data;
+    lines.push(block.codeLine(data, indent));
+    if (block.hasChildren) {
+      if (item.children && item.children.length) {
+        generateLines(item.children, depth + 1).forEach(l => lines.push(l));
+      } else {
+        lines.push(`  ${indent}  // empty`);
+      }
+      lines.push(`  ${indent}}`);
+    }
   });
+  return lines;
 }
 
 function updateCode() {
-  const setupLines = zones.setup.map(it => BLOCKS[it.type].code(it.data));
-  const loopLines  = zones.loop.map(it  => BLOCKS[it.type].code(it.data));
+  const globalLines = generateLines(zones.globals, 0);
+  const setupLines  = generateLines(zones.setup,   0);
+  const loopLines   = generateLines(zones.loop,    0);
 
-  const raw = `void setup() {\n${setupLines.join('\n') || '  // nothing yet'}\n}\n\nvoid loop() {\n${loopLines.join('\n') || '  // nothing yet'}\n}`;
+  const globalBlock = globalLines.length ? globalLines.join('\n') + '\n\n' : '';
+
+  const raw = `${globalBlock}void setup() {\n${setupLines.join('\n') || '  // nothing yet'}\n}\n\nvoid loop() {\n${loopLines.join('\n') || '  // nothing yet'}\n}`;
 
   document.getElementById('code-out').innerHTML = raw
     .replace(/void (setup|loop)/g,   '<span class="ck">void</span> <span class="cv">$1</span>')
+    .replace(/(#define|#include|int|bool|float|String)/g, '<span class="ck">$1</span>')
     .replace(/(pinMode|digitalWrite|digitalRead|analogWrite|analogRead|delay|delayMicroseconds|Serial\.begin|Serial\.print|Serial\.println)/g, '<span class="cn">$1</span>')
-    .replace(/(HIGH|LOW|OUTPUT|INPUT|INPUT_PULLUP)/g, '<span class="cs">$1</span>')
+    .replace(/(HIGH|LOW|OUTPUT|INPUT|INPUT_PULLUP|true|false)/g, '<span class="cs">$1</span>')
     .replace(/(\/\/ .*)/g, '<span class="cc">$1</span>');
 
   window._lastCode = raw;
 }
 
-// ── Drop zones ────────────────────────────────────────────────
+// ════════════════════════════════════════════════════
+//  Render a single item element (recursive)
+// ════════════════════════════════════════════════════
+function makeItemEl(item, parentArr, idx, onChanged) {
+  const def   = BLOCKS[item.type];
+  const data  = Object.assign({}, BLOCK_DEFINITIONS.find(d => d.type === item.type).defaults, item.data);
+  item.data   = data;
+
+  const div = document.createElement('div');
+  div.className = 'placed ' + def.cls;
+  div.dataset.id = item.id;
+
+  // Header row
+  const row = document.createElement('div');
+  row.className = 'placed-row';
+  row.innerHTML = def.render(data);
+
+  const del = document.createElement('button');
+  del.className = 'del-btn';
+  del.title = 'remove';
+  del.textContent = '✕';
+  del.onclick = () => {
+    parentArr.splice(idx, 1);
+    onChanged();
+  };
+  row.appendChild(del);
+  div.appendChild(row);
+
+  // Wire up inline inputs/selects
+  row.querySelectorAll('.inline-input, .inline-select').forEach(inp => {
+    inp.addEventListener('input',  () => { item.data[inp.dataset.k] = inp.value; updateCode(); });
+    inp.addEventListener('change', () => { item.data[inp.dataset.k] = inp.value; updateCode(); });
+  });
+
+  // Nested zone for control blocks
+  if (def.hasChildren) {
+    if (!item.children) item.children = [];
+
+    const body = document.createElement('div');
+    body.className = 'nested-body';
+
+    const nestedDrop = document.createElement('div');
+    nestedDrop.className = 'nested-drop';
+
+    function refreshNested() {
+      nestedDrop.innerHTML = '';
+      if (item.children.length === 0) {
+        nestedDrop.innerHTML = '<div class="nested-hint">↓ drop blocks here</div>';
+      } else {
+        item.children.forEach((child, ci) => {
+          const childEl = makeItemEl(child, item.children, ci, () => {
+            refreshNested();
+            updateCode();
+          });
+          nestedDrop.appendChild(childEl);
+        });
+      }
+    }
+
+    // Drop handling for nested zone
+    nestedDrop.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      nestedDrop.classList.add('drag-over');
+    });
+    nestedDrop.addEventListener('dragleave', e => {
+      if (!nestedDrop.contains(e.relatedTarget)) {
+        nestedDrop.classList.remove('drag-over');
+      }
+    });
+    nestedDrop.addEventListener('drop', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      nestedDrop.classList.remove('drag-over');
+      const type = (dragSource && dragSource.type) || e.dataTransfer.getData('text/plain');
+      if (!type || !BLOCKS[type]) return;
+      item.children.push({ id: mkUid(), type, data: {}, children: [] });
+      refreshNested();
+      updateCode();
+    });
+
+    refreshNested();
+    body.appendChild(nestedDrop);
+
+    const closeBrace = document.createElement('div');
+    closeBrace.className = 'close-brace';
+    closeBrace.textContent = '}';
+    body.appendChild(closeBrace);
+
+    div.appendChild(body);
+  }
+
+  return div;
+}
+
+// ════════════════════════════════════════════════════
+//  Render a root drop zone
+// ════════════════════════════════════════════════════
+function renderZone(zoneId) {
+  const el  = document.getElementById('zone-' + zoneId);
+  const arr = zones[zoneId];
+
+  el.innerHTML = '';
+
+  if (arr.length === 0) {
+    const hint =
+      zoneId === 'setup'   ? 'runs once at start' :
+      zoneId === 'loop'    ? 'runs forever' :
+                             '#define, variables, #include';
+    el.innerHTML = `<div class="drop-hint"><i>↓</i> Drop blocks here<br><small style="color:#333">${hint}</small></div>`;
+    return;
+  }
+
+  arr.forEach((item, i) => {
+    const el2 = makeItemEl(item, arr, i, () => {
+      renderZone(zoneId);
+      updateCode();
+    });
+    el.appendChild(el2);
+  });
+}
+
+// ════════════════════════════════════════════════════
+//  Root drop zones
+// ════════════════════════════════════════════════════
 document.querySelectorAll('.drop-zone').forEach(zone => {
-  zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('drag-over'); });
-  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('dragover', e => {
+    e.preventDefault();
+    zone.classList.add('drag-over');
+  });
+  zone.addEventListener('dragleave', e => {
+    if (!zone.contains(e.relatedTarget)) zone.classList.remove('drag-over');
+  });
   zone.addEventListener('drop', e => {
     e.preventDefault();
     zone.classList.remove('drag-over');
-    const type = dragType || e.dataTransfer.getData('text/plain');
+    const type = (dragSource && dragSource.type) || e.dataTransfer.getData('text/plain');
     if (!type || !BLOCKS[type]) return;
     const zoneId = zone.id.replace('zone-', '');
-    zones[zoneId].push({ id: mkUid(), type, data: {} });
+    zones[zoneId].push({ id: mkUid(), type, data: {}, children: [] });
     renderZone(zoneId);
     updateCode();
   });
 });
 
-// ── Toolbar buttons ───────────────────────────────────────────
+// ════════════════════════════════════════════════════
+//  Toolbar
+// ════════════════════════════════════════════════════
 document.getElementById('btn-clear').onclick = () => {
-  zones = { setup: [], loop: [] };
+  zones = { globals: [], setup: [], loop: [] };
+  renderZone('globals');
   renderZone('setup');
   renderZone('loop');
   updateCode();
@@ -199,13 +326,16 @@ document.getElementById('btn-clear').onclick = () => {
 
 document.getElementById('btn-download').onclick = () => {
   const blob = new Blob([window._lastCode || ''], { type: 'text/plain' });
-  const a    = document.createElement('a');
-  a.href     = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
   a.download = 'my_arduino.ino';
   a.click();
 };
 
-// ── Init ──────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════
+//  Init
+// ════════════════════════════════════════════════════
+renderZone('globals');
 renderZone('setup');
 renderZone('loop');
 updateCode();

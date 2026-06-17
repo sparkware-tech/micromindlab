@@ -9,19 +9,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="../assests/css/index.css">
-    <link rel="stylesheet" href="../assests/css/projects.css">
+    <link rel="stylesheet" href="../assests/css/techexplorer.css">
   </head>
 <body>
 
 <!-- NAV -->
 <nav>
-  <a href="#" class="nav-logo">
+  <a href="../index.html" class="nav-logo">
     <div class=""><img src="../assests/img/logo.png" alt="MicroMind Lab Logo" style="width: 50px;"></div>
     MicroMind Lab
   </a>
   <ul class="nav-links">
     <li><a href="../index.html#about">About</a></li>
-    <li><a href="../index.html#instructor">Instructor</a></li>
+    <li><a href="../index.html#instructor">Instructors</a></li>
     <li><a href="../index.html#programs">Programs</a></li>
     <li class="nav-dropdown">
       <a href="#">
@@ -51,7 +51,14 @@
     </li>
     <li><a href="../index.html#contact">Contact</a></li>
   </ul>
-  <a href="../lms.html" target="_blank" class="nav-cta">Log in to LMS</a>
+  <div>
+    <button id="lang-toggle" class="lang-toggle" data-lang="en" onclick="toggleLanguage()">
+      <span class="lang-active">EN</span>
+      <span class="lang-divider">/</span>
+      <span class="lang-inactive">SI</span>
+    </button>
+    <a href="../lms.html" target="_blank" class="nav-cta">Log in to LMS</a>
+  </div>
   <button class="nav-hamburger" onclick="toggleMenu()" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
@@ -60,7 +67,7 @@
 <div class="mobile-menu" id="mobileMenu">
   <ul>
     <li><a href="../index.html#about" onclick="closeMenu()">About</a></li>
-    <li><a href="../index.html#instructor" onclick="closeMenu()">Instructor</a></li>
+    <li><a href="../index.html#instructor" onclick="closeMenu()">Instructors</a></li>
     <li><a href="../index.html#programs" onclick="closeMenu()">Programs</a></li>
     <li class="mobile-dropdown">
       <span class="mobile-dropdown-label">Learn</span>
@@ -176,7 +183,6 @@
         <tr><td>SG90 Servo Motor</td><td><span class="qty-badge">×1</span></td></tr>
         <tr><td>Breadboard</td><td><span class="qty-badge">×1</span></td></tr>
         <tr><td>Jumper Wires</td><td><span class="qty-badge">×20</span></td></tr>
-        <tr><td>USB Cable</td><td><span class="qty-badge">×1</span></td></tr>
         <tr><td>Colored Paper (Red, Green, Blue)</td><td><span class="qty-badge">×3</span></td></tr>
       </tbody>
     </table>
@@ -256,58 +262,104 @@
           <p>Open Arduino IDE and upload the following code:</p>
 
 <pre><code>
-#include &lt;Servo.h&gt;
+#include <Servo.h>
 
-Servo sorter;
-
+// ---------------- SENSOR PINS ----------------
 #define S0 4
 #define S1 5
 #define S2 6
 #define S3 7
 #define sensorOut 8
 
-int redValue;
-int greenValue;
-int blueValue;
+// ---------------- SERVO ----------------
+Servo myServo;
+#define servoPin 9
 
+// ---------------- VARIABLES ----------------
+int redFreq, greenFreq, blueFreq;
+
+int r, g, b;
+
+// ---------------- SETUP ----------------
 void setup() {
 
+  // Sensor pins
   pinMode(S0, OUTPUT);
   pinMode(S1, OUTPUT);
   pinMode(S2, OUTPUT);
   pinMode(S3, OUTPUT);
   pinMode(sensorOut, INPUT);
 
+  // Frequency scaling (20%)
   digitalWrite(S0, HIGH);
   digitalWrite(S1, LOW);
 
-  sorter.attach(9);
+  // Servo setup
+  myServo.attach(servoPin);
+  myServo.write(90); // middle position
 
+  // Serial monitor
   Serial.begin(9600);
 }
 
+// ---------------- LOOP ----------------
 void loop() {
 
+  // -------- RED --------
   digitalWrite(S2, LOW);
   digitalWrite(S3, LOW);
-  redValue = pulseIn(sensorOut, LOW);
+  redFreq = pulseIn(sensorOut, LOW);
 
+  // -------- GREEN --------
   digitalWrite(S2, HIGH);
   digitalWrite(S3, HIGH);
-  greenValue = pulseIn(sensorOut, LOW);
+  greenFreq = pulseIn(sensorOut, LOW);
 
+  // -------- BLUE --------
   digitalWrite(S2, LOW);
   digitalWrite(S3, HIGH);
-  blueValue = pulseIn(sensorOut, LOW);
+  blueFreq = pulseIn(sensorOut, LOW);
 
-  if (redValue &lt; greenValue && redValue &lt; blueValue) {
-    sorter.write(30);
+  // -------- SIMPLE MAP --------
+  r = map(redFreq, 1000, 200, 0, 255);
+  g = map(greenFreq, 1000, 200, 0, 255);
+  b = map(blueFreq, 1000, 200, 0, 255);
+
+  // Print values
+  Serial.print("R: "); Serial.print(r);
+  Serial.print(" G: "); Serial.print(g);
+  Serial.print(" B: "); Serial.println(b);
+
+  // -------- COLOR CHECK --------
+
+  // BLACK (no light)
+  if (r < 40 && g < 40 && b < 40) {
+    myServo.write(160); // black position
   }
-  else if (greenValue &lt; redValue && greenValue &lt; blueValue) {
-    sorter.write(90);
+
+  // WHITE (all high)
+  else if (r > 200 && g > 200 && b > 200) {
+    myServo.write(140); // white position
   }
+
+  // RED
+  else if (r > g && r > b) {
+    myServo.write(20); // red position
+  }
+
+  // GREEN
+  else if (g > r && g > b) {
+    myServo.write(60); // green position
+  }
+
+  // BLUE
+  else if (b > r && b > g) {
+    myServo.write(100); // blue position
+  }
+
+  // default
   else {
-    sorter.write(150);
+    myServo.write(90);
   }
 
   delay(500);
@@ -409,6 +461,11 @@ void loop() {
   <p class="footer-tagline">The way to a smart future — Galle, Sri Lanka</p>
   <p class="footer-copy">© 2026 MicroMind Lab</p>
 </footer>
+
+<!-- Hidden Google Translate widget -->
+<div id="google_translate_element" style="display:none"></div>
+<script src="../assests/constant/lang-toggle.js"></script>
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 <script>
 function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }

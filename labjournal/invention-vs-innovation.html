@@ -9,19 +9,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="../assests/css/index.css">
-    <link rel="stylesheet" href="../assests/css/blogs.css">
+    <link rel="stylesheet" href="../assests/css/labjournal.css">
   </head>
 <body>
 
 <!-- NAV -->
 <nav>
-  <a href="#" class="nav-logo">
+  <a href="../index.html" class="nav-logo">
     <div class=""><img src="../assests/img/logo.png" alt="MicroMind Lab Logo" style="width: 50px;"></div>
     MicroMind Lab
   </a>
   <ul class="nav-links">
     <li><a href="../index.html#about">About</a></li>
-    <li><a href="../index.html#instructor">Instructor</a></li>
+    <li><a href="../index.html#instructor">Instructors</a></li>
     <li><a href="../index.html#programs">Programs</a></li>
     <li class="nav-dropdown">
       <a href="#">
@@ -51,7 +51,14 @@
     </li>
     <li><a href="../index.html#contact">Contact</a></li>
   </ul>
-  <a href="../lms.html" target="_blank" class="nav-cta">Log in to LMS</a>
+  <div>
+    <button id="lang-toggle" class="lang-toggle" data-lang="en" onclick="toggleLanguage()">
+      <span class="lang-active">EN</span>
+      <span class="lang-divider">/</span>
+      <span class="lang-inactive">SI</span>
+    </button>
+    <a href="../lms.html" target="_blank" class="nav-cta">Log in to LMS</a>
+  </div>
   <button class="nav-hamburger" onclick="toggleMenu()" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
@@ -60,7 +67,7 @@
 <div class="mobile-menu" id="mobileMenu">
   <ul>
     <li><a href="../index.html#about" onclick="closeMenu()">About</a></li>
-    <li><a href="../index.html#instructor" onclick="closeMenu()">Instructor</a></li>
+    <li><a href="../index.html#instructor" onclick="closeMenu()">Instructors</a></li>
     <li><a href="../index.html#programs" onclick="closeMenu()">Programs</a></li>
     <li class="mobile-dropdown">
       <span class="mobile-dropdown-label">Learn</span>
@@ -195,6 +202,11 @@
   <p class="footer-tagline">The way to a smart future — Galle, Sri Lanka</p>
   <p class="footer-copy">© 2026 MicroMind Lab</p>
 </footer>
+
+<!-- Hidden Google Translate widget -->
+<div id="google_translate_element" style="display:none"></div>
+<script src="../assests/constant/lang-toggle.js"></script>
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 <script>
 function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }

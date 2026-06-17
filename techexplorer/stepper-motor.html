@@ -9,18 +9,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="../assests/css/index.css">
-    <link rel="stylesheet" href="../assests/css/projects.css">
+    <link rel="stylesheet" href="../assests/css/techexplorer.css">
   </head>
 <body>
 <!-- NAV -->
 <nav>
-  <a href="#" class="nav-logo">
+  <a href="../index.html" class="nav-logo">
     <div class=""><img src="../assests/img/logo.png" alt="MicroMind Lab Logo" style="width: 50px;"></div>
     MicroMind Lab
   </a>
   <ul class="nav-links">
     <li><a href="../index.html#about">About</a></li>
-    <li><a href="../index.html#instructor">Instructor</a></li>
+    <li><a href="../index.html#instructor">Instructors</a></li>
     <li><a href="../index.html#programs">Programs</a></li>
     <li class="nav-dropdown">
       <a href="#">
@@ -50,7 +50,14 @@
     </li>
     <li><a href="../index.html#contact">Contact</a></li>
   </ul>
-  <a href="../lms.html" target="_blank" class="nav-cta">Log in to LMS</a>
+  <div>
+    <button id="lang-toggle" class="lang-toggle" data-lang="en" onclick="toggleLanguage()">
+      <span class="lang-active">EN</span>
+      <span class="lang-divider">/</span>
+      <span class="lang-inactive">SI</span>
+    </button>
+    <a href="../lms.html" target="_blank" class="nav-cta">Log in to LMS</a>
+  </div>
   <button class="nav-hamburger" onclick="toggleMenu()" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
@@ -59,7 +66,7 @@
 <div class="mobile-menu" id="mobileMenu">
   <ul>
     <li><a href="../index.html#about" onclick="closeMenu()">About</a></li>
-    <li><a href="../index.html#instructor" onclick="closeMenu()">Instructor</a></li>
+    <li><a href="../index.html#instructor" onclick="closeMenu()">Instructors</a></li>
     <li><a href="../index.html#programs" onclick="closeMenu()">Programs</a></li>
     <li class="mobile-dropdown">
       <span class="mobile-dropdown-label">Learn</span>
@@ -82,7 +89,7 @@
   <a href="../lms.html" target="_blank" class="mobile-menu-cta">Log in to LMS</a>
 </div>
 
-<div class="proj-detail-hero"><div class="proj-detail-orb"></div><div class="proj-detail-hero-inner"><a href="../techexplorer.html" class="proj-back"><i class="fa-solid fa-arrow-left"></i> Back to How It Works</a><div class="proj-meta-row"><span class="proj-meta-tag">Motor</span><span class="proj-meta-tag"><i class="fa-solid fa-gears" style="color:#34D399;font-size:11px;"></i> Step movement</span></div><h1>How Stepper Motors Work</h1><p class="lead">A stepper motor rotates in small fixed steps, making it useful when a project needs accurate movement without guessing the position.</p><div class="proj-stats"><div class="proj-stat"><i class="fa-solid fa-magnet"></i><span>Inside</span><strong>Coils</strong></div><div class="proj-stat"><i class="fa-solid fa-shoe-prints"></i><span>Motion</span><strong>Steps</strong></div><div class="proj-stat"><i class="fa-solid fa-microchip"></i><span>Needs</span><strong>Driver</strong></div></div></div><div class="proj-cover"><img src="../assests/img/howitworks/stepper motor.webp" alt="Stepper motor learning activity"></div></div>
+<div class="proj-detail-hero"><div class="proj-detail-orb"></div><div class="proj-detail-hero-inner"><a href="../techexplorer.html" class="proj-back"><i class="fa-solid fa-arrow-left"></i> Back to Tech Explorer</a><div class="proj-meta-row"><span class="proj-meta-tag">Motor</span><span class="proj-meta-tag"><i class="fa-solid fa-gears" style="color:#34D399;font-size:11px;"></i> Step movement</span></div><h1>How Stepper Motors Work</h1><p class="lead">A stepper motor rotates in small fixed steps, making it useful when a project needs accurate movement without guessing the position.</p><div class="proj-stats"><div class="proj-stat"><i class="fa-solid fa-magnet"></i><span>Inside</span><strong>Coils</strong></div><div class="proj-stat"><i class="fa-solid fa-shoe-prints"></i><span>Motion</span><strong>Steps</strong></div><div class="proj-stat"><i class="fa-solid fa-microchip"></i><span>Needs</span><strong>Driver</strong></div></div></div><div class="proj-cover"><img src="../assests/img/howitworks/stepper motor.webp" alt="Stepper motor learning activity"></div></div>
 
 <div class="proj-content">
   <div class="proj-section"><div class="proj-section-label"><div class="proj-section-icon"><i class="fa-solid fa-book-open"></i></div><h2>Simple Idea</h2></div><div class="proj-body-text"><p>A stepper motor has coils inside. When these coils are switched on in a controlled order, the rotor moves a small amount each time.</p><p>Instead of spinning freely, it moves step by step. Counting the steps tells us how far it has turned.</p></div></div>
@@ -94,6 +101,10 @@
 </div>
 
 <a href="https://wa.me/94769011856" target="_blank" class="wa-float" aria-label="Chat on WhatsApp"><i class="fa-brands fa-whatsapp"></i><span class="wa-float-label">Chat with us</span><span class="wa-float-ping"></span></a><footer><div class="footer-brand"><div><img src="../assests/img/logo.png" alt="MicroMind Lab Logo" style="width: 50px;"></div>MicroMind Lab</div><p class="footer-tagline">The way to a smart future - Galle, Sri Lanka</p><p class="footer-copy">&copy; 2026 MicroMind Lab</p></footer>
+<!-- Hidden Google Translate widget -->
+<div id="google_translate_element" style="display:none"></div>
+<script src="../assests/constant/lang-toggle.js"></script>
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 <script>function toggleMenu(){document.getElementById('mobileMenu').classList.toggle('open')}function closeMenu(){document.getElementById('mobileMenu').classList.remove('open')}document.addEventListener('click',function(e){const menu=document.getElementById('mobileMenu');const hamburger=document.querySelector('.nav-hamburger');if(menu.classList.contains('open')&&!menu.contains(e.target)&&!hamburger.contains(e.target))menu.classList.remove('open')});</script>
 </body>
 </html>
