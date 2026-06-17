@@ -23,12 +23,10 @@
         </div>
         MicroMind Lab
     </a>
-
     <ul class="nav-links">
         <li><a href="../index.html#about">About</a></li>
         <li><a href="../index.html#instructor">Instructors</a></li>
         <li><a href="../index.html#programs">Programs</a></li>
-
         <li class="nav-dropdown">
             <a href="#">
                 Learn
@@ -38,7 +36,6 @@
                     <polyline points="2 4 6 8 10 4"/>
                 </svg>
             </a>
-
             <div class="dropdown-menu">
                 <a href="../labjournal.html">Lab Journal</a>
                 <div class="dropdown-divider"></div>
@@ -47,7 +44,6 @@
                 <a href="../projecthub.html">Project Hub</a>
             </div>
         </li>
-
         <li class="nav-dropdown">
             <a href="#">
                 Build
@@ -57,7 +53,6 @@
                     <polyline points="2 4 6 8 10 4"/>
                 </svg>
             </a>
-
             <div class="dropdown-menu">
                 <a href="../designstudio.html" target="_blank">Design Studio</a>
                 <div class="dropdown-divider"></div>
@@ -66,10 +61,8 @@
                 <a href="../labstore.html" target="_blank">Lab Store</a>
             </div>
         </li>
-
         <li><a href="../index.html#contact">Contact</a></li>
     </ul>
-
     <div>
         <button id="lang-toggle" class="lang-toggle" data-lang="en"
             onclick="toggleLanguage()">
@@ -77,12 +70,10 @@
             <span class="lang-divider">/</span>
             <span class="lang-inactive">SI</span>
         </button>
-
         <a href="../lms.html" target="_blank" class="nav-cta">
             Log in to LMS
         </a>
     </div>
-
     <button class="nav-hamburger" onclick="toggleMenu()" aria-label="Menu">
         <span></span>
         <span></span>
@@ -96,7 +87,6 @@
         <li><a href="../index.html#about" onclick="closeMenu()">About</a></li>
         <li><a href="../index.html#instructor" onclick="closeMenu()">Instructors</a></li>
         <li><a href="../index.html#programs" onclick="closeMenu()">Programs</a></li>
-
         <li class="mobile-dropdown">
             <span class="mobile-dropdown-label">Learn</span>
             <ul class="mobile-sub">
@@ -105,7 +95,6 @@
                 <li><a href="../projecthub.html" onclick="closeMenu()">Project Hub</a></li>
             </ul>
         </li>
-
         <li class="mobile-dropdown">
             <span class="mobile-dropdown-label">Build</span>
             <ul class="mobile-sub">
@@ -114,10 +103,8 @@
                 <li><a href="../labstore.html" target="_blank" onclick="closeMenu()">Lab Store</a></li>
             </ul>
         </li>
-
         <li><a href="../index.html#contact" onclick="closeMenu()">Contact</a></li>
     </ul>
-
     <a href="../lms.html" target="_blank" class="mobile-menu-cta">
         Log in to LMS
     </a>
@@ -129,7 +116,6 @@
     <div class="proj-detail-orb"></div>
 
     <div class="proj-detail-hero-inner">
-
         <a href="../techexplorer.html" class="proj-back">
             <i class="fa-solid fa-arrow-left"></i>
             Back to Tech Explorer
@@ -145,16 +131,17 @@
             </span>
         </div>
 
-        <h1>How TCS230 TCS3200 Color Sensors Work</h1>
+        <h1>TCS3200 Color Sensor Module Guide with Arduino</h1>
 
         <p class="lead">
-            The TCS230 TCS3200 Color Recognition Sensor Module detect the
-            color of an object by measuring the intensity of red, green, and
-            blue (RGB) light reflected from its surface.
+            The TCS3200 is a popular, inexpensive color sensor module capable of detecting a wide range of visible colors. Whether you are building a color-sorting robot, an automated quality control system, or just want your project to interact with the environment, this sensor is a fantastic choice.
+        </p><br>
+
+        <p class="lead">
+            In this guide, we will explore how the TCS3200 color sensor module works, its key features, how to connect it to an Arduino, and example code to get you started on your color detection projects.
         </p>
 
         <div class="proj-stats">
-
             <div class="proj-stat">
                 <i class="fa-solid fa-lightbulb"></i>
                 <span>Detects</span>
@@ -177,8 +164,7 @@
     </div>
 
     <div class="proj-cover">
-        <img src="../assests/img/howitworks/color sensor.png"
-            alt="TCS3200 Color Recognition Sensor Module">
+        <img src="../assests/img/howitworks/howcolorsensorwor.jpeg" alt="TCS3200 Color Recognition Sensor Module">
     </div>
 
 </div>
@@ -186,121 +172,41 @@
 <!-- CONTENT -->
 <div class="proj-content">
 
-    <!-- SIMPLE IDEA -->
+    <!-- INTRODUCTION -->
     <div class="proj-section">
         <div class="proj-section-label">
             <div class="proj-section-icon">
                 <i class="fa-solid fa-book-open"></i>
             </div>
-            <h2>Simple Idea</h2>
+            <h2>Introduction</h2>
         </div>
-
-        <div class="proj-body-text">
-            <p>
-                The TCS230 TCS3200 is color recognition sensor that
-                identify colors by measuring reflected light. The sensor
-                contains arrays of red, green, blue, and clear photodiodes.
-            </p>
-
-            <p>
-                When light reflects from an object, the sensor measures how
-                much red, green, and blue light is received. A microcontroller
-                then compares these values to determine the object's color.
-            </p>
+        <p>
+            The TCS3200 color sensor module – shown in the figure below –  uses a TAOS TCS3200 RGB sensor chip to detect color. It also contains four white LEDs that light up the object in front of it.
+        </p>
+        <div class="proj-img">
+            <img src="../assests/img/howitworks/Color-sensor-1.png" alt="TCS3200 Color Sensor Module" style="height: 200px; width:auto; margin-top:20px;">
         </div>
     </div>
 
     <div class="proj-divider"></div>
 
-    <!-- HOW IT WORKS -->
-    <div class="proj-section">
-        <div class="proj-section-label">
-            <div class="proj-section-icon">
-                <i class="fa-solid fa-list-check"></i>
-            </div>
-            <h2>How It Works</h2>
-        </div>
-
-        <div class="steps-list">
-
-            <div class="step-item">
-                <div class="step-num-circle">1</div>
-                <div class="step-item-body">
-                    <h4>Illuminate the Object</h4>
-                    <p>
-                        White LEDs on the module shine light onto the object's
-                        surface.
-                    </p>
-                </div>
-            </div>
-
-            <div class="step-item">
-                <div class="step-num-circle">2</div>
-                <div class="step-item-body">
-                    <h4>Light is Reflected</h4>
-                    <p>
-                        Different colors reflect different amounts of red,
-                        green, and blue light.
-                    </p>
-                </div>
-            </div>
-
-            <div class="step-item">
-                <div class="step-num-circle">3</div>
-                <div class="step-item-body">
-                    <h4>Photodiodes Measure Color</h4>
-                    <p>
-                        The sensor selects red, green, or blue filters and
-                        measures the intensity of the reflected light.
-                    </p>
-                </div>
-            </div>
-
-            <div class="step-item">
-                <div class="step-num-circle">4</div>
-                <div class="step-item-body">
-                    <h4>Frequency Output is Generated</h4>
-                    <p>
-                        The measured light intensity is converted into a
-                        square-wave frequency signal.
-                    </p>
-                </div>
-            </div>
-
-            <div class="step-item">
-                <div class="step-num-circle">5</div>
-                <div class="step-item-body">
-                    <h4>Color is Identified</h4>
-                    <p>
-                        The microcontroller compares red, green, and blue
-                        values and determines the object's color.
-                    </p>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <div class="proj-divider"></div>
-
-    <!-- FEATURES -->
+    <!-- SPECIFICATIONS -->
     <div class="proj-section">
         <div class="proj-section-label">
             <div class="proj-section-icon">
                 <i class="fa-solid fa-star"></i>
             </div>
-            <h2>Key Features</h2>
+            <h2>Specifications</h2>
         </div>
+        <ul>
+            <li>Power: 2.7V to 5.5V</li>
+            <li>Size: 28.4 x 28.4mm (1.12 x 1.12″)</li>
+            <li>Interface: digital TTL</li>
+            <li>High-resolution conversion of light intensity to frequency</li>
+            <li>Programmable color and full-scale output frequency</li>
+            <li>Communicates directly to microcontroller</li>
+        </ul>
 
-        <div class="proj-body-text">
-            <ul>
-                <li>Detects red, green, blue, and clear light components.</li>
-                <li>Frequency output is easy to read using microcontrollers.</li>
-                <li>Built-in white LEDs improve sensing accuracy.</li>
-                <li>Compatible with Arduino, ESP32, Raspberry Pi, and STM32.</li>
-                <li>Fast and reliable color recognition.</li>
-            </ul>
-        </div>
     </div>
 
     <div class="proj-divider"></div>
@@ -311,22 +217,201 @@
             <div class="proj-section-icon">
                 <i class="fa-solid fa-plug"></i>
             </div>
-            <h2>Main Pins</h2>
+            <h2>Pinout</h2>
+        </div>
+        <table class="proj-table">
+            <thead>
+                <tr>
+                    <th>Pin</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tr>
+                <td>VCC</td>
+                <td>Power</td>
+                <td>Power supply (5V)</td>
+            </tr>
+            <tr>
+                <td>GND</td>
+                <td>Power</td>
+                <td>Ground connection</td>
+            </tr>
+            <tr>
+                <td>S0, S1</td>
+                <td>INPUT</td>
+                <td>Output frequency scaling selection inputs</td>
+            </tr>
+            <tr>
+                <td>S2, S3</td>
+                <td>INPUT</td>
+                <td>Color filter selection inputs</td>
+            </tr>
+            <tr>
+                <td>OUT</td>
+                <td>OUTPUT</td>
+                <td>Frequency output signal</td>
+            </tr>
+            <tr>
+                <td>OE </td>
+                <td>INPUT</td>
+                <td>Enable for output frequency (active low)</td>
+            </tr>
+        </table>
+        <div class="proj-img">
+            <img src="../assests/img/howitworks/color sensor.png" alt="TCS3200 Color Sensor Module Pinout" style="width:100%;">
+        </div>
+    </div>
+
+     <div class="proj-divider"></div>
+
+    <!-- HOW IT WORKS -->
+    <div class="proj-section">
+        <div class="proj-section-label">
+            <div class="proj-section-icon">
+                <i class="fa-solid fa-list-check"></i>
+            </div>
+            <h2>How the TCS3200 Sensor Works</h2>
         </div>
 
-        <div class="proj-body-text">
-            <p><strong>VCC</strong> – Power supply (5V)</p>
-            <p><strong>GND</strong> – Ground connection</p>
-            <p><strong>OUT</strong> – Frequency output signal</p>
-            <p><strong>S0, S1</strong> – Output frequency scaling selection</p>
-            <p><strong>S2, S3</strong> – Color filter selection</p>
-            <p><strong>OE</strong> – Output enable pin</p>
+        <p>At its core, the TCS3200 is a light-to-frequency converter.</p><br>
+
+        <div class="steps-list">
+            <div class="step-item">
+                <div class="step-num-circle">1</div>
+
+                <div class="step-item-body">
+                    <h4>The Photodiode Matrix</h4>
+                    <p>If you look closely at the center of the chip, you will see an 8 x 8 matrix of photodiodes. A photodiode converts light into electrical current. The 64 photodiodes are split into four different categories.</p>
+
+                    <div class="proj-img">
+                        <img src="../assests/img/howitworks/Color_sensor_filters.png" style="height: 200px; width:auto; margin-top:20px;">
+                    </div>
+
+                    <br>
+
+                    <ul>
+                        <li>16 Photodiodes with Red filters (sensitive only to red light)</li>
+                        <li>16 Photodiodes with Green filters (sensitive only to green light)</li>
+                        <li>16 Photodiodes with Blue filters (sensitive only to blue light)</li>
+                        <li>16 Photodiodes with Clear filters (no filter, sensitive to all visible light)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="step-item">
+                <div class="step-num-circle">2</div>
+                <div class="step-item-body">
+                    <h4>Light-to-Frequency Conversion</h4>
+
+                    <p>The sensor takes the current produced by these photodiodes and outputs a square wave (a digital signal that rapidly cycles between HIGH and LOW).</p>
+
+                    <br>
+
+                    <ul>
+                        <li>The frequency of this square wave is directly proportional to the intensity of the light hitting the selected photodiodes.</li>
+                        <li>For example, if you shine a bright red light on the sensor, the "Red" photodiodes will produce a high-frequency square wave, while the Green and Blue photodiodes will produce a very low-frequency wave.</li>
+                    </ul>
+
+                    <div class="proj-img">
+                        <img src="../assests/img/howitworks/Color-sensor-scheme.png" style="height: 200px; width:auto; margin-top:20px;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-item">
+                <div class="step-num-circle">3</div>
+                <div class="step-item-body">
+                    <h4>Controlling the Sensor via Pins (S0 to S3)</h4>
+
+                    <p>By using the Arduino's digital pins, you can dynamically tell the sensor which color filter to look at and how fast to scale the frequency output.</p>
+
+                    <br>
+
+                    <h4>Frequency Scaling (S0, S1)</h4>
+
+                    <p>Frequency scaling allows you to optimize the output frequency for different microcontrollers. For an Arduino Uno/Nano, 20% scaling is usually perfect.</p>
+
+                    <table class="proj-table">
+                        <thead>
+                            <tr>
+                                <th>Output frequency scaling</th>
+                                <th>S0</th>
+                                <th>S1</th>
+                            </tr>
+                        </thead>
+                        <tr>
+                            <td>Power down</td>
+                            <td>LOW</td>
+                            <td>LOW</td>
+                        </tr>
+                        <tr>
+                            <td>2%</td>
+                            <td>LOW</td>
+                            <td>HIGH</td>
+                        </tr>
+                        <tr>
+                            <td>20%</td>
+                            <td>HIGH</td>
+                            <td>LOW</td>
+                        </tr>
+                        <tr>
+                            <td>100%</td>
+                            <td>HIGH</td>
+                            <td>HIGH</td>
+                        </tr>
+                    </table>
+
+                    <h4>Color Filter Selection (S2, S3)</h4>
+
+                    <p>By changing the states of S2 and S3, you choose which color matrix the OUT pin reads.</p>
+
+                    <table class="proj-table">
+                        <thead>
+                            <tr>
+                                <th>Photodiode type</th>
+                                <th>S2</th>
+                                <th>S3</th>
+                            </tr>
+                        </thead>
+                        <tr>
+                            <td>Red</td>
+                            <td>LOW</td>
+                            <td>LOW</td>
+                        </tr>
+                        <tr>
+                            <td>Blue</td>
+                            <td>LOW</td>
+                            <td>HIGH</td>
+                        </tr>
+                        <tr>
+                            <td>No filter (clear)</td>
+                            <td>HIGH</td>
+                            <td>LOW</td>
+                        </tr>
+                        <tr>
+                            <td>Green</td>
+                            <td>HIGH</td>
+                            <td>HIGH</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="step-item">
+                <div class="step-num-circle">4</div>
+                <div class="step-item-body">
+                    <h4> Determine the Detected Color</h4>
+
+                    <p>The Arduino reads the frequency output from the sensor for the red, green, and blue filters. These values are then used to determine the color.</p>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="proj-divider"></div>
 
-    <!-- ARDUINO CONNECTION -->
+    <!-- ARDUINO -->
     <div class="proj-section">
         <div class="proj-section-label">
             <div class="proj-section-icon">
@@ -335,157 +420,164 @@
             <h2>Using the Sensor with Arduino</h2>
         </div>
 
-        <div class="proj-body-text">
+        <h3>Wiring TCS3200 to Arduino</h3><br>
 
-            <h3>Wiring Connections</h3><br>
-
-            <img src="../assests/img/howitworks/color sensor circuit.png" alt="TCS3200 Color Recognition Sensor Module" style="width:100%;">
-
-            <table class="proj-table">
-                <thead>
-                    <tr>
-                        <th>TCS3200 Pin</th>
-                        <th>Arduino Uno Pin</th>
-                    </tr>
-                </thead>
-                <tr>
-                    <td>VCC</td>
-                    <td>5V</td>
-                </tr>
-                <tr>
-                    <td>GND</td>
-                    <td>GND</td>
-                </tr>
-                <tr>
-                    <td>S0</td>
-                    <td>D4</td>
-                </tr>
-                <tr>
-                    <td>S1</td>
-                    <td>D5</td>
-                </tr>
-                <tr>
-                    <td>S2</td>
-                    <td>D6</td>
-                </tr>
-                <tr>
-                    <td>S3</td>
-                    <td>D7</td>
-                </tr>
-                <tr>
-                    <td>OUT</td>
-                    <td>D8</td>
-                </tr>
-            </table>
-
-
-           <br>
-
-            <p>
-                The Arduino reads the frequency output from the sensor for the
-                red, green, and blue filters. These values are then used to
-                determine the detected color.
-            </p>
-
-        </div>
-    </div>
-
-    <div class="proj-divider"></div>
-
-    <!-- ARDUINO CODE -->
-    <div class="proj-section">
-        <div class="proj-section-label">
-            <div class="proj-section-icon">
-                <i class="fa-solid fa-code"></i>
-            </div>
-            <h2>Example Arduino Code</h2>
+        <div class="proj-img">
+            <img src="../assests/img/howitworks/color sensor circuit.png" alt="TCS3200 Color Recognition Sensor Module" style="width:100%;">    
         </div>
 
-        <div class="proj-body-text">
+        <table class="proj-table">
+            <thead>
+                <tr>
+                    <th>TCS3200 Pin</th>
+                    <th>Arduino Uno Pin</th>
+                </tr>
+            </thead>
+            <tr>
+                <td>VCC</td>
+                <td>5V</td>
+            </tr>
+            <tr>
+                <td>GND</td>
+                <td>GND</td>
+            </tr>
+            <tr>
+                <td>S0</td>
+                <td>D4</td>
+            </tr>
+            <tr>
+                <td>S1</td>
+                <td>D5</td>
+            </tr>
+            <tr>
+                <td>S2</td>
+                <td>D6</td>
+            </tr>
+            <tr>
+                <td>S3</td>
+                <td>D7</td>
+            </tr>
+            <tr>
+                <td>OUT</td>
+                <td>D8</td>
+            </tr>
+        </table>
 
-    <pre><code>
+        <h3>Arduino Script</h3>
+
+        <p>This script configures the control pins, switches rapidly between the Red, Green, and Blue filters, and measures the duration of the incoming pulse using <b>pulseIn()</b>.</p><br>
+
+        <p>Note on <b>pulseIn()</b>: A higher intensity of light results in a higher frequency, which means the duration of the pulse is shorter. Therefore, lower raw numbers in the Serial Monitor mean a stronger presence of that specific color.</p>
+
+<pre><code>
+    // Define Sensor Pin Connections
     #define S0 4
     #define S1 5
     #define S2 6
     #define S3 7
     #define sensorOut 8
 
+    // Variables to store raw photodiode pulse durations
     int redFrequency = 0;
     int greenFrequency = 0;
     int blueFrequency = 0;
 
     void setup() {
+        // Set Pin Modes
         pinMode(S0, OUTPUT);
         pinMode(S1, OUTPUT);
         pinMode(S2, OUTPUT);
         pinMode(S3, OUTPUT);
         pinMode(sensorOut, INPUT);
-
+        
+        // Set Frequency Scaling to 20% (S0 = HIGH, S1 = LOW)
         digitalWrite(S0, HIGH);
         digitalWrite(S1, LOW);
-
+        
+        // Initialize Serial Communication
         Serial.begin(9600);
+        Serial.println("TCS3200 Color Sensor Initialized...");
     }
 
     void loop() {
-        // Read RED
+        // 1. Read Red Photiodiodes
         digitalWrite(S2, LOW);
         digitalWrite(S3, LOW);
         redFrequency = pulseIn(sensorOut, LOW);
-
-        // Read GREEN
+        
+        // 2. Read Green Photiodiodes
         digitalWrite(S2, HIGH);
         digitalWrite(S3, HIGH);
         greenFrequency = pulseIn(sensorOut, LOW);
-
-        // Read BLUE
+        
+        // 3. Read Blue Photiodiodes
         digitalWrite(S2, LOW);
         digitalWrite(S3, HIGH);
         blueFrequency = pulseIn(sensorOut, LOW);
-
+        
+        // Print Raw values to Serial Monitor
         Serial.print("R = ");
         Serial.print(redFrequency);
-
-        Serial.print(" G = ");
+        Serial.print(" | G = ");
         Serial.print(greenFrequency);
-
-        Serial.print(" B = ");
+        Serial.print(" | B = ");
         Serial.println(blueFrequency);
 
-        delay(500);
+        delay(500); // Wait half a second between readings
     }
-    </code></pre>
-            <br>
-            <p>
-                Open the Serial Monitor to view the Red, Green, and Blue values.
-                By comparing these values, the Arduino can identify different
-                colors such as red, green, blue, yellow, black, and white.
-            </p>
+</code></pre>
 
-        </div>
+        <br>
+        
+        <h3>Calibration and Mapping to True RGB (0-255)</h3>
+
+        <p>The code above prints raw pulse widths, not standard 0–255 RGB values. Because ambient lighting conditions heavily affect this sensor, you must calibrate it manually for precision projects.</p>
+
+        <br>
+
+        <p>How to Calibrate:</p>
+
+        <ul>
+            <li>Open your Serial Monitor with the code running above.</li>
+            <li>Hold a pure white object (like white paper) directly in front of the sensor. Note down the R, G, and B values. These are your Minimum values (highest light intensity).</li>
+            <li>Hold a pure black object in front of the sensor. Note down the R, G, and B values. These are your Maximum values (lowest light intensity).</li>
+            <li>Use the Arduino map() function to convert those custom ranges into a standard 0 to 255 format.</li>
+        </ul>
+
+        <br>
+
+        <p>Example Calibration Snippet:</p>
+
+        <p>Replace the print statements in your loop with a mapping function like this (replace the placeholder numbers with your actual observed numbers)</p>
+
+<pre><code>
+    // Map raw values to 0-255 range
+    int redMapped = map(redFrequency, 1000, 200, 0, 255); // Example min/max values
+    int greenMapped = map(greenFrequency, 1000, 200, 0, 255);
+    int blueMapped = map(blueFrequency, 1000, 200, 0, 255);
+
+    // Print Mapped RGB Values
+    Serial.print("Mapped R = ");
+    Serial.print(redMapped);
+    Serial.print(" | Mapped G = ");
+    Serial.print(greenMapped);
+    Serial.print(" | Mapped B = ");
+    Serial.println(blueMapped);
+</code></pre>
     </div>
 
-    <div class="proj-divider"></div>
-
-    <!-- COMMON USES -->
+        <!-- INTRODUCTION -->
     <div class="proj-section">
         <div class="proj-section-label">
             <div class="proj-section-icon">
-                <i class="fa-solid fa-lightbulb"></i>
+                <i class="fa-solid fa-book-open"></i>
             </div>
-            <h2>Common Uses</h2>
+            <h2>Summary</h2>
         </div>
-
-        <div class="proj-body-text">
-            <p>
-                Color sorting machines, smart recycling systems, robotic vision,
-                industrial automation, line-following robots, object
-                classification, quality control systems, and educational
-                electronics projects.
-            </p>
-        </div>
+        <p>
+            The TCS3200 color sensor is an RGB color detection module that identifies the color of an object by measuring the intensity of red, green, and blue (RGB) light reflected from its surface. It uses the TCS3200 sensor chip and four built-in white LEDs to illuminate the target object. The sensor converts the detected light intensity into a digital frequency signal, which can be read by a microcontroller such as an Arduino for accurate color recognition.
+        </p>
     </div>
-
 </div>
 
 <!-- WHATSAPP -->
