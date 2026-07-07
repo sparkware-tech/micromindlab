@@ -127,44 +127,44 @@
             <span class="proj-meta-tag">
                 <i class="fa-solid fa-palette"
                     style="color:#34D399;font-size:11px;"></i>
-                Object Detection
+                Color Detection
             </span>
         </div>
 
-        <h1>IR Sensor Module Guide with Arduin</h1>
+        <h1>TCS3200 Color Sensor Module Guide with Arduino</h1>
 
         <p class="lead">
-            An IR (infrared) sensor is a simple, low-cost sensor used to detect objects in front of it without any physical contact. It works by emitting infrared light from an IR LED and measuring the infrared light that bounces back off a nearby object onto a photodiode. IR sensor modules are widely used in obstacle-avoidance robots, line-following robots, automatic hand sanitizer dispensers, and object counters.
+            The TCS3200 is a popular, inexpensive color sensor module capable of detecting a wide range of visible colors. Whether you are building a color-sorting robot, an automated quality control system, or just want your project to interact with the environment, this sensor is a fantastic choice.
         </p><br>
 
         <p class="lead">
-            In this guide, we will explore how the IR sensor module works, its key features, how to connect it to an Arduino, and example code to get you started on your own object-detection projects. 
+            In this guide, we will explore how the TCS3200 color sensor module works, its key features, how to connect it to an Arduino, and example code to get you started on your color detection projects.
         </p>
 
         <div class="proj-stats">
             <div class="proj-stat">
                 <i class="fa-solid fa-lightbulb"></i>
-                <span>Detects </span>
-                <strong>Objects</strong>
+                <span>Detects</span>
+                <strong>RGB Colors</strong>
             </div>
 
             <div class="proj-stat">
                 <i class="fa-solid fa-microchip"></i>
                 <span>Output</span>
-                <strong>Digital</strong>
+                <strong>Frequency</strong>
             </div>
 
             <div class="proj-stat">
                 <i class="fa-solid fa-eye"></i>
                 <span>Uses</span>
-                <strong>object detection</strong>
+                <strong>Color Recognition</strong>
             </div>
 
         </div>
     </div>
 
     <div class="proj-cover">
-        <img src="../assests/img/howitworks/ir sensor.png" alt="IR Sensor Module">
+        <img src="../assests/img/howitworks/howcolorsensorwor.jpeg" alt="TCS3200 Color Recognition Sensor Module">
     </div>
 
 </div>
@@ -181,10 +181,10 @@
             <h2>Introduction</h2>
         </div>
         <p>
-            The IR (infrared) sensor is a simple, low-cost sensor used to detect objects in front of it without any physical contact. It works by emitting infrared light from an IR LED and measuring the infrared light that bounces back off a nearby object onto a photodiode.
+            The TCS3200 color sensor module – shown in the figure below –  uses a TAOS TCS3200 RGB sensor chip to detect color. It also contains four white LEDs that light up the object in front of it.
         </p>
         <div class="proj-img">
-            <img src="../assests/img/howitworks/ir sensor module.jpg" alt="IR Sensor Module" style="height: 200px; width:auto; margin-top:20px;">
+            <img src="../assests/img/howitworks/Color-sensor-1.png" alt="TCS3200 Color Sensor Module" style="height: 200px; width:auto; margin-top:20px;">
         </div>
     </div>
 
@@ -199,12 +199,12 @@
             <h2>Specifications</h2>
         </div>
         <ul>
-            <li>Operating voltage: 3.3V to 5V DC </li>
-            <li>Detection range: approximately 2 cm to 30 cm (adjustable) </li>
-            <li>Output type: digital TTL (HIGH / LOW)</li>
-            <li>Onboard potentiometer to adjust detection sensitivity/range </li>
-            <li>Onboard status LED indicates when an object is detected</li>
-            <li>Low power consumption, small and lightweight footprint </li>
+            <li>Power: 2.7V to 5.5V</li>
+            <li>Size: 28.4 x 28.4mm (1.12 x 1.12″)</li>
+            <li>Interface: digital TTL</li>
+            <li>High-resolution conversion of light intensity to frequency</li>
+            <li>Programmable color and full-scale output frequency</li>
+            <li>Communicates directly to microcontroller</li>
         </ul>
 
     </div>
@@ -230,7 +230,7 @@
             <tr>
                 <td>VCC</td>
                 <td>Power</td>
-                <td>Power supply (3.3V – 5V)</td>
+                <td>Power supply (5V)</td>
             </tr>
             <tr>
                 <td>GND</td>
@@ -238,13 +238,28 @@
                 <td>Ground connection</td>
             </tr>
             <tr>
+                <td>S0, S1</td>
+                <td>INPUT</td>
+                <td>Output frequency scaling selection inputs</td>
+            </tr>
+            <tr>
+                <td>S2, S3</td>
+                <td>INPUT</td>
+                <td>Color filter selection inputs</td>
+            </tr>
+            <tr>
                 <td>OUT</td>
                 <td>OUTPUT</td>
-                <td>Digital signal: LOW when an object is detected, HIGH when clear (on most common modules) </td>
+                <td>Frequency output signal</td>
+            </tr>
+            <tr>
+                <td>OE </td>
+                <td>INPUT</td>
+                <td>Enable for output frequency (active low)</td>
             </tr>
         </table>
         <div class="proj-img">
-            <img src="../assests/img/howitworks/ir sensor pinout.jpg" alt="IR Sensor Pinout" style="width:100%;">
+            <img src="../assests/img/howitworks/color sensor.png" alt="TCS3200 Color Sensor Module Pinout" style="width:100%;">
         </div>
     </div>
 
@@ -256,51 +271,139 @@
             <div class="proj-section-icon">
                 <i class="fa-solid fa-list-check"></i>
             </div>
-            <h2>How the IR Sensor Works</h2>
+            <h2>How the TCS3200 Sensor Works</h2>
         </div>
 
-        <p>An IR sensor detects the presence of nearby objects without any physical contact. It works by emitting infrared light and detecting the reflection of that light off of objects in its range.</p><br>
+        <p>At its core, the TCS3200 is a light-to-frequency converter.</p><br>
 
         <div class="steps-list">
             <div class="step-item">
                 <div class="step-num-circle">1</div>
 
                 <div class="step-item-body">
-                    <h4>Emitting Infrared Light </h4>
-                    <p>The IR LED continuously emits infrared light, which is invisible to the human eye. This light travels outward from the sensor in a narrow cone. </p>
-                    <br>
+                    <h4>The Photodiode Matrix</h4>
+                    <p>If you look closely at the center of the chip, you will see an 8 x 8 matrix of photodiodes. A photodiode converts light into electrical current. The 64 photodiodes are split into four different categories.</p>
+
+                    <div class="proj-img">
+                        <img src="../assests/img/howitworks/Color_sensor_filters.png" style="height: 200px; width:auto; margin-top:20px;">
                     </div>
+
+                    <br>
+
+                    <ul>
+                        <li>16 Photodiodes with Red filters (sensitive only to red light)</li>
+                        <li>16 Photodiodes with Green filters (sensitive only to green light)</li>
+                        <li>16 Photodiodes with Blue filters (sensitive only to blue light)</li>
+                        <li>16 Photodiodes with Clear filters (no filter, sensitive to all visible light)</li>
+                    </ul>
                 </div>
-            
+            </div>
 
             <div class="step-item">
                 <div class="step-num-circle">2</div>
                 <div class="step-item-body">
-                    <h4>Reflection and Detection</h4>
+                    <h4>Light-to-Frequency Conversion</h4>
 
-                    <p>When an object enters the sensor's detection range, the infrared light emitted by the LED bounces off the surface of that object and reflects back toward the sensor module. .</p>
+                    <p>The sensor takes the current produced by these photodiodes and outputs a square wave (a digital signal that rapidly cycles between HIGH and LOW).</p>
 
+                    <br>
 
-                    
+                    <ul>
+                        <li>The frequency of this square wave is directly proportional to the intensity of the light hitting the selected photodiodes.</li>
+                        <li>For example, if you shine a bright red light on the sensor, the "Red" photodiodes will produce a high-frequency square wave, while the Green and Blue photodiodes will produce a very low-frequency wave.</li>
+                    </ul>
+
+                    <div class="proj-img">
+                        <img src="../assests/img/howitworks/Color-sensor-scheme.png" style="height: 200px; width:auto; margin-top:20px;">
+                    </div>
                 </div>
             </div>
 
             <div class="step-item">
                 <div class="step-num-circle">3</div>
                 <div class="step-item-body">
-                    <h4> Detecting the Reflected Light</h4>
+                    <h4>Controlling the Sensor via Pins (S0 to S3)</h4>
 
-                    <p> The photodiode (receiver) picks up the reflected infrared light. The closer or more reflective the object, the stronger the signal received by the photodiode. The onboard LM358 comparator compares this received signal against a reference voltage set by the onboard potentiometer. </p>
+                    <p>By using the Arduino's digital pins, you can dynamically tell the sensor which color filter to look at and how fast to scale the frequency output.</p>
 
+                    <br>
+
+                    <h4>Frequency Scaling (S0, S1)</h4>
+
+                    <p>Frequency scaling allows you to optimize the output frequency for different microcontrollers. For an Arduino Uno/Nano, 20% scaling is usually perfect.</p>
+
+                    <table class="proj-table">
+                        <thead>
+                            <tr>
+                                <th>Output frequency scaling</th>
+                                <th>S0</th>
+                                <th>S1</th>
+                            </tr>
+                        </thead>
+                        <tr>
+                            <td>Power down</td>
+                            <td>LOW</td>
+                            <td>LOW</td>
+                        </tr>
+                        <tr>
+                            <td>2%</td>
+                            <td>LOW</td>
+                            <td>HIGH</td>
+                        </tr>
+                        <tr>
+                            <td>20%</td>
+                            <td>HIGH</td>
+                            <td>LOW</td>
+                        </tr>
+                        <tr>
+                            <td>100%</td>
+                            <td>HIGH</td>
+                            <td>HIGH</td>
+                        </tr>
+                    </table>
+
+                    <h4>Color Filter Selection (S2, S3)</h4>
+
+                    <p>By changing the states of S2 and S3, you choose which color matrix the OUT pin reads.</p>
+
+                    <table class="proj-table">
+                        <thead>
+                            <tr>
+                                <th>Photodiode type</th>
+                                <th>S2</th>
+                                <th>S3</th>
+                            </tr>
+                        </thead>
+                        <tr>
+                            <td>Red</td>
+                            <td>LOW</td>
+                            <td>LOW</td>
+                        </tr>
+                        <tr>
+                            <td>Blue</td>
+                            <td>LOW</td>
+                            <td>HIGH</td>
+                        </tr>
+                        <tr>
+                            <td>No filter (clear)</td>
+                            <td>HIGH</td>
+                            <td>LOW</td>
+                        </tr>
+                        <tr>
+                            <td>Green</td>
+                            <td>HIGH</td>
+                            <td>HIGH</td>
+                        </tr>
+                    </table>
                 </div>
             </div>
 
             <div class="step-item">
                 <div class="step-num-circle">4</div>
                 <div class="step-item-body">
-                    <h4> Producing a Digital Output </h4>
+                    <h4> Determine the Detected Color</h4>
 
-                    <p> The photodiode (receiver) picks up the reflected infrared light. The closer or more reflective the object, the stronger the signal received by the photodiode. The onboard LM358 comparator compares this received signal against a reference voltage set by the onboard potentiometer.</p>
+                    <p>The Arduino reads the frequency output from the sensor for the red, green, and blue filters. These values are then used to determine the color.</p>
                 </div>
             </div>
         </div>
@@ -317,16 +420,16 @@
             <h2>Using the Sensor with Arduino</h2>
         </div>
 
-        <h3>Wiring IR sensor to Arduino</h3><br>
+        <h3>Wiring TCS3200 to Arduino</h3><br>
 
         <div class="proj-img">
-            <img src="../assests/img/howitworks/ir circuit.png" alt="IR Sensor Circuit" style="width:100%;">    
+            <img src="../assests/img/howitworks/color sensor circuit.png" alt="TCS3200 Color Recognition Sensor Module" style="width:100%;">    
         </div>
 
         <table class="proj-table">
             <thead>
                 <tr>
-                    <th>IR Sensor Pin</th>
+                    <th>TCS3200 Pin</th>
                     <th>Arduino Uno Pin</th>
                 </tr>
             </thead>
@@ -339,40 +442,94 @@
                 <td>GND</td>
             </tr>
             <tr>
-                <td>OUT</td>
+                <td>S0</td>
                 <td>D4</td>
             </tr>
-             </table>
+            <tr>
+                <td>S1</td>
+                <td>D5</td>
+            </tr>
+            <tr>
+                <td>S2</td>
+                <td>D6</td>
+            </tr>
+            <tr>
+                <td>S3</td>
+                <td>D7</td>
+            </tr>
+            <tr>
+                <td>OUT</td>
+                <td>D8</td>
+            </tr>
+        </table>
 
         <h3>Arduino Script</h3>
 
-        <!-- <p>This script configures the control pins, switches rapidly between the Red, Green, and Blue filters, and measures the duration of the incoming pulse using <b>pulseIn()</b>.</p><br>
+        <p>This script configures the control pins, switches rapidly between the Red, Green, and Blue filters, and measures the duration of the incoming pulse using <b>pulseIn()</b>.</p><br>
 
-        <p>Note on <b>pulseIn()</b>: A higher intensity of light results in a higher frequency, which means the duration of the pulse is shorter. Therefore, lower raw numbers in the Serial Monitor mean a stronger presence of that specific color.</p> -->
+        <p>Note on <b>pulseIn()</b>: A higher intensity of light results in a higher frequency, which means the duration of the pulse is shorter. Therefore, lower raw numbers in the Serial Monitor mean a stronger presence of that specific color.</p>
 
 <pre><code>
-    #define IR_SENSOR_PIN 2 
- 
-void setup() { 
-  pinMode(IR_SENSOR_PIN, INPUT); 
-  Serial.begin(9600); 
-  Serial.println("IR Sensor Initialized..."); 
-} 
- 
-void loop() { 
-  int sensorState = digitalRead(IR_SENSOR_PIN); 
- 
-  if (sensorState == LOW) { 
-    Serial.println("Object Detected!"); 
-  } else { 
-    Serial.println("No Object"); 
-  } 
+    // Define Sensor Pin Connections
+    #define S0 4
+    #define S1 5
+    #define S2 6
+    #define S3 7
+    #define sensorOut 8
 
+    // Variables to store raw photodiode pulse durations
+    int redFrequency = 0;
+    int greenFrequency = 0;
+    int blueFrequency = 0;
+
+    void setup() {
+        // Set Pin Modes
+        pinMode(S0, OUTPUT);
+        pinMode(S1, OUTPUT);
+        pinMode(S2, OUTPUT);
+        pinMode(S3, OUTPUT);
+        pinMode(sensorOut, INPUT);
+        
+        // Set Frequency Scaling to 20% (S0 = HIGH, S1 = LOW)
+        digitalWrite(S0, HIGH);
+        digitalWrite(S1, LOW);
+        
+        // Initialize Serial Communication
+        Serial.begin(9600);
+        Serial.println("TCS3200 Color Sensor Initialized...");
+    }
+
+    void loop() {
+        // 1. Read Red Photiodiodes
+        digitalWrite(S2, LOW);
+        digitalWrite(S3, LOW);
+        redFrequency = pulseIn(sensorOut, LOW);
+        
+        // 2. Read Green Photiodiodes
+        digitalWrite(S2, HIGH);
+        digitalWrite(S3, HIGH);
+        greenFrequency = pulseIn(sensorOut, LOW);
+        
+        // 3. Read Blue Photiodiodes
+        digitalWrite(S2, LOW);
+        digitalWrite(S3, HIGH);
+        blueFrequency = pulseIn(sensorOut, LOW);
+        
+        // Print Raw values to Serial Monitor
+        Serial.print("R = ");
+        Serial.print(redFrequency);
+        Serial.print(" | G = ");
+        Serial.print(greenFrequency);
+        Serial.print(" | B = ");
+        Serial.println(blueFrequency);
+
+        delay(500); // Wait half a second between readings
+    }
 </code></pre>
 
         <br>
         
-        <!-- <h3>Calibration and Mapping to True RGB (0-255)</h3>
+        <h3>Calibration and Mapping to True RGB (0-255)</h3>
 
         <p>The code above prints raw pulse widths, not standard 0–255 RGB values. Because ambient lighting conditions heavily affect this sensor, you must calibrate it manually for precision projects.</p>
 
@@ -407,10 +564,10 @@ void loop() {
     Serial.print(" | Mapped B = ");
     Serial.println(blueMapped);
 </code></pre>
-    </div> -->
+    </div>
 
         <!-- INTRODUCTION -->
-    <!-- <div class="proj-section">
+    <div class="proj-section">
         <div class="proj-section-label">
             <div class="proj-section-icon">
                 <i class="fa-solid fa-book-open"></i>
@@ -420,7 +577,7 @@ void loop() {
         <p>
             The TCS3200 color sensor is an RGB color detection module that identifies the color of an object by measuring the intensity of red, green, and blue (RGB) light reflected from its surface. It uses the TCS3200 sensor chip and four built-in white LEDs to illuminate the target object. The sensor converts the detected light intensity into a digital frequency signal, which can be read by a microcontroller such as an Arduino for accurate color recognition.
         </p>
-    </div> -->
+    </div>
 </div>
 
 <!-- WHATSAPP -->
