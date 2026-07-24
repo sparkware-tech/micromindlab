@@ -4,107 +4,453 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MicroMind Lab - Tech Explorer</title>
-    <meta name="description" content="Learn how servo motors control angle using gears, feedback, and PWM signals.">
+    <meta name="description" content="Learn how the servo motor rotates to a precise angle using a PWM control signal, and how to wire and program it with Arduino.">
     <link rel="icon" type="image/png" href="../assests/img/favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="../assests/css/index.css">
     <link rel="stylesheet" href="../assests/css/techexplorer.css">
   </head>
+
 <body>
+
 <!-- NAV -->
 <nav>
-  <a href="../index.html" class="nav-logo">
-    <div class=""><img src="../assests/img/logo.png" alt="MicroMind Lab Logo" style="width: 50px;"></div>
-    MicroMind Lab
-  </a>
-  <ul class="nav-links">
-    <li><a href="../index.html#about">About</a></li>
-    <li><a href="../index.html#instructor">Instructors</a></li>
-    <li><a href="../index.html#programs">Programs</a></li>
-    <li class="nav-dropdown">
-      <a href="#">
-        Learn
-        <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2 4 6 8 10 4"/></svg>
-      </a>
-      <div class="dropdown-menu">
-        <a href="../labjournal.html">Lab Journal</a>
-        <div class="dropdown-divider"></div>
-        <a href="../techexplorer.html">Tech Explorer</a>
-        <div class="dropdown-divider"></div>
-        <a href="../projecthub.html">Project Hub</a>
-      </div>
-    </li>
-    <li class="nav-dropdown">
-      <a href="#">
-       Build
-        <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2 4 6 8 10 4"/></svg>
-      </a>
-      <div class="dropdown-menu">
-        <a href="../designstudio.html" target="_blank">Design Studio</a>
-        <div class="dropdown-divider"></div>
-        <a href="../blockcoder.html" target="_blank">Block Coder</a>
-        <div class="dropdown-divider"></div>
-        <a href="../labstore.html" target="_blank">Lab Store</a>
-      </div>
-    </li>
-    <li><a href="../index.html#contact">Contact</a></li>
-  </ul>
-  <div>
-    <button id="lang-toggle" class="lang-toggle" data-lang="en" onclick="toggleLanguage()">
-      <span class="lang-active">EN</span>
-      <span class="lang-divider">/</span>
-      <span class="lang-inactive">SI</span>
+    <a href="../index.html" class="nav-logo">
+        <div>
+            <img src="../assests/img/logo.png" alt="MicroMind Lab Logo" style="width:50px;">
+        </div>
+        MicroMind Lab
+    </a>
+    <ul class="nav-links">
+        <li><a href="../index.html#about">About</a></li>
+        <li><a href="../index.html#instructor">Instructors</a></li>
+        <li><a href="../index.html#programs">Programs</a></li>
+        <li class="nav-dropdown">
+            <a href="#">
+                Learn
+                <svg width="11" height="11" viewBox="0 0 12 12" fill="none"
+                    stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round">
+                    <polyline points="2 4 6 8 10 4"/>
+                </svg>
+            </a>
+            <div class="dropdown-menu">
+                <a href="../labjournal.html">Lab Journal</a>
+                <div class="dropdown-divider"></div>
+                <a href="../techexplorer.html">Tech Explorer</a>
+                <div class="dropdown-divider"></div>
+                <a href="../projecthub.html">Project Hub</a>
+            </div>
+        </li>
+        <li class="nav-dropdown">
+            <a href="#">
+                Build
+                <svg width="11" height="11" viewBox="0 0 12 12" fill="none"
+                    stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round">
+                    <polyline points="2 4 6 8 10 4"/>
+                </svg>
+            </a>
+            <div class="dropdown-menu">
+                <a href="../designstudio.html" target="_blank">Design Studio</a>
+                <div class="dropdown-divider"></div>
+                <a href="../blockcoder.html" target="_blank">Block Coder</a>
+                <div class="dropdown-divider"></div>
+                <a href="../labstore.html" target="_blank">Lab Store</a>
+            </div>
+        </li>
+        <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <div>
+        <button id="lang-toggle" class="lang-toggle" data-lang="en"
+            onclick="toggleLanguage()">
+            <span class="lang-active">EN</span>
+            <span class="lang-divider">/</span>
+            <span class="lang-inactive">SI</span>
+        </button>
+        <a href="../lms.html" target="_blank" class="nav-cta">
+            Log in to LMS
+        </a>
+    </div>
+    <button class="nav-hamburger" onclick="toggleMenu()" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
     </button>
-    <a href="../lms.html" target="_blank" class="nav-cta">Log in to LMS</a>
-  </div>
-  <button class="nav-hamburger" onclick="toggleMenu()" aria-label="Menu">
-    <span></span><span></span><span></span>
-  </button>
 </nav>
 
+<!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobileMenu">
-  <ul>
-    <li><a href="../index.html#about" onclick="closeMenu()">About</a></li>
-    <li><a href="../index.html#instructor" onclick="closeMenu()">Instructors</a></li>
-    <li><a href="../index.html#programs" onclick="closeMenu()">Programs</a></li>
-    <li class="mobile-dropdown">
-      <span class="mobile-dropdown-label">Learn</span>
-      <ul class="mobile-sub">
-        <li><a href="../labjournal.html" onclick="closeMenu()">Lab Journal</a></li>
-        <li><a href="../techexplorer.html" onclick="closeMenu()">Tech Explorer</a></li>
-        <li><a href="../projecthub.html" onclick="closeMenu()">Project Hub</a></li>
-      </ul>
-    </li>
-    <li class="mobile-dropdown">
-      <span class="mobile-dropdown-label">Build</span>
-      <ul class="mobile-sub">
-        <li><a href="../designstudio.html" target="_blank" onclick="closeMenu()">Design Studio</a></li>
-        <li><a href="../blockcoder.html" target="_blank" onclick="closeMenu()">Block Coder</a></li>
-        <li><a href="../labstore.html" target="_blank" onclick="closeMenu()">Lab Store</a></li>
-      </ul>
-    </li>
-    <li><a href="../index.html#contact" onclick="closeMenu()">Contact</a></li>
-  </ul>
-  <a href="../lms.html" target="_blank" class="mobile-menu-cta">Log in to LMS</a>
+    <ul>
+        <li><a href="../index.html#about" onclick="closeMenu()">About</a></li>
+        <li><a href="../index.html#instructor" onclick="closeMenu()">Instructors</a></li>
+        <li><a href="../index.html#programs" onclick="closeMenu()">Programs</a></li>
+        <li class="mobile-dropdown">
+            <span class="mobile-dropdown-label">Learn</span>
+            <ul class="mobile-sub">
+                <li><a href="../labjournal.html" onclick="closeMenu()">Lab Journal</a></li>
+                <li><a href="../techexplorer.html" onclick="closeMenu()">Tech Explorer</a></li>
+                <li><a href="../projecthub.html" onclick="closeMenu()">Project Hub</a></li>
+            </ul>
+        </li>
+        <li class="mobile-dropdown">
+            <span class="mobile-dropdown-label">Build</span>
+            <ul class="mobile-sub">
+                <li><a href="../designstudio.html" target="_blank" onclick="closeMenu()">Design Studio</a></li>
+                <li><a href="../blockcoder.html" target="_blank" onclick="closeMenu()">Block Coder</a></li>
+                <li><a href="../labstore.html" target="_blank" onclick="closeMenu()">Lab Store</a></li>
+            </ul>
+        </li>
+        <li><a href="../index.html#contact" onclick="closeMenu()">Contact</a></li>
+    </ul>
+    <a href="../lms.html" target="_blank" class="mobile-menu-cta">
+        Log in to LMS
+    </a>
 </div>
 
-<div class="proj-detail-hero"><div class="proj-detail-orb"></div><div class="proj-detail-hero-inner"><a href="../techexplorer.html" class="proj-back"><i class="fa-solid fa-arrow-left"></i> Back to Tech Explorer</a><div class="proj-meta-row"><span class="proj-meta-tag">Motor</span><span class="proj-meta-tag"><i class="fa-solid fa-rotate" style="color:#34D399;font-size:11px;"></i> Angle control</span></div><h1>How Servo Motors Work</h1><p class="lead">A servo motor turns to a requested angle and holds that position using a small motor, gears, and internal feedback.</p><div class="proj-stats"><div class="proj-stat"><i class="fa-solid fa-sliders"></i><span>Input</span><strong>PWM signal</strong></div><div class="proj-stat"><i class="fa-solid fa-rotate"></i><span>Motion</span><strong>Angle</strong></div><div class="proj-stat"><i class="fa-solid fa-bullseye"></i><span>Feedback</span><strong>Position</strong></div></div></div><div class="proj-cover"><img src="../assests/img/howitworks/servo motor.webp" alt="Servo motor learning activity"></div></div>
+<!-- HERO -->
+<div class="proj-detail-hero">
 
+    <div class="proj-detail-orb"></div>
+
+    <div class="proj-detail-hero-inner">
+        <a href="../techexplorer.html" class="proj-back">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Tech Explorer
+        </a>
+
+        <div class="proj-meta-row">
+            <span class="proj-meta-tag">Actuator</span>
+
+            <span class="proj-meta-tag">
+                <i class="fa-solid fa-arrows-rotate"
+                    style="color:#34D399;font-size:11px;"></i>
+                Angular Motion
+            </span>
+        </div>
+
+        <h1>Servo Motor Guide with Arduino</h1>
+
+        <p class="lead">
+            A servo motor is a small, geared motor that can rotate to a precise angle and hold its position, rather than spinning continuously like a normal DC motor. It works by reading a pulse-width modulated (PWM) control signal and using an internal feedback loop to move its shaft to the angle that signal represents. Servo motors are widely used in robotic arms, steering mechanisms, camera gimbals, and any project that needs precise, repeatable angular movement.
+        </p><br>
+
+        <p class="lead">
+            In this guide, we will explore how the servo motor works, its key features, how to connect it to an Arduino, and example code to get you started on your own angular-motion projects. 
+        </p>
+
+        <div class="proj-stats">
+            <div class="proj-stat">
+                <i class="fa-solid fa-gauge"></i>
+                <span>Controls </span>
+                <strong>Angle</strong>
+            </div>
+
+            <div class="proj-stat">
+                <i class="fa-solid fa-microchip"></i>
+                <span>Input</span>
+                <strong>PWM Signal</strong>
+            </div>
+
+            <div class="proj-stat">
+                <i class="fa-solid fa-robot"></i>
+                <span>Uses</span>
+                <strong>Angular Motion</strong>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="proj-cover">
+        <a href="../assests/img/howitworks/servo motor.png" target="_blank"><img src="../assests/img/howitworks/servo motor.png" alt="Servo Motor"></a>
+    </div>
+
+</div>
+
+<!-- CONTENT -->
 <div class="proj-content">
-  <div class="proj-section"><div class="proj-section-label"><div class="proj-section-icon"><i class="fa-solid fa-book-open"></i></div><h2>Simple Idea</h2></div><div class="proj-body-text"><p>A normal DC motor spins continuously. A servo motor is different because it is designed to move to a specific angle, such as 0, 90, or 180 degrees.</p><p>Inside the servo, gears slow the motor down and increase strength. A feedback sensor tells the controller where the shaft is positioned.</p></div></div>
-  <div class="proj-divider"></div>
-  <div class="proj-section"><div class="proj-section-label"><div class="proj-section-icon"><i class="fa-solid fa-list-check"></i></div><h2>How It Works</h2></div><div class="steps-list"><div class="step-item"><div class="step-num-circle">1</div><div class="step-item-body"><h4>Controller sends a signal</h4><p>A microcontroller sends a PWM signal that represents the target angle.</p></div></div><div class="step-item"><div class="step-num-circle">2</div><div class="step-item-body"><h4>Servo compares position</h4><p>The internal circuit compares the target angle with the current shaft position.</p></div></div><div class="step-item"><div class="step-num-circle">3</div><div class="step-item-body"><h4>Motor turns through gears</h4><p>The motor rotates until the shaft reaches the requested angle.</p></div></div><div class="step-item"><div class="step-num-circle">4</div><div class="step-item-body"><h4>Position is held</h4><p>The servo keeps making small corrections so the shaft stays in place.</p></div></div></div></div>
-  <div class="proj-divider"></div>
-  <div class="proj-section"><div class="proj-section-label"><div class="proj-section-icon"><i class="fa-solid fa-lightbulb"></i></div><h2>Common Uses</h2></div><div class="proj-body-text"><p>Robot arms, steering systems, camera mounts, automatic doors, grippers, and small moving mechanisms.</p></div></div>
-  <!-- <div class="proj-nav-footer"><a href="ultrasonic-sensor.html" class="proj-nav-btn"><i class="fa-solid fa-arrow-left"></i><span><span class="proj-nav-btn-label">Previous</span><span class="proj-nav-btn-title">Ultrasonic Sensor</span></span></a><a href="stepper-motor.html" class="proj-nav-btn"><span><span class="proj-nav-btn-label">Next</span><span class="proj-nav-btn-title">Stepper Motor</span></span><i class="fa-solid fa-arrow-right"></i></a></div> -->
+
+    <!-- INTRODUCTION -->
+    <div class="proj-section">
+        <div class="proj-section-label">
+            <div class="proj-section-icon">
+                <i class="fa-solid fa-book-open"></i>
+            </div>
+            <h2>Introduction</h2>
+        </div>
+        <p>
+            The servo motor is a small, geared motor that can rotate to a precise angle and hold its position, rather than spinning continuously like a normal DC motor. It works by reading a pulse-width modulated (PWM) control signal and using an internal feedback loop to move its shaft to the angle that signal represents.
+        </p>
+        <div class="proj-img">
+            <a href="../assests/img/howitworks/servo_motor.png" target="_blank"><img src="../assests/img/howitworks/servo_motor.png" alt="Servo Motor" style="height: 200px; width:auto; margin-top:20px;"></a>
+        </div>
+    </div>
+
+    <div class="proj-divider"></div>
+
+    <!-- SPECIFICATIONS -->
+    <div class="proj-section">
+        <div class="proj-section-label">
+            <div class="proj-section-icon">
+                <i class="fa-solid fa-star"></i>
+            </div>
+            <h2>Specifications</h2>
+        </div>
+        <ul>
+            <li>Operating voltage: 4.8V to 6V DC (typically powered from 5V) </li>
+            <li>Rotation range: approximately 0 to 180 degrees (standard servo) </li>
+            <li>Control type: PWM signal, pulse repeated approximately every 20 milliseconds </li>
+            <li>Pulse width of roughly 1 to 2 milliseconds sets the shaft angle </li>
+            <li>Internal gear train and feedback potentiometer hold the commanded position </li>
+            <li>Compact size, commonly used for lightweight positioning tasks </li>
+        </ul>
+
+    </div>
+
+    <div class="proj-divider"></div>
+
+    <!-- PINS -->
+    <div class="proj-section">
+        <div class="proj-section-label">
+            <div class="proj-section-icon">
+                <i class="fa-solid fa-plug"></i>
+            </div>
+            <h2>Pinout</h2>
+        </div>
+        <table class="proj-table">
+            <thead>
+                <tr>
+                    <th>Wire</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tr>
+                <td>VCC (Red)</td>
+                <td>Power</td>
+                <td>Power supply (4.8V – 6V)</td>
+            </tr>
+            <tr>
+                <td>GND (Brown/Black)</td>
+                <td>Power</td>
+                <td>Ground connection</td>
+            </tr>
+            <tr>
+                <td>Signal (Orange/Yellow)</td>
+                <td>INPUT</td>
+                <td>PWM control signal that sets the shaft angle </td>
+            </tr>
+        </table>
+        <div class="proj-img">
+            <a href="../assests/img/howitworks/servo motor pinout.jpeg" target="_blank"><img src="../assests/img/howitworks/servo motor pinout.jpeg" alt="Servo Motor Pinout" style="width:100%;"></a>
+        </div>
+    </div>
+
+     <div class="proj-divider"></div>
+
+    <!-- HOW IT WORKS -->
+    <div class="proj-section">
+        <div class="proj-section-label">
+            <div class="proj-section-icon">
+                <i class="fa-solid fa-list-check"></i>
+            </div>
+            <h2>How the Servo Motor Works</h2>
+        </div>
+
+        <p>A servo motor moves its shaft to a specific angle and holds it there, based on a repeating electrical signal it receives on its signal wire.</p><br>
+
+        <div class="steps-list">
+            <div class="step-item">
+                <div class="step-num-circle">1</div>
+
+                <div class="step-item-body">
+                    <h4>Sending the PWM Signal </h4>
+
+                    <p>The microcontroller sends a pulse on the signal wire roughly every 20 milliseconds. The width of each pulse, typically between 1 and 2 milliseconds, tells the servo which angle to move to. </p>
+                    </div>
+                </div>
+            
+
+            <div class="step-item">
+                <div class="step-num-circle">2</div>
+                <div class="step-item-body">
+                    <h4>Reading the Pulse Width</h4>
+
+                    <p>The servo's internal control circuit measures the width of the incoming pulse and converts it into a target angle. A shorter pulse commands one end of the range, a longer pulse commands the other end, and a pulse near the middle commands the center position.</p>
+                </div>
+            </div>
+
+            <div class="step-item">
+                <div class="step-num-circle">3</div>
+                <div class="step-item-body">
+                    <h4> Comparing with the Current Position</h4>
+
+                    <p> A potentiometer connected to the output shaft reports the servo's current angle back to the control circuit. This is compared against the target angle from the incoming pulse to work out how far and in which direction the shaft needs to move. </p>
+                </div>
+            </div>
+
+            <div class="step-item">
+                <div class="step-num-circle">4</div>
+                <div class="step-item-body">
+                    <h4> Driving the Motor to Position </h4>
+
+                    <p> The control circuit drives the internal DC motor through the gear train until the potentiometer reading matches the target angle, then holds that position. This closed feedback loop lets the servo maintain a precise angle even against light resistance. </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="proj-divider"></div>
+
+    <!-- ARDUINO -->
+    <div class="proj-section">
+        <div class="proj-section-label">
+            <div class="proj-section-icon">
+                <i class="fa-solid fa-microchip"></i>
+            </div>
+            <h2>Using the Motor with Arduino</h2>
+        </div>
+
+        <h3>Wiring Servo motor to Arduino</h3><br>
+
+        <div class="proj-img">
+            <a href="../assests/img/howitworks/servo motor circuit.jpeg" target="_blank">
+                <img src="../assests/img/howitworks/servo motor circuit.jpeg" alt="Servo Motor Circuit" style="width:100%;">
+            </a>
+        </div>
+
+        <table class="proj-table">
+            <thead>
+                <tr>
+                    <th>Servo Motor Wire</th>
+                    <th>Arduino Uno Pin</th>
+                </tr>
+            </thead>
+            <tr>
+                <td>VCC (Red)</td>
+                <td>5V</td>
+            </tr>
+            <tr>
+                <td>GND (Brown/Black)</td>
+                <td>GND</td>
+            </tr>
+            <tr>
+                <td>Signal (Orange/Yellow)</td>
+                <td>D9</td>
+            </tr>
+             </table>
+
+        <h3>Arduino Script</h3>
+
+<pre><code>
+#include &lt;Servo.h&gt;
+
+#define SERVO_PIN 9
+
+Servo myServo;
+
+void setup() {
+  myServo.attach(SERVO_PIN);
+  Serial.begin(9600);
+  Serial.println("Servo Motor Initialized...");
+}
+
+void loop() {
+  // Sweep from 0 to 180 degrees
+  for (int angle = 0; angle <= 180; angle++) {
+    myServo.write(angle);
+    delay(15);
+  }
+
+  // Sweep back from 180 to 0 degrees
+  for (int angle = 180; angle >= 0; angle--) {
+    myServo.write(angle);
+    delay(15);
+  }
+}
+</code></pre>
+
+        <br>
+
+    </div>
+
+    <div class="proj-section">
+        <div class="proj-section-label">
+            <div class="proj-section-icon">
+                <i class="fa-solid fa-book-open"></i>
+            </div>
+            <h2>Summary</h2>
+        </div>
+        <p>
+            The servo motor is a simple and effective way to achieve precise angular movement without needing to build your own feedback control. By reading a PWM signal and comparing it against its own position, it can rotate to and hold a commanded angle. With its easy three-wire interface, it can readily connect to microcontrollers like Arduino using the built-in Servo library for various applications such as robotic arms, steering, and camera positioning. Understanding how to wire and program the servo motor opens up many possibilities for creating interactive and responsive projects.
+        </p>
+    </div>
 </div>
 
-<a href="https://wa.me/94769011856" target="_blank" class="wa-float" aria-label="Chat on WhatsApp"><i class="fa-brands fa-whatsapp"></i><span class="wa-float-label">Chat with us</span><span class="wa-float-ping"></span></a><footer><div class="footer-brand"><div><img src="../assests/img/logo.png" alt="MicroMind Lab Logo" style="width: 50px;"></div>MicroMind Lab</div><p class="footer-tagline">The way to a smart future - Galle, Sri Lanka</p><p class="footer-copy">&copy; 2026 MicroMind Lab</p></footer>
-<!-- Hidden Google Translate widget -->
+<!-- WHATSAPP -->
+<a href="https://wa.me/94769011856" target="_blank"
+    class="wa-float" aria-label="Chat on WhatsApp">
+
+    <i class="fa-brands fa-whatsapp"></i>
+
+    <span class="wa-float-label">Chat with us</span>
+
+    <span class="wa-float-ping"></span>
+</a>
+
+<!-- FOOTER -->
+<footer>
+
+    <div class="footer-brand">
+        <div>
+            <img src="../assests/img/logo.png"
+                alt="MicroMind Lab Logo"
+                style="width:50px;">
+        </div>
+        MicroMind Lab
+    </div>
+
+    <p class="footer-tagline">
+        The way to a smart future - Galle, Sri Lanka
+    </p>
+
+    <p class="footer-copy">
+        &copy; 2026 MicroMind Lab
+    </p>
+
+</footer>
+
+<!-- GOOGLE TRANSLATE -->
 <div id="google_translate_element" style="display:none"></div>
+
 <script src="../assests/constant/lang-toggle.js"></script>
+
 <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-<script>function toggleMenu(){document.getElementById('mobileMenu').classList.toggle('open')}function closeMenu(){document.getElementById('mobileMenu').classList.remove('open')}document.addEventListener('click',function(e){const menu=document.getElementById('mobileMenu');const hamburger=document.querySelector('.nav-hamburger');if(menu.classList.contains('open')&&!menu.contains(e.target)&&!hamburger.contains(e.target))menu.classList.remove('open')});</script>
+
+<script>
+function toggleMenu() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+}
+
+function closeMenu() {
+    document.getElementById('mobileMenu').classList.remove('open');
+}
+
+document.addEventListener('click', function(e) {
+
+    const menu = document.getElementById('mobileMenu');
+    const hamburger = document.querySelector('.nav-hamburger');
+
+    if (
+        menu.classList.contains('open') &&
+        !menu.contains(e.target) &&
+        !hamburger.contains(e.target)
+    ) {
+        menu.classList.remove('open');
+    }
+});
+</script>
+
 </body>
 </html>
