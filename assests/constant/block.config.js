@@ -18,7 +18,7 @@ const BLOCK_DEFINITIONS = [
     defaults:{ pin:'13', mode:'OUTPUT' },
     fields:[
       { kind:'text', label:'setPin' },
-      { kind:'input', key:'pin', width:30 },
+      { kind:'input', key:'pin', width:100 },
       { kind:'text', label:'as' },
       { kind:'select', key:'mode', options:['OUTPUT','INPUT'] }
     ],
@@ -26,35 +26,36 @@ const BLOCK_DEFINITIONS = [
   },
   /* Digital */
   {
-    category:'Digital', type:'pinOn', cls:'b-digital',
-    label:'pinOn', hint:'turn a pin HIGH',
+    category:'Digital', type:'pinHigh', cls:'b-digital',
+    label:'pinHigh', hint:'turn a pin HIGH',
     defaults:{ pin:'13' },
     fields:[
-      { kind:'text', label:'pinOn' },
-      { kind:'input', key:'pin', width:30 }
+      { kind:'text', label:'pinHigh' },
+      { kind:'input', key:'pin', width:100 }
     ],
     code:'  {{_indent}}digitalWrite({{pin}}, HIGH);'
   },
   {
-    category:'Digital', type:'pinOff', cls:'b-digital',
-    label:'pinOff', hint:'turn a pin LOW',
+    category:'Digital', type:'pinLow', cls:'b-digital',
+    label:'pinLow', hint:'turn a pin LOW',
     defaults:{ pin:'13' },
     fields:[
-      { kind:'text', label:'pinOff' },
-      { kind:'input', key:'pin', width:30 }
+      { kind:'text', label:'pinLow' },
+      { kind:'input', key:'pin', width:100 }
     ],
     code:'  {{_indent}}digitalWrite({{pin}}, LOW);'
   },
   {
     category:'Digital', type:'readPin', cls:'b-digital',
-    label:'readPin', hint:'read digital pin value',
-    defaults:{ pin:'2' },
+    label:'readPin', hint:'read digital pin value and store in variable',
+    defaults:{ pin:'2', var:'val' },
     fields:[
       { kind:'text', label:'readPin' },
-      { kind:'input', key:'pin', width:30 },
-      { kind:'text', label:'→ val' }
+      { kind:'input', key:'pin', width:100 },
+      { kind:'text', label:'store in' },
+      { kind:'input', key:'var', width:100 }
     ],
-    code:'  {{_indent}}int val = digitalRead({{pin}});'
+    code:'  {{_indent}}int {{var}} = digitalRead({{pin}});'
   },
   /* Analog */
   {
@@ -63,7 +64,7 @@ const BLOCK_DEFINITIONS = [
     defaults:{ pin:'9', val:'128' },
     fields:[
       { kind:'text', label:'writePin' },
-      { kind:'input', key:'pin', width:30 },
+      { kind:'input', key:'pin', width:100 },
       { kind:'text', label:'value' },
       { kind:'input', key:'val', width:36 }
     ],
@@ -72,13 +73,14 @@ const BLOCK_DEFINITIONS = [
   {
     category:'Analog', type:'analogRead', cls:'b-analog',
     label:'readPin', hint:'read analog pin A0–A5',
-    defaults:{ pin:'A0' },
+    defaults:{ pin:'A0', var:'val' },
     fields:[
       { kind:'text', label:'readPin' },
       { kind:'select', key:'pin', options:['A0','A1','A2','A3','A4','A5'] },
-      { kind:'text', label:'→ val' }
+      { kind:'text', label:'store in' },
+      { kind:'input', key:'var', width:100 }
     ],
-    code:'  {{_indent}}int val = analogRead({{pin}});'
+    code:'  {{_indent}}int {{var}} = analogRead({{pin}});'
   },
   /* Time */
   {
@@ -116,25 +118,23 @@ const BLOCK_DEFINITIONS = [
   },
   {
     category:'Serial', type:'serialPrint', cls:'b-serial',
-    label:'serialPrint', hint:'print text to monitor',
+    label:'serialPrint', hint:'print text/value to monitor',
     defaults:{ msg:'hello' },
     fields:[
-      { kind:'text', label:'serialPrint "' },
-      { kind:'input', key:'msg', width:70 },
-      { kind:'text', label:'"' }
+      { kind:'text', label:'serialPrint ' },
+      { kind:'input', key:'msg', width:200 },
     ],
-    code:'  {{_indent}}Serial.print("{{msg}}");'
+    code:'  {{_indent}}Serial.print({{msg}});'
   },
   {
     category:'Serial', type:'serialPrintLine', cls:'b-serial',
-    label:'serialPrintLine', hint:'print + new line',
-    defaults:{ msg:'hello' },
+    label:'serialPrintLine', hint:'print text/value to monitor with new line',
+    defaults:{ msgLine:'hello' },
     fields:[
-      { kind:'text', label:'serialPrintLine "' },
-      { kind:'input', key:'msg', width:70 },
-      { kind:'text', label:'"' }
+      { kind:'text', label:'serialPrintLine ' },
+      { kind:'input', key:'msgLine', width:200 },
     ],
-    code:'  {{_indent}}Serial.println("{{msg}}");'
+    code:'  {{_indent}}Serial.println({{msgLine}});'
   },
   /* Variable */
   {
@@ -143,7 +143,7 @@ const BLOCK_DEFINITIONS = [
     defaults:{ name:'x', val:'0' },
     fields:[
       { kind:'text', label:'int' },
-      { kind:'input', key:'name', width:44 },
+      { kind:'input', key:'name', width:100},
       { kind:'text', label:'=' },
       { kind:'input', key:'val', width:36 }
     ],
@@ -154,7 +154,7 @@ const BLOCK_DEFINITIONS = [
     label:'set var', hint:'assign value to a variable',
     defaults:{ name:'x', val:'0' },
     fields:[
-      { kind:'input', key:'name', width:44 },
+      { kind:'input', key:'name', width:100},
       { kind:'text', label:'=' },
       { kind:'input', key:'val', width:44 }
     ],
@@ -167,7 +167,7 @@ const BLOCK_DEFINITIONS = [
     defaults:{ cond:'val == HIGH' },
     fields:[
       { kind:'text', label:'if (' },
-      { kind:'input', key:'cond', width:110 },
+      { kind:'input', key:'cond', width:200 },
       { kind:'text', label:') {' }
     ],
     hasChildren: true,
@@ -190,7 +190,7 @@ const BLOCK_DEFINITIONS = [
     defaults:{ cond:'true' },
     fields:[
       { kind:'text', label:'till (' },
-      { kind:'input', key:'cond', width:110 },
+      { kind:'input', key:'cond', width:200 },
       { kind:'text', label:') {' }
     ],
     hasChildren: true,
@@ -235,30 +235,17 @@ const BLOCK_DEFINITIONS = [
     ],
     code:'  {{_indent}}{{result}} = {{num1}} - {{num2}};'
   },
-  /* Library */
+  /* Servo motor */
   {
-    category:'Library', type:'includeLibrary', cls:'b-global',
+    category:'Servo Motor', type:'includeLibrary', cls:'b-sensor',
     label:'insert', hint:'insert a library',
     defaults:{ lib: 'Servo.h' },
     fields:[
       { kind:'text', label:'insert' },
-      { kind:'select', key:'lib', options:['Servo.h','DHT.h','Wire.h'] },
+      { kind:'input', key:'lib', width:80 },
     ],
     code:'  {{_indent}}#include ({{lib}})'
   },
-  {
-    category:'Library', type:'objectDefine', cls:'b-global',
-    label:'create object', hint:'create a object from a library',
-    defaults:{ ob: 'Servo', name: 'myServo' },
-    fields:[
-      { kind:'text', label:'create' },
-      { kind:'input', key:'name', width:70 },
-      { kind:'text', label:'from' },
-      { kind:'select', key:'ob', options:['Servo','DHT'] },
-    ],
-    code:'  {{_indent}}{{ob}} {{name}};'
-  },
-  /* Servo motor */
   {
     category:'Servo Motor', type:'servoDefine', cls:'b-sensor',
     label:'create servo', hint:'define a servo motor',
