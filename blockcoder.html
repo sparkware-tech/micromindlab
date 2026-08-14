@@ -51,6 +51,18 @@
 <script src="assests/constant/block.config.js"></script>
 
 <script>
+//  Helper: figure out insertion index from drop Y position
+function getDropIndex(container, clientY) {
+  // Only look at direct-child placed blocks (not nested ones inside them)
+  const items = Array.from(container.children).filter(el => el.classList.contains('placed'));
+  for (let i = 0; i < items.length; i++) {
+    const rect = items[i].getBoundingClientRect();
+    const midpoint = rect.top + rect.height / 2;
+    if (clientY < midpoint) return i;
+  }
+  return items.length;
+}
+
 // ════════════════════════════════════════════════════
 //  Build BLOCKS lookup
 // ════════════════════════════════════════════════════
@@ -244,7 +256,8 @@ function makeItemEl(item, parentArr, idx, onChanged) {
       nestedDrop.classList.remove('drag-over');
       const type = (dragSource && dragSource.type) || e.dataTransfer.getData('text/plain');
       if (!type || !BLOCKS[type]) return;
-      item.children.push({ id: mkUid(), type, data: {}, children: [] });
+      const insertAt = getDropIndex(nestedDrop, e.clientY);
+      item.children.splice(insertAt, 0, { id: mkUid(), type, data: {}, children: [] });
       refreshNested();
       updateCode();
     });
@@ -307,7 +320,8 @@ document.querySelectorAll('.drop-zone').forEach(zone => {
     const type = (dragSource && dragSource.type) || e.dataTransfer.getData('text/plain');
     if (!type || !BLOCKS[type]) return;
     const zoneId = zone.id.replace('zone-', '');
-    zones[zoneId].push({ id: mkUid(), type, data: {}, children: [] });
+    const insertAt = getDropIndex(zone, e.clientY);
+    zones[zoneId].splice(insertAt, 0, { id: mkUid(), type, data: {}, children: [] });
     renderZone(zoneId);
     updateCode();
   });
