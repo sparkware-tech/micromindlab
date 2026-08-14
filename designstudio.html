@@ -13,6 +13,8 @@
   <img src="assests/img/logo.png" alt="Logo" id="logo" style="width:32px;height:32px;margin-right:2px">
   <h1>Design Studio</h1>
   <div class="sep"></div>
+  <button class="btn" id="btn-undo" onclick="undo()" title="Undo (Ctrl+Z)">&#8630; Undo</button>
+  <button class="btn" id="btn-redo" onclick="redo()" title="Redo (Ctrl+Y)">&#8631; Redo</button>
   <button class="btn" id="btn-p" onclick="setMode('pan')">&#9974; Pan</button>
   <button class="btn active" id="btn-s" onclick="setMode('select')">&#10022; Select</button>
   <button class="btn" id="btn-w" onclick="setMode('wire')">&#8767; Wire</button>
@@ -30,7 +32,7 @@
   <button class="btn" onclick="adjustZoom(0.1)">+</button>
   <button class="btn" onclick="resetZoom()" title="Reset zoom">&#8865;</button>
   <div class="sep"></div>
-  <button class="btn" onclick="exportPNG()">&#8595; PNG</button>
+  <button class="btn" onclick="exportPNG()">&#8595; Download</button>
   <button class="btn danger" onclick="clearAll()">Clear</button>
   <div id="mode-badge" style="margin-left:auto">SELECT</div>
 </div>
@@ -156,7 +158,10 @@ const FLOW_CFG = {
 };
 let flowNodes=[];
 let flowIdCtr=0, selectedFlowNode=null, flowPlaceType=null;
-let flowDrag=null;
+let flowDrag=null, flowResize=null;
+
+// ─── UNDO / REDO STATE ──────────────────────────────────────────────────────
+let undoStack=[], redoStack=[], restoring=false;
 
 // ─── DOM REFS ─────────────────────────────────────────────────────────────
 const canvasEl   = document.getElementById('canvas-area');
@@ -233,57 +238,89 @@ function activateFlowPlace(type){
 // ─── FLOW SHAPES ──────────────────────────────────────────────────────────
 function flowShapeDragStart(e,type){e.dataTransfer.setData('flow-shape',type);}
 
-function buildShapeSVG(type,w,h,cfg){
+function buildShapeSVG(type,w,h,cfg,label){
   const ns='http://www.w3.org/2000/svg';
   const svg=document.createElementNS(ns,'svg');
   svg.setAttribute('width',w);svg.setAttribute('height',h);
+  svg.setAttribute('viewBox',`0 0 ${w} ${h}`);
   svg.setAttribute('overflow','visible');svg.classList.add('flow-shape-svg');
   let shape;
   if(type==='start'){
     shape=document.createElementNS(ns,'ellipse');
     shape.setAttribute('cx',w/2);shape.setAttribute('cy',h/2);
-    shape.setAttribute('rx',w/2-2);shape.setAttribute('ry',h/2-2);
+    shape.setAttribute('rx',Math.max(4,w/2-2));shape.setAttribute('ry',Math.max(4,h/2-2));
   }else if(type==='process'){
     shape=document.createElementNS(ns,'rect');
     shape.setAttribute('x',2);shape.setAttribute('y',2);
-    shape.setAttribute('width',w-4);shape.setAttribute('height',h-4);shape.setAttribute('rx',4);
+    shape.setAttribute('width',Math.max(4,w-4));shape.setAttribute('height',Math.max(4,h-4));shape.setAttribute('rx',4);
   }else if(type==='decision'){
     shape=document.createElementNS(ns,'polygon');
     shape.setAttribute('points',`${w/2},2 ${w-2},${h/2} ${w/2},${h-2} 2,${h/2}`);
   }else if(type==='output'){
-    const off=10;
+    const off=Math.min(10,w*0.12);
     shape=document.createElementNS(ns,'polygon');
     shape.setAttribute('points',`${off},2 ${w-2},2 ${w-2-off},${h-2} 2,${h-2}`);
   }
   shape.setAttribute('fill',cfg.fill);shape.setAttribute('stroke',cfg.stroke);shape.setAttribute('stroke-width','1.5');
   svg.appendChild(shape);
-  const txt=document.createElementNS(ns,'text');
-  txt.setAttribute('x',w/2);txt.setAttribute('y',h/2);
-  txt.setAttribute('text-anchor','middle');txt.setAttribute('dominant-baseline','central');
-  txt.setAttribute('fill','#cdd9e5');txt.style.fontSize='11px';txt.style.fontFamily='monospace';
-  txt.style.pointerEvents='none';
-  svg.appendChild(txt);
-  return{svg,txt};
+
+  // Padding varies per shape so wrapped text stays inside the visible silhouette
+  let padX=8,padY=6;
+  if(type==='decision'){padX=w*0.26;padY=h*0.26;}
+  else if(type==='start'){padX=w*0.15;padY=h*0.24;}
+  else if(type==='output'){padX=Math.max(12,w*0.11);padY=6;}
+  const fw=Math.max(10,w-padX*2), fh=Math.max(10,h-padY*2);
+
+  const fo=document.createElementNS(ns,'foreignObject');
+  fo.setAttribute('x',padX);fo.setAttribute('y',padY);
+  fo.setAttribute('width',fw);fo.setAttribute('height',fh);
+  const div=document.createElementNS('http://www.w3.org/1999/xhtml','div');
+  div.style.cssText='width:100%;height:100%;display:flex;align-items:center;justify-content:center;text-align:center;color:#cdd9e5;font-size:11px;font-family:monospace;overflow:hidden;word-break:break-word;line-height:1.25;pointer-events:none;';
+  div.textContent=label;
+  fo.appendChild(div);
+  svg.appendChild(fo);
+  return{svg,textDiv:div};
 }
 
-function createFlowNode(type,wx,wy){
+// Re-renders a flow node's shape/text at its current w/h (used on resize)
+function updateFlowNodeVisual(obj){
+  obj.el.style.width=obj.w+'px';
+  obj.el.style.height=obj.h+'px';
+  const cfg=FLOW_CFG[obj.type];
+  const oldSvg=obj.el.querySelector('svg.flow-shape-svg');
+  const{svg,textDiv}=buildShapeSVG(obj.type,obj.w,obj.h,cfg,obj.label);
+  if(oldSvg)obj.el.replaceChild(svg,oldSvg);else obj.el.insertBefore(svg,obj.el.firstChild);
+  obj._txt=textDiv;
+}
+
+function createFlowNode(type,wx,wy,overrides){
   const cfg=FLOW_CFG[type];if(!cfg)return;
+  saveHistory();
   const id='fn'+(++flowIdCtr);
-  const w=cfg.w,h=cfg.h,x=Math.round(wx-w/2),y=Math.round(wy-h/2);
-  const obj={id,type,x,y,w,h,label:cfg.label};
+  const w=(overrides&&overrides.w)||cfg.w;
+  const h=(overrides&&overrides.h)||cfg.h;
+  let x,y;
+  if(overrides&&overrides.exact){x=Math.round(wx);y=Math.round(wy);}
+  else{x=Math.round(wx-w/2);y=Math.round(wy-h/2);}
+  const label=(overrides&&overrides.label)||cfg.label;
+  const obj={id,type,x,y,w,h,label};
   flowNodes.push(obj);
   const node=document.createElement('div');
   node.className='flow-node';
   node.id=id;
   node.style.cssText=`left:${x}px;top:${y}px;width:${w}px;height:${h}px;pointer-events:${mode==='select'?'auto':'none'};`;
-  const{svg,txt}=buildShapeSVG(type,w,h,cfg);
-  obj._txt=txt;txt.textContent=obj.label;
+  const{svg,textDiv}=buildShapeSVG(type,w,h,cfg,label);
+  obj._txt=textDiv;
+  const rh=document.createElement('div');
+  rh.className='resize-handle flow-resize-handle';
+  rh.style.cssText='position:absolute;right:-5px;bottom:-5px;width:11px;height:11px;background:#58a6ff;border:1px solid #0d1117;border-radius:2px;cursor:nwse-resize;z-index:6;';
+  rh.addEventListener('mousedown',e=>{e.stopPropagation();startResizeFlow(e,obj,node);});
   const del=document.createElement('button');
   del.className='flow-node-del';del.textContent='x';
   del.addEventListener('click',e=>{e.stopPropagation();removeFlowNode(id);});
-  node.appendChild(svg);node.appendChild(del);
+  node.appendChild(svg);node.appendChild(rh);node.appendChild(del);
   node.addEventListener('mousedown',e=>{
-    if(e.target===del)return;
+    if(e.target===del||e.target===rh)return;
     e.stopPropagation();
     if(mode==='select'){selectFlowNode(id);startDragFlowNode(e,obj,node);}
   });
@@ -293,6 +330,7 @@ function createFlowNode(type,wx,wy){
 }
 
 function editFlowLabel(obj,node){
+  saveHistory();
   const inp=document.createElement('input');
   inp.type='text';inp.value=obj.label;inp.className='flow-node-edit';
   inp.style.width=(obj.w-10)+'px';node.appendChild(inp);
@@ -307,14 +345,24 @@ function deselectFlowNode(){if(selectedFlowNode){const obj=flowNodes.find(n=>n.i
 
 function removeFlowNode(id){
   const idx=flowNodes.findIndex(n=>n.id===id);if(idx<0)return;
+  saveHistory();
   if(flowNodes[idx].el)flowNodes[idx].el.remove();
   flowNodes.splice(idx,1);if(selectedFlowNode===id)deselectFlowNode();
   updateStatus();
 }
 
 function startDragFlowNode(e,obj,node){
-  e.preventDefault();const w=screenToWorld(e.clientX,e.clientY);
+  e.preventDefault();
+  saveHistory();
+  const w=screenToWorld(e.clientX,e.clientY);
   flowDrag={obj,ox:w.x-obj.x,oy:w.y-obj.y};node.style.zIndex=20;
+}
+
+function startResizeFlow(e,obj,node){
+  e.preventDefault();e.stopPropagation();
+  saveHistory();
+  flowResize={obj,node,startClientX:e.clientX,startClientY:e.clientY,iw:obj.w,ih:obj.h};
+  node.style.zIndex=20;
 }
 
 // ─── IMAGES ───────────────────────────────────────────────────────────────
@@ -359,6 +407,7 @@ function placeImageOnCanvas(src,name,wx,wy){
 }
 
 function createImageNode(src,name,x,y,w,h,srcId){
+  saveHistory();
   const id='img'+(++imgIdCtr);const obj={id,src,name,x,y,w,h,srcId:srcId||id};images.push(obj);
   const node=document.createElement('div');node.className='img-node';node.id=id;
   node.style.cssText=`left:${x}px;top:${y}px;width:${w}px;height:${h}px;`;
@@ -372,15 +421,20 @@ function createImageNode(src,name,x,y,w,h,srcId){
   imgLayer.appendChild(node);obj.el=node;updateStatus();return obj;
 }
 
-function removeImageNode(id){const idx=images.findIndex(i=>i.id===id);if(idx<0)return;if(images[idx].el)images[idx].el.remove();images.splice(idx,1);if(selectedImg===id)deselectImg();updateStatus();}
+function removeImageNode(id){
+  const idx=images.findIndex(i=>i.id===id);if(idx<0)return;
+  saveHistory();
+  if(images[idx].el)images[idx].el.remove();images.splice(idx,1);if(selectedImg===id)deselectImg();updateStatus();
+}
 function selectImg(id){deselectImg();selectedImg=id;const obj=images.find(i=>i.id===id);if(obj&&obj.el)obj.el.classList.add('selected');}
 function deselectImg(){if(selectedImg){const obj=images.find(i=>i.id===selectedImg);if(obj&&obj.el)obj.el.classList.remove('selected');}selectedImg=null;}
 
 function startDragImg(e,obj,node){
   if(mode!=='select')return;e.preventDefault();e.stopPropagation();selectImg(obj.id);
+  saveHistory();
   const w=screenToWorld(e.clientX,e.clientY);dragging={type:'img',obj,ox:w.x-obj.x,oy:w.y-obj.y};node.style.zIndex=10;
 }
-function startResize(e,obj,node){e.preventDefault();e.stopPropagation();dragging={type:'resize',obj,startClientX:e.clientX,startClientY:e.clientY,iw:obj.w,ih:obj.h};}
+function startResize(e,obj,node){e.preventDefault();e.stopPropagation();saveHistory();dragging={type:'resize',obj,startClientX:e.clientX,startClientY:e.clientY,iw:obj.w,ih:obj.h};}
 
 // ─── CANVAS MOUSE ─────────────────────────────────────────────────────────
 function cvDown(e){
@@ -398,6 +452,15 @@ function cvDown(e){
 function cvMove(e){
   if(dragging&&dragging.type==='img'){const w=screenToWorld(e.clientX,e.clientY);dragging.obj.x=Math.round((w.x-dragging.ox)/5)*5;dragging.obj.y=Math.round((w.y-dragging.oy)/5)*5;dragging.obj.el.style.left=dragging.obj.x+'px';dragging.obj.el.style.top=dragging.obj.y+'px';return;}
   if(dragging&&dragging.type==='resize'){const dx=(e.clientX-dragging.startClientX)/zoom;const aspect=dragging.ih/dragging.iw;const nw=Math.max(30,dragging.iw+dx);const nh=Math.round(nw*aspect);dragging.obj.w=Math.round(nw);dragging.obj.h=nh;dragging.obj.el.style.width=dragging.obj.w+'px';dragging.obj.el.style.height=dragging.obj.h+'px';return;}
+  if(flowResize){
+    const dx=(e.clientX-flowResize.startClientX)/zoom;
+    const dy=(e.clientY-flowResize.startClientY)/zoom;
+    const nw=Math.max(50,Math.round(flowResize.iw+dx));
+    const nh=Math.max(34,Math.round(flowResize.ih+dy));
+    flowResize.obj.w=nw;flowResize.obj.h=nh;
+    updateFlowNodeVisual(flowResize.obj);
+    return;
+  }
   if(flowDrag){const w=screenToWorld(e.clientX,e.clientY);flowDrag.obj.x=Math.round((w.x-flowDrag.ox)/5)*5;flowDrag.obj.y=Math.round((w.y-flowDrag.oy)/5)*5;flowDrag.obj.el.style.left=flowDrag.obj.x+'px';flowDrag.obj.el.style.top=flowDrag.obj.y+'px';return;}
   if(mode==='pan'&&panState){const dx=(e.clientX-panState.startX)/zoom;const dy=(e.clientY-panState.startY)/zoom;panX=panState.startPanX+dx;panY=panState.startPanY+dy;applyTransform();return;}
   const pt=screenToWorld(e.clientX,e.clientY);mousePos={...pt};
@@ -407,6 +470,7 @@ function cvMove(e){
 
 function cvUp(e){
   if(dragging){if(dragging.obj&&dragging.obj.el)dragging.obj.el.style.zIndex='';dragging=null;return;}
+  if(flowResize){flowResize.node.style.zIndex='';flowResize=null;return;}
   if(flowDrag){flowDrag.obj.el.style.zIndex='';flowDrag=null;return;}
   if(mode==='wire'&&wireDraw&&wireDraw.isDown){wireDraw.isDown=false;updatePreview();return;}
   if(mode==='pan'&&panState){panState=null;canvasEl.style.cursor='grab';return;}
@@ -418,10 +482,18 @@ function cvRightClick(e){e.preventDefault();if(mode==='wire'&&wireDraw)finishWir
 function createPreview(){if(wireDraw.previewEl)wireDraw.previewEl.remove();const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.classList.add('wire-preview');path.setAttribute('stroke',wireDraw.color);path.setAttribute('stroke-width',wireDraw.width);svgEl.appendChild(path);wireDraw.previewEl=path;}
 function updatePreview(){if(!wireDraw||!wireDraw.previewEl)return;const pts=[...wireDraw.pts,mousePos];wireDraw.previewEl.setAttribute('d',ptsToPath(pts));wireDraw.previewEl.setAttribute('stroke',wireDraw.color);wireDraw.previewEl.setAttribute('stroke-width',wireDraw.width);}
 function ptsToPath(pts){if(!pts||pts.length<1)return'';let d=`M${pts[0].x},${pts[0].y}`;for(let i=1;i<pts.length;i++)d+=` L${pts[i].x},${pts[i].y}`;return d;}
-function finishWire(){if(!wireDraw||wireDraw.pts.length<2){cancelWireDraw();return;}const w={id:'w'+(++wireIdCtr),pts:[...wireDraw.pts],color:wireDraw.color,width:wireDraw.width};wires.push(w);renderWire(w);cancelWireDraw();updateStatus();toast('Wire placed');}
+function finishWire(){
+  if(!wireDraw||wireDraw.pts.length<2){cancelWireDraw();return;}
+  saveHistory();
+  const w={id:'w'+(++wireIdCtr),pts:[...wireDraw.pts],color:wireDraw.color,width:wireDraw.width};wires.push(w);renderWire(w);cancelWireDraw();updateStatus();toast('Wire placed');
+}
 function cancelWireDraw(){if(wireDraw){if(wireDraw.previewEl)wireDraw.previewEl.remove();wireDraw=null;}}
 function renderWire(w){const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.classList.add('wire-path');path.setAttribute('stroke',w.color);path.setAttribute('stroke-width',w.width);path.setAttribute('d',ptsToPath(w.pts));path.style.pointerEvents=mode==='erase'?'stroke':'none';path.style.cursor=mode==='erase'?'pointer':'default';path.addEventListener('click',()=>{if(mode==='erase')deleteWire(w.id);});path.addEventListener('mouseenter',()=>{if(mode==='erase')path.setAttribute('stroke-width',parseFloat(w.width)+3);});path.addEventListener('mouseleave',()=>path.setAttribute('stroke-width',w.width));svgEl.appendChild(path);w.el=path;}
-function deleteWire(id){const idx=wires.findIndex(w=>w.id===id);if(idx<0)return;if(wires[idx].el)wires[idx].el.remove();wires.splice(idx,1);updateStatus();toast('Wire erased');}
+function deleteWire(id){
+  const idx=wires.findIndex(w=>w.id===id);if(idx<0)return;
+  saveHistory();
+  if(wires[idx].el)wires[idx].el.remove();wires.splice(idx,1);updateStatus();toast('Wire erased');
+}
 
 // ─── FILES ────────────────────────────────────────────────────────────────
 function handleCanvasDrop(e){
@@ -454,6 +526,9 @@ function onKey(e){
   if(e.ctrlKey&&e.key==='0'){e.preventDefault();resetZoom();}
   if(e.ctrlKey&&e.key==='+'){e.preventDefault();adjustZoom(ZOOM_STEP);}
   if(e.ctrlKey&&e.key==='-'){e.preventDefault();adjustZoom(-ZOOM_STEP);}
+  if(e.ctrlKey&&!e.shiftKey&&(e.key==='z'||e.key==='Z')){e.preventDefault();undo();}
+  if(e.ctrlKey&&e.shiftKey&&(e.key==='z'||e.key==='Z')){e.preventDefault();redo();}
+  if(e.ctrlKey&&(e.key==='y'||e.key==='Y')){e.preventDefault();redo();}
 }
 
 // ─── TABS ─────────────────────────────────────────────────────────────────
@@ -488,6 +563,7 @@ function updateStatus(){
 // ─── CLEAR ────────────────────────────────────────────────────────────────
 function clearAll(){
   if(!confirm('Clear everything?'))return;
+  saveHistory();
   images.forEach(i=>{if(i.el)i.el.remove();});images=[];wires=[];svgEl.innerHTML='';
   flowNodes.forEach(n=>{if(n.el)n.el.remove();});
   flowNodes=[];
@@ -495,7 +571,64 @@ function clearAll(){
   document.getElementById('img-list').innerHTML='';updateStatus();toast('Canvas cleared');
 }
 
+// ─── UNDO / REDO ────────────────────────────────────────────────────────────
+// Snapshots only the canvas state (placed images, wires, flow nodes) —
+// the uploaded-image library in the sidebar is left untouched by undo/redo.
+function snapshotState(){
+  return JSON.stringify({
+    images:images.map(i=>({src:i.src,name:i.name,x:i.x,y:i.y,w:i.w,h:i.h,srcId:i.srcId})),
+    wires:wires.map(w=>({pts:w.pts,color:w.color,width:w.width})),
+    flowNodes:flowNodes.map(n=>({type:n.type,x:n.x,y:n.y,w:n.w,h:n.h,label:n.label}))
+  });
+}
+function saveHistory(){
+  if(restoring)return;
+  undoStack.push(snapshotState());
+  if(undoStack.length>60)undoStack.shift();
+  redoStack=[];
+}
+function applyState(json){
+  const state=JSON.parse(json);
+  images.forEach(i=>{if(i.el)i.el.remove();});images=[];
+  wires.forEach(w=>{if(w.el)w.el.remove();});wires=[];svgEl.innerHTML='';
+  flowNodes.forEach(n=>{if(n.el)n.el.remove();});flowNodes=[];
+  deselectImg();deselectFlowNode();
+  state.images.forEach(i=>createImageNode(i.src,i.name,i.x,i.y,i.w,i.h,i.srcId));
+  state.wires.forEach(w=>{const nw={id:'w'+(++wireIdCtr),pts:w.pts,color:w.color,width:w.width};wires.push(nw);renderWire(nw);});
+  state.flowNodes.forEach(n=>createFlowNode(n.type,n.x,n.y,{w:n.w,h:n.h,label:n.label,exact:true}));
+  updateStatus();
+}
+function undo(){
+  if(undoStack.length===0){toast('Nothing to undo');return;}
+  const current=snapshotState();
+  const prev=undoStack.pop();
+  redoStack.push(current);
+  restoring=true;applyState(prev);restoring=false;
+  toast('Undo');
+}
+function redo(){
+  if(redoStack.length===0){toast('Nothing to redo');return;}
+  const current=snapshotState();
+  const next=redoStack.pop();
+  undoStack.push(current);
+  restoring=true;applyState(next);restoring=false;
+  toast('Redo');
+}
+
 // ─── EXPORT PNG ───────────────────────────────────────────────────────────
+function wrapCanvasText(ctx,text,cx,cy,maxWidth,lineHeight){
+  const words=String(text).split(/\s+/);
+  const lines=[];let cur='';
+  words.forEach(word=>{
+    const test=cur?cur+' '+word:word;
+    if(ctx.measureText(test).width>maxWidth&&cur){lines.push(cur);cur=word;}
+    else cur=test;
+  });
+  if(cur)lines.push(cur);
+  const totalH=lines.length*lineHeight;
+  let sy=cy-totalH/2+lineHeight/2;
+  lines.forEach((line,i)=>ctx.fillText(line,cx,sy+i*lineHeight));
+}
 function exportPNG(){
   const r=canvasEl.getBoundingClientRect();const cv=document.createElement('canvas');const scale=2;
   cv.width=r.width*scale;cv.height=r.height*scale;const ctx=cv.getContext('2d');
@@ -515,10 +648,10 @@ function exportPNG(){
       if(n.type==='start'){ctx.ellipse(x+w/2,y+h/2,w/2-2,h/2-2,0,0,Math.PI*2);}
       else if(n.type==='process'){ctx.rect(x+2,y+2,w-4,h-4);}
       else if(n.type==='decision'){ctx.moveTo(x+w/2,y+2);ctx.lineTo(x+w-2,y+h/2);ctx.lineTo(x+w/2,y+h-2);ctx.lineTo(x+2,y+h/2);ctx.closePath();}
-      else if(n.type==='output'){const off=10*zoom;ctx.moveTo(x+off,y+2);ctx.lineTo(x+w-2,y+2);ctx.lineTo(x+w-2-off,y+h-2);ctx.lineTo(x+2,y+h-2);ctx.closePath();}
+      else if(n.type==='output'){const off=Math.min(10,n.w*0.12)*zoom;ctx.moveTo(x+off,y+2);ctx.lineTo(x+w-2,y+2);ctx.lineTo(x+w-2-off,y+h-2);ctx.lineTo(x+2,y+h-2);ctx.closePath();}
       ctx.fill();ctx.stroke();
       ctx.fillStyle='#cdd9e5';ctx.font=`${11*zoom}px monospace`;ctx.textAlign='center';ctx.textBaseline='middle';
-      ctx.fillText(n.label,x+w/2,y+h/2);
+      wrapCanvasText(ctx,n.label,x+w/2,y+h/2,w*0.72,13*zoom);
     });
     const a=document.createElement('a');a.href=cv.toDataURL('image/png');a.download='circuit.png';a.click();toast('PNG exported');
   });
@@ -533,6 +666,7 @@ canvasEl.addEventListener('wheel',e=>{if(!e.ctrlKey)return;e.preventDefault();co
 
 document.addEventListener('mouseup',()=>{
   if(dragging){if(dragging.obj&&dragging.obj.el)dragging.obj.el.style.zIndex='';dragging=null;}
+  if(flowResize){flowResize.node.style.zIndex='';flowResize=null;}
   if(flowDrag){flowDrag.obj.el.style.zIndex='';flowDrag=null;}
   if(panState){panState=null;if(mode==='pan')canvasEl.style.cursor='grab';}
   if(mode==='wire'&&wireDraw)wireDraw.isDown=false;
