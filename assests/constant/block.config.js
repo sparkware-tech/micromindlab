@@ -199,14 +199,14 @@ const BLOCK_DEFINITIONS = [
   {
     category:'Control Flow', type:'forBlock', cls:'b-control',
     label:'repeat', hint:'repeat block for a number of iterations with nested blocks',
-    defaults:{ init:'int i=0', cond:'10', inc:'i++' },
+    defaults:{ init:'int i=1', cond:'10', inc:'i++', condition:'i<=' },
     fields:[
       { kind:'text', label:'repeat (' },
       { kind:'input', key:'cond', width:50 },
       { kind:'text', label:') {' }
     ],
     hasChildren: true,
-    code:'  {{_indent}}for ({{init}}; {{cond}}; {{inc}}) {'
+    code:'  {{_indent}}for ({{init}}; {{condition}}{{cond}}; {{inc}}) {'
   },
    /* Maths */
   {
@@ -223,7 +223,7 @@ const BLOCK_DEFINITIONS = [
     code:'  {{_indent}}{{result}} = {{num1}} + {{num2}};'
   },
   {
-    category:'Math', type:'sumBlock', cls:'b-math',
+    category:'Math', type:'subBlock', cls:'b-math',
     label:'sub', hint:'subtraction of two numbers',
     defaults:{ result: 'result', num1:'num1', num2:'num2' },
     fields:[

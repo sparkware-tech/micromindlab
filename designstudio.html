@@ -6,6 +6,11 @@
 <link rel="icon" type="image/png" href="assests/img/favicon.png">
 <title>MicroMind Lab - Design Studio</title>
 <link rel="stylesheet" href="assests/css/designstudio.css">
+<style>
+  .flow-node.arrow-pending{outline:2px dashed #58a6ff;outline-offset:3px;border-radius:2px;}
+  .arrow-preview{pointer-events:none;}
+  .flow-arrow{transition:stroke-width .12s ease;}
+</style>
 </head>
 <body>
 
@@ -18,6 +23,7 @@
   <button class="btn" id="btn-p" onclick="setMode('pan')">&#9974; Pan</button>
   <button class="btn active" id="btn-s" onclick="setMode('select')">&#10022; Select</button>
   <button class="btn" id="btn-w" onclick="setMode('wire')">&#8767; Wire</button>
+  <button class="btn" id="btn-a" onclick="setMode('arrow')" title="Flow Arrow (A) - click source shape, then target shape">&#8594; Arrow</button>
   <button class="btn" id="btn-e" onclick="setMode('erase')">&#9003; Erase</button>
   <div class="sep"></div>
   <div id="swatches"></div>
@@ -94,7 +100,9 @@
         <div style="font-size:10px;color:#6e7681;line-height:1.6;padding:2px">
           &#8227; Drag shapes onto canvas<br>
           &#8227; Double-click shape to rename<br>
-          &#8227; Use Wire mode to connect shapes<br>
+          &#8227; Arrow mode: click source, then target shape<br>
+          &#8227; Arrows auto-follow shapes you move/resize<br>
+          &#8227; Erase mode also removes arrows<br>
           &#8227; Del key removes selected<br>
         </div>
       </div>
@@ -125,6 +133,7 @@
   <span id="icount">0 images</span>
   <span id="wcount">0 wires</span>
   <span id="fcount">0 flow nodes</span>
+  <span id="aconn">0 arrows</span>
 </div>
 <div id="toast"></div>
 
@@ -159,6 +168,10 @@ const FLOW_CFG = {
 let flowNodes=[];
 let flowIdCtr=0, selectedFlowNode=null, flowPlaceType=null;
 let flowDrag=null, flowResize=null;
+
+// ─── FLOW ARROW / CONNECTION STATE ─────────────────────────────────────────
+let flowConnections=[];
+let flowConnCtr=0, pendingArrowFrom=null, arrowPreviewEl=null;
 
 // ─── UNDO / REDO STATE ──────────────────────────────────────────────────────
 let undoStack=[], redoStack=[], restoring=false;
@@ -212,18 +225,19 @@ function setColor(v,btn){wireColor=v;document.querySelectorAll('.sw').forEach(b=
 function setMode(m){
   mode=m;
   document.getElementById('mode-badge').textContent=m.toUpperCase();
-  cancelWireDraw(); deselectImg(); deselectFlowNode();
+  cancelWireDraw(); cancelArrowDraw(); deselectImg(); deselectFlowNode();
   flowPlaceType=null;
-  ['btn-s','btn-w','btn-e','btn-p'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('active');});
-  const map={select:'btn-s',wire:'btn-w',erase:'btn-e',pan:'btn-p'};
+  ['btn-s','btn-w','btn-e','btn-p','btn-a'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('active');});
+  const map={select:'btn-s',wire:'btn-w',erase:'btn-e',pan:'btn-p',arrow:'btn-a'};
   if(map[m])document.getElementById(map[m]).classList.add('active');
   const eraseMode=m==='erase';
   svgEl.style.pointerEvents=eraseMode?'all':'none';
   wires.forEach(w=>{if(w.el){w.el.style.pointerEvents=eraseMode?'stroke':'none';w.el.style.cursor=eraseMode?'pointer':'default';}});
+  flowConnections.forEach(c=>{if(c.el){c.el.style.pointerEvents=eraseMode?'stroke':'none';c.el.style.cursor=eraseMode?'pointer':'default';}});
   imgLayer.style.pointerEvents=m==='select'?'auto':'none';
   // ✅ Never let flowLayer intercept — let individual nodes handle it
   flowLayer.style.pointerEvents='none';
-  flowNodes.forEach(n=>{if(n.el)n.el.style.pointerEvents=m==='select'?'auto':'none';});
+  flowNodes.forEach(n=>{if(n.el)n.el.style.pointerEvents=(m==='select'||m==='arrow')?'auto':'none';});
   if(m==='pan')canvasEl.style.cursor='grab';
   else if(m==='select')canvasEl.style.cursor='default';
   else canvasEl.style.cursor='crosshair';
@@ -308,7 +322,7 @@ function createFlowNode(type,wx,wy,overrides){
   const node=document.createElement('div');
   node.className='flow-node';
   node.id=id;
-  node.style.cssText=`left:${x}px;top:${y}px;width:${w}px;height:${h}px;pointer-events:${mode==='select'?'auto':'none'};`;
+  node.style.cssText=`left:${x}px;top:${y}px;width:${w}px;height:${h}px;pointer-events:${(mode==='select'||mode==='arrow')?'auto':'none'};`;
   const{svg,textDiv}=buildShapeSVG(type,w,h,cfg,label);
   obj._txt=textDiv;
   const rh=document.createElement('div');
@@ -323,6 +337,7 @@ function createFlowNode(type,wx,wy,overrides){
     if(e.target===del||e.target===rh)return;
     e.stopPropagation();
     if(mode==='select'){selectFlowNode(id);startDragFlowNode(e,obj,node);}
+    else if(mode==='arrow'){handleArrowNodeClick(id);}
   });
   node.addEventListener('dblclick',e=>{e.stopPropagation();editFlowLabel(obj,node);});
   flowLayer.appendChild(node);obj.el=node;
@@ -348,6 +363,15 @@ function removeFlowNode(id){
   saveHistory();
   if(flowNodes[idx].el)flowNodes[idx].el.remove();
   flowNodes.splice(idx,1);if(selectedFlowNode===id)deselectFlowNode();
+  for(let i=flowConnections.length-1;i>=0;i--){
+    const c=flowConnections[i];
+    if(c.from===id||c.to===id){
+      if(c.el)c.el.remove();
+      if(c.markerEl)c.markerEl.remove();
+      flowConnections.splice(i,1);
+    }
+  }
+  if(pendingArrowFrom===id)cancelArrowDraw();
   updateStatus();
 }
 
@@ -363,6 +387,176 @@ function startResizeFlow(e,obj,node){
   saveHistory();
   flowResize={obj,node,startClientX:e.clientX,startClientY:e.clientY,iw:obj.w,ih:obj.h};
   node.style.zIndex=20;
+}
+
+// ─── FLOW ARROWS ────────────────────────────────────────────────────────
+function getFlowNodeById(id){return flowNodes.find(n=>n.id===id);}
+
+// Finds where a line leaving the center of a box (half-width hw, half-height
+// hh) toward direction (dx,dy) crosses the box's own edge — used to anchor
+// arrows exactly at a shape's border rather than its center.
+function rectEdgePoint(cx,cy,hw,hh,dx,dy){
+  if(dx===0&&dy===0)return{x:cx,y:cy};
+  const scaleX=dx!==0?hw/Math.abs(dx):Infinity;
+  const scaleY=dy!==0?hh/Math.abs(dy):Infinity;
+  const scale=Math.min(scaleX,scaleY);
+  return{x:cx+dx*scale,y:cy+dy*scale};
+}
+
+function computeArrowPoints(a,b){
+  const cA={x:a.x+a.w/2,y:a.y+a.h/2},cB={x:b.x+b.w/2,y:b.y+b.h/2};
+  let dx=cB.x-cA.x,dy=cB.y-cA.y;
+  if(dx===0&&dy===0){dx=1;dy=0;}
+  const start=rectEdgePoint(cA.x,cA.y,a.w/2,a.h/2,dx,dy);
+  const end=rectEdgePoint(cB.x,cB.y,b.w/2,b.h/2,-dx,-dy);
+  return{start,end};
+}
+
+function ensureArrowDefs(){
+  let defs=svgEl.querySelector('defs');
+  if(!defs){defs=document.createElementNS('http://www.w3.org/2000/svg','defs');svgEl.insertBefore(defs,svgEl.firstChild);}
+  return defs;
+}
+
+function ensurePreviewMarker(){
+  const defs=ensureArrowDefs();
+  const existing=defs.querySelector('#arrow-preview-marker');
+  if(existing)existing.remove();
+  const ns='http://www.w3.org/2000/svg';
+  const marker=document.createElementNS(ns,'marker');
+  marker.setAttribute('id','arrow-preview-marker');
+  marker.setAttribute('markerWidth','10');marker.setAttribute('markerHeight','10');
+  marker.setAttribute('refX','8');marker.setAttribute('refY','3.5');marker.setAttribute('orient','auto');
+  const poly=document.createElementNS(ns,'polygon');
+  poly.setAttribute('points','0,0 10,3.5 0,7');
+  poly.setAttribute('fill',wireColor);
+  marker.appendChild(poly);
+  defs.appendChild(marker);
+}
+
+function createArrowPreview(){
+  if(arrowPreviewEl){arrowPreviewEl.remove();arrowPreviewEl=null;}
+  ensurePreviewMarker();
+  const ns='http://www.w3.org/2000/svg';
+  const path=document.createElementNS(ns,'path');
+  path.setAttribute('class','arrow-preview');
+  path.setAttribute('stroke',wireColor);
+  path.setAttribute('stroke-width','2');
+  path.setAttribute('fill','none');
+  path.setAttribute('stroke-dasharray','6,4');
+  path.setAttribute('marker-end','url(#arrow-preview-marker)');
+  svgEl.appendChild(path);
+  arrowPreviewEl=path;
+}
+
+function updateArrowPreview(pt){
+  if(!arrowPreviewEl||!pendingArrowFrom)return;
+  const a=getFlowNodeById(pendingArrowFrom);if(!a)return;
+  const cA={x:a.x+a.w/2,y:a.y+a.h/2};
+  let dx=pt.x-cA.x,dy=pt.y-cA.y;
+  if(dx===0&&dy===0){dx=1;dy=0;}
+  const start=rectEdgePoint(cA.x,cA.y,a.w/2,a.h/2,dx,dy);
+  arrowPreviewEl.setAttribute('d',`M${start.x},${start.y} L${pt.x},${pt.y}`);
+}
+
+function cancelArrowDraw(){
+  if(pendingArrowFrom){
+    const obj=getFlowNodeById(pendingArrowFrom);
+    if(obj&&obj.el)obj.el.classList.remove('arrow-pending');
+  }
+  pendingArrowFrom=null;
+  if(arrowPreviewEl){arrowPreviewEl.remove();arrowPreviewEl=null;}
+}
+
+// Click one shape (source), then click another (target) — an arrow is
+// placed between them automatically. Clicking the same shape cancels.
+function handleArrowNodeClick(id){
+  if(!pendingArrowFrom){
+    pendingArrowFrom=id;
+    const obj=getFlowNodeById(id);
+    if(obj&&obj.el)obj.el.classList.add('arrow-pending');
+    createArrowPreview();
+    toast('Click the target shape to connect');
+    return;
+  }
+  if(id===pendingArrowFrom){cancelArrowDraw();toast('Cancelled');return;}
+  createFlowConnection(pendingArrowFrom,id);
+  cancelArrowDraw();
+}
+
+function createFlowConnection(fromId,toId,overrides){
+  saveHistory();
+  const id='fc'+(++flowConnCtr);
+  const color=(overrides&&overrides.color)||wireColor;
+  const width=(overrides&&overrides.width)||wireWidth;
+  const conn={id,from:fromId,to:toId,color,width};
+  flowConnections.push(conn);
+  renderFlowConnection(conn);
+  updateStatus();
+  if(!(overrides&&overrides.silent))toast('Arrow connected');
+  return conn;
+}
+
+function renderFlowConnection(conn){
+  const ns='http://www.w3.org/2000/svg';
+  const defs=ensureArrowDefs();
+  const markerId='arrowhead-'+conn.id;
+  const marker=document.createElementNS(ns,'marker');
+  marker.setAttribute('id',markerId);
+  marker.setAttribute('markerWidth','10');
+  marker.setAttribute('markerHeight','10');
+  marker.setAttribute('refX','8');
+  marker.setAttribute('refY','3.5');
+  marker.setAttribute('orient','auto');
+  const poly=document.createElementNS(ns,'polygon');
+  poly.setAttribute('points','0,0 10,3.5 0,7');
+  poly.setAttribute('fill',conn.color);
+  marker.appendChild(poly);
+  defs.appendChild(marker);
+
+  const path=document.createElementNS(ns,'path');
+  path.classList.add('flow-arrow');
+  path.setAttribute('stroke',conn.color);
+  path.setAttribute('stroke-width',conn.width);
+  path.setAttribute('fill','none');
+  path.setAttribute('marker-end',`url(#${markerId})`);
+  const eraseMode=mode==='erase';
+  path.style.pointerEvents=eraseMode?'stroke':'none';
+  path.style.cursor=eraseMode?'pointer':'default';
+  path.addEventListener('click',()=>{if(mode==='erase')deleteFlowConnection(conn.id);});
+  path.addEventListener('mouseenter',()=>{if(mode==='erase')path.setAttribute('stroke-width',parseFloat(conn.width)+2);});
+  path.addEventListener('mouseleave',()=>path.setAttribute('stroke-width',conn.width));
+  svgEl.appendChild(path);
+  conn.el=path;
+  conn.markerEl=marker;
+  updateFlowConnectionPath(conn);
+}
+
+// Recomputes one connection's path from its two nodes' current positions.
+function updateFlowConnectionPath(conn){
+  const a=getFlowNodeById(conn.from),b=getFlowNodeById(conn.to);
+  if(!a||!b||!conn.el)return;
+  const{start,end}=computeArrowPoints(a,b);
+  conn.el.setAttribute('d',`M${start.x},${start.y} L${end.x},${end.y}`);
+}
+
+// Called while dragging/resizing a node so any arrow touching it stays
+// attached and re-angled live — pass no id to refresh every arrow.
+function refreshFlowConnections(nodeId){
+  flowConnections.forEach(c=>{
+    if(!nodeId||c.from===nodeId||c.to===nodeId)updateFlowConnectionPath(c);
+  });
+}
+
+function deleteFlowConnection(id){
+  const idx=flowConnections.findIndex(c=>c.id===id);if(idx<0)return;
+  saveHistory();
+  const conn=flowConnections[idx];
+  if(conn.el)conn.el.remove();
+  if(conn.markerEl)conn.markerEl.remove();
+  flowConnections.splice(idx,1);
+  updateStatus();
+  toast('Arrow removed');
 }
 
 // ─── IMAGES ───────────────────────────────────────────────────────────────
@@ -440,6 +634,7 @@ function startResize(e,obj,node){e.preventDefault();e.stopPropagation();saveHist
 function cvDown(e){
   if(e.button===2)return;
   if(flowPlaceType&&mode==='select'){const pt=screenToWorld(e.clientX,e.clientY);createFlowNode(flowPlaceType,pt.x,pt.y);flowPlaceType=null;canvasEl.style.cursor='default';return;}
+  if(mode==='arrow'){cancelArrowDraw();return;}
   if(mode==='pan'){panState={startX:e.clientX,startY:e.clientY,startPanX:panX,startPanY:panY};canvasEl.style.cursor='grabbing';return;}
   if(mode==='select'){if(!e.target.closest('.img-node')&&!e.target.closest('.flow-node')){deselectImg();deselectFlowNode();}return;}
   if(mode==='wire'){
@@ -459,13 +654,15 @@ function cvMove(e){
     const nh=Math.max(34,Math.round(flowResize.ih+dy));
     flowResize.obj.w=nw;flowResize.obj.h=nh;
     updateFlowNodeVisual(flowResize.obj);
+    refreshFlowConnections(flowResize.obj.id);
     return;
   }
-  if(flowDrag){const w=screenToWorld(e.clientX,e.clientY);flowDrag.obj.x=Math.round((w.x-flowDrag.ox)/5)*5;flowDrag.obj.y=Math.round((w.y-flowDrag.oy)/5)*5;flowDrag.obj.el.style.left=flowDrag.obj.x+'px';flowDrag.obj.el.style.top=flowDrag.obj.y+'px';return;}
+  if(flowDrag){const w=screenToWorld(e.clientX,e.clientY);flowDrag.obj.x=Math.round((w.x-flowDrag.ox)/5)*5;flowDrag.obj.y=Math.round((w.y-flowDrag.oy)/5)*5;flowDrag.obj.el.style.left=flowDrag.obj.x+'px';flowDrag.obj.el.style.top=flowDrag.obj.y+'px';refreshFlowConnections(flowDrag.obj.id);return;}
   if(mode==='pan'&&panState){const dx=(e.clientX-panState.startX)/zoom;const dy=(e.clientY-panState.startY)/zoom;panX=panState.startPanX+dx;panY=panState.startPanY+dy;applyTransform();return;}
   const pt=screenToWorld(e.clientX,e.clientY);mousePos={...pt};
   document.getElementById('coords').textContent=`x:${Math.round(pt.x)} y:${Math.round(pt.y)}`;
   if(mode==='wire'&&wireDraw){if(wireDraw.isDown){const last=wireDraw.pts[wireDraw.pts.length-1];const dist=Math.hypot(pt.x-last.x,pt.y-last.y);if(dist>4)wireDraw.pts.push({...pt});}updatePreview();}
+  if(mode==='arrow'&&pendingArrowFrom)updateArrowPreview(pt);
 }
 
 function cvUp(e){
@@ -515,8 +712,9 @@ function onPaste(e){for(const item of e.clipboardData.items){if(item.type.starts
 // ─── KEYS ─────────────────────────────────────────────────────────────────
 function onKey(e){
   if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
-  if(e.key==='Escape'){cancelWireDraw();setMode('select');flowPlaceType=null;}
+  if(e.key==='Escape'){cancelWireDraw();cancelArrowDraw();setMode('select');flowPlaceType=null;}
   if(e.key==='w'||e.key==='W')setMode('wire');
+  if(e.key==='a'||e.key==='A')setMode('arrow');
   if(e.key==='s'||e.key==='S')setMode('select');
   if(e.key==='e'||e.key==='E')setMode('erase');
   if(e.key==='p'||e.key==='P')setMode('pan');
@@ -558,6 +756,7 @@ function updateStatus(){
   document.getElementById('icount').textContent=images.length+' images';
   document.getElementById('wcount').textContent=wires.length+' wires';
   document.getElementById('fcount').textContent=flowNodes.length+' flow nodes';
+  const ac=document.getElementById('aconn');if(ac)ac.textContent=flowConnections.length+' arrows';
 }
 
 // ─── CLEAR ────────────────────────────────────────────────────────────────
@@ -567,18 +766,24 @@ function clearAll(){
   images.forEach(i=>{if(i.el)i.el.remove();});images=[];wires=[];svgEl.innerHTML='';
   flowNodes.forEach(n=>{if(n.el)n.el.remove();});
   flowNodes=[];
-  cancelWireDraw();deselectImg();deselectFlowNode();
+  flowConnections=[];
+  cancelWireDraw();cancelArrowDraw();deselectImg();deselectFlowNode();
   document.getElementById('img-list').innerHTML='';updateStatus();toast('Canvas cleared');
 }
 
 // ─── UNDO / REDO ────────────────────────────────────────────────────────────
-// Snapshots only the canvas state (placed images, wires, flow nodes) —
-// the uploaded-image library in the sidebar is left untouched by undo/redo.
+// Snapshots only the canvas state (placed images, wires, flow nodes, and the
+// arrows between them) — the uploaded-image library in the sidebar is left
+// untouched by undo/redo. Arrows are stored by node INDEX (not id) because
+// restoring a snapshot recreates flow nodes with fresh ids.
 function snapshotState(){
+  const idxMap={};
+  flowNodes.forEach((n,i)=>{idxMap[n.id]=i;});
   return JSON.stringify({
     images:images.map(i=>({src:i.src,name:i.name,x:i.x,y:i.y,w:i.w,h:i.h,srcId:i.srcId})),
     wires:wires.map(w=>({pts:w.pts,color:w.color,width:w.width})),
-    flowNodes:flowNodes.map(n=>({type:n.type,x:n.x,y:n.y,w:n.w,h:n.h,label:n.label}))
+    flowNodes:flowNodes.map(n=>({type:n.type,x:n.x,y:n.y,w:n.w,h:n.h,label:n.label})),
+    flowConnections:flowConnections.map(c=>({fromIdx:idxMap[c.from],toIdx:idxMap[c.to],color:c.color,width:c.width}))
   });
 }
 function saveHistory(){
@@ -592,10 +797,16 @@ function applyState(json){
   images.forEach(i=>{if(i.el)i.el.remove();});images=[];
   wires.forEach(w=>{if(w.el)w.el.remove();});wires=[];svgEl.innerHTML='';
   flowNodes.forEach(n=>{if(n.el)n.el.remove();});flowNodes=[];
+  flowConnections=[];
+  cancelArrowDraw();
   deselectImg();deselectFlowNode();
   state.images.forEach(i=>createImageNode(i.src,i.name,i.x,i.y,i.w,i.h,i.srcId));
   state.wires.forEach(w=>{const nw={id:'w'+(++wireIdCtr),pts:w.pts,color:w.color,width:w.width};wires.push(nw);renderWire(nw);});
   state.flowNodes.forEach(n=>createFlowNode(n.type,n.x,n.y,{w:n.w,h:n.h,label:n.label,exact:true}));
+  (state.flowConnections||[]).forEach(c=>{
+    const a=flowNodes[c.fromIdx],b=flowNodes[c.toIdx];
+    if(a&&b)createFlowConnection(a.id,b.id,{color:c.color,width:c.width,silent:true});
+  });
   updateStatus();
 }
 function undo(){
@@ -652,6 +863,22 @@ function exportPNG(){
       ctx.fill();ctx.stroke();
       ctx.fillStyle='#cdd9e5';ctx.font=`${11*zoom}px monospace`;ctx.textAlign='center';ctx.textBaseline='middle';
       wrapCanvasText(ctx,n.label,x+w/2,y+h/2,w*0.72,13*zoom);
+    });
+    // Draw flow arrows (drawn on top so arrowheads stay visible against shapes)
+    flowConnections.forEach(c=>{
+      const a=flowNodes.find(n=>n.id===c.from),b=flowNodes.find(n=>n.id===c.to);
+      if(!a||!b)return;
+      const{start,end}=computeArrowPoints(a,b);
+      const sx=start.x*zoom+tx,sy=start.y*zoom+ty,ex=end.x*zoom+tx,ey=end.y*zoom+ty;
+      ctx.strokeStyle=c.color;ctx.fillStyle=c.color;ctx.lineWidth=c.width*zoom;ctx.lineCap='round';
+      ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(ex,ey);ctx.stroke();
+      const angle=Math.atan2(ey-sy,ex-sx);
+      const headLen=10*zoom;
+      ctx.beginPath();
+      ctx.moveTo(ex,ey);
+      ctx.lineTo(ex-headLen*Math.cos(angle-Math.PI/6),ey-headLen*Math.sin(angle-Math.PI/6));
+      ctx.lineTo(ex-headLen*Math.cos(angle+Math.PI/6),ey-headLen*Math.sin(angle+Math.PI/6));
+      ctx.closePath();ctx.fill();
     });
     const a=document.createElement('a');a.href=cv.toDataURL('image/png');a.download='circuit.png';a.click();toast('PNG exported');
   });
